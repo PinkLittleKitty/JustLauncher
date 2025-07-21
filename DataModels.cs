@@ -1,106 +1,135 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace JustLauncher
 {
     public class VersionManifest
     {
-        public List<MinecraftVersion> versions { get; set; }
+        [JsonPropertyName("versions")]
+        public List<MinecraftVersion> Versions { get; set; }
     }
 
     public class MinecraftVersion
     {
-        public string id { get; set; }
-        public string type { get; set; }
-        public string url { get; set; }
-        public DateTime releaseTime { get; set; }
+        [JsonPropertyName("id")]
+        public string Id { get; set; }
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+        [JsonPropertyName("url")]
+        public string Url { get; set; }
+        [JsonPropertyName("releaseTime")]
+        public DateTime ReleaseTime { get; set; }
     }
 
     public class VersionInfo
     {
-        public string mainClass { get; set; }
-        public string type { get; set; }
-        public string inheritsFrom { get; set; }
-        public string minecraftArguments { get; set; }
-        public Arguments arguments { get; set; }
-        public AssetIndex assetIndex { get; set; }
-        public List<Library> libraries { get; set; }
-        public Downloads downloads { get; set; }
+        [JsonPropertyName("mainClass")]
+        public string MainClass { get; set; }
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+        [JsonPropertyName("inheritsFrom")]
+        public string InheritsFrom { get; set; }
+        [JsonPropertyName("minecraftArguments")]
+        public string MinecraftArguments { get; set; }
+        [JsonPropertyName("arguments")]
+        public Arguments Arguments { get; set; }
+        [JsonPropertyName("assetIndex")]
+        public AssetIndex AssetIndex { get; set; }
+        [JsonPropertyName("libraries")]
+        public List<Library> Libraries { get; set; }
+        [JsonPropertyName("downloads")]
+        public Downloads Downloads { get; set; }
     }
 
     public class Arguments
     {
-        public List<object> game { get; set; }
-        public List<object> jvm { get; set; }
+        [JsonPropertyName("game")]
+        public List<object> Game { get; set; }
+        [JsonPropertyName("jvm")]
+        public List<object> Jvm { get; set; }
     }
 
     public class ConditionalArgument
     {
-        public List<Rule> rules { get; set; }
-        public object value { get; set; }
+        public List<Rule> Rules { get; set; } // Fixed IDE1006: Renamed 'rules' to 'Rules'
+        public object Value { get; set; } // Fixed IDE1006: Renamed 'value' to 'Value'
     }
 
     public class AssetIndex
     {
-        public string id { get; set; }
-        public string url { get; set; }
+        [JsonPropertyName("id")]
+        public string Id { get; set; }
+        [JsonPropertyName("url")]
+        public string Url { get; set; }
     }
 
     public class Library
     {
-        public string name { get; set; }
-        public LibraryDownloads downloads { get; set; }
-        public List<Rule> rules { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        [JsonPropertyName("downloads")]
+        public LibraryDownloads Downloads { get; set; }
+        [JsonPropertyName("rules")]
+        public List<Rule> Rules { get; set; }
     }
 
     public class LibraryDownloads
     {
-        public Artifact artifact { get; set; }
-        public Classifiers classifiers { get; set; }
+        [JsonPropertyName("artifact")]
+        public Artifact Artifact { get; set; }
+        [JsonPropertyName("classifiers")]
+        public Classifiers Classifiers { get; set; }
     }
 
     public class Classifiers
     {
-        public Artifact natives_windows { get; set; }
+        public Artifact NativesWindows { get; set; } // Fixed IDE1006: Renamed 'natives_windows' to 'NativesWindows'
     }
 
     public class Artifact
     {
-        public string path { get; set; }
-        public string url { get; set; }
+        [JsonPropertyName("path")]
+        public string Path { get; set; }
+        [JsonPropertyName("url")]
+        public string Url { get; set; }
     }
 
     public class Rule
     {
-        public string action { get; set; }
-        public Os os { get; set; }
+        public string Action { get; set; } // Fixed IDE1006: Renamed 'action' to 'Action'
+        public Os Os { get; set; } // Fixed IDE1006: Renamed 'os' to 'Os'
     }
 
     public class Os
     {
-        public string name { get; set; }
+        public string Name { get; set; } // Fixed IDE1006: Renamed 'name' to 'Name'
     }
 
     public class Downloads
     {
-        public ClientDownload client { get; set; }
+        [JsonPropertyName("client")]
+        public ClientDownload Client { get; set; }
     }
 
     public class ClientDownload
     {
-        public string url { get; set; }
+        [JsonPropertyName("url")]
+        public string Url { get; set; }
     }
 
     public class AssetIndexInfo
     {
-        public Dictionary<string, AssetObject> objects { get; set; }
+        public Dictionary<string, AssetObject> Objects { get; set; } // Fixed IDE1006: Renamed 'objects' to 'Objects'
     }
 
     public class AssetObject
     {
-        public string hash { get; set; }
-        public int size { get; set; }
+        [JsonPropertyName("hash")]
+        public string Hash { get; set; }
+        [JsonPropertyName("size")]
+        public int Size { get; set; }
     }
 
     public class VersionListItem
@@ -117,6 +146,16 @@ namespace JustLauncher
 
     public class ProfilesConfig
     {
-        public List<GameProfile> profiles { get; set; }
+        public List<GameProfile> Profiles { get; set; } // Fixed IDE1006: Renamed 'profiles' to 'Profiles'
+    }
+
+    // Added missing GameProfile class to fix CS0246
+    public class GameProfile
+    {
+        public string Name { get; set; }
+        public string Directory { get; set; }
+        public string GameDirectory { get; set; }
+        public string LastUsedUsername { get; set; }
+        public string JavaArgs { get; set; }
     }
 }

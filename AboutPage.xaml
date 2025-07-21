@@ -1,0 +1,12 @@
+<UserControl x:Class="JustLauncher.AboutPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#23272A">
+    <Grid Margin="20">
+        <StackPanel>
+            <TextBlock Text="About JustLauncher" FontSize="24" Foreground="White" Margin="0,0,0,10"/>
+            <TextBlock Text="A modern Minecraft launcher built with .NET 8 and WPF." Foreground="White"/>
+            <TextBlock Text="By JustNeki" Foreground="White" Margin="0,10,0,0"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

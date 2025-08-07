@@ -7,8 +7,16 @@
       "RelativeMoniker": "D:0:0:{5EE03A18-16D2-4B09-B292-0DF96844E30F}|JustLauncher.csproj|solutionrelative:mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{5EE03A18-16D2-4B09-B292-0DF96844E30F}|JustLauncher.csproj|d:\\githubprojects\\justlauncher\\playpage.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{5EE03A18-16D2-4B09-B292-0DF96844E30F}|JustLauncher.csproj|solutionrelative:playpage.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{5EE03A18-16D2-4B09-B292-0DF96844E30F}|JustLauncher.csproj|d:\\githubprojects\\justlauncher\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5EE03A18-16D2-4B09-B292-0DF96844E30F}|JustLauncher.csproj|solutionrelative:mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5EE03A18-16D2-4B09-B292-0DF96844E30F}|JustLauncher.csproj|d:\\githubprojects\\justlauncher\\playpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5EE03A18-16D2-4B09-B292-0DF96844E30F}|JustLauncher.csproj|solutionrelative:playpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5EE03A18-16D2-4B09-B292-0DF96844E30F}|JustLauncher.csproj|d:\\githubprojects\\justlauncher\\profiledialog.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -22,11 +30,35 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
+              "Title": "PlayPage.xaml",
+              "DocumentMoniker": "D:\\GithubProjects\\JustLauncher\\PlayPage.xaml",
+              "RelativeDocumentMoniker": "PlayPage.xaml",
+              "ToolTip": "D:\\GithubProjects\\JustLauncher\\PlayPage.xaml",
+              "RelativeToolTip": "PlayPage.xaml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAABPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-07-21T05:10:13.044Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "PlayPage.xaml.cs",
+              "DocumentMoniker": "D:\\GithubProjects\\JustLauncher\\PlayPage.xaml.cs",
+              "RelativeDocumentMoniker": "PlayPage.xaml.cs",
+              "ToolTip": "D:\\GithubProjects\\JustLauncher\\PlayPage.xaml.cs",
+              "RelativeToolTip": "PlayPage.xaml.cs",
+              "ViewState": "AgIAADsAAAAAAAAAAAAmwIEAAABhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-21T04:58:36.925Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "ProfileDialog.xaml.cs",
               "DocumentMoniker": "D:\\GithubProjects\\JustLauncher\\ProfileDialog.xaml.cs",
               "RelativeDocumentMoniker": "ProfileDialog.xaml.cs",
@@ -35,6 +67,18 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAA/AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-01T08:58:16.036Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "D:\\GithubProjects\\JustLauncher\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "MainWindow.xaml.cs",
+              "ToolTip": "D:\\GithubProjects\\JustLauncher\\MainWindow.xaml.cs",
+              "RelativeToolTip": "MainWindow.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-01T07:37:32.722Z"
             },
             {
               "$type": "Document",
@@ -47,18 +91,6 @@
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2025-07-01T07:37:34.922Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "MainWindow.xaml.cs",
-              "DocumentMoniker": "D:\\GithubProjects\\JustLauncher\\MainWindow.xaml.cs",
-              "RelativeDocumentMoniker": "MainWindow.xaml.cs",
-              "ToolTip": "D:\\GithubProjects\\JustLauncher\\MainWindow.xaml.cs",
-              "RelativeToolTip": "MainWindow.xaml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-01T07:37:32.722Z"
             }
           ]
         }

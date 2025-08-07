@@ -53,8 +53,8 @@ namespace JustLauncher
 
     public class ConditionalArgument
     {
-        public List<Rule> Rules { get; set; } // Fixed IDE1006: Renamed 'rules' to 'Rules'
-        public object Value { get; set; } // Fixed IDE1006: Renamed 'value' to 'Value'
+        public List<Rule> Rules { get; set; }
+        public object Value { get; set; }
     }
 
     public class AssetIndex
@@ -85,7 +85,7 @@ namespace JustLauncher
 
     public class Classifiers
     {
-        public Artifact NativesWindows { get; set; } // Fixed IDE1006: Renamed 'natives_windows' to 'NativesWindows'
+        public Artifact NativesWindows { get; set; }
     }
 
     public class Artifact
@@ -98,13 +98,13 @@ namespace JustLauncher
 
     public class Rule
     {
-        public string Action { get; set; } // Fixed IDE1006: Renamed 'action' to 'Action'
-        public Os Os { get; set; } // Fixed IDE1006: Renamed 'os' to 'Os'
+        public string Action { get; set; }
+        public Os Os { get; set; }
     }
 
     public class Os
     {
-        public string Name { get; set; } // Fixed IDE1006: Renamed 'name' to 'Name'
+        public string Name { get; set; }
     }
 
     public class Downloads
@@ -121,7 +121,7 @@ namespace JustLauncher
 
     public class AssetIndexInfo
     {
-        public Dictionary<string, AssetObject> Objects { get; set; } // Fixed IDE1006: Renamed 'objects' to 'Objects'
+        public Dictionary<string, AssetObject> Objects { get; set; }
     }
 
     public class AssetObject
@@ -146,10 +146,9 @@ namespace JustLauncher
 
     public class ProfilesConfig
     {
-        public List<GameProfile> Profiles { get; set; } // Fixed IDE1006: Renamed 'profiles' to 'Profiles'
+        public List<GameProfile> Profiles { get; set; }
     }
 
-    // Added missing GameProfile class to fix CS0246
     public class GameProfile
     {
         public string Name { get; set; }
@@ -157,5 +156,36 @@ namespace JustLauncher
         public string GameDirectory { get; set; }
         public string LastUsedUsername { get; set; }
         public string JavaArgs { get; set; }
+    }
+
+    public class Installation
+    {
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public string Name { get; set; }
+        public string Version { get; set; }
+        public string GameDirectory { get; set; }
+        public string JavaPath { get; set; }
+        public string JavaArgs { get; set; } = "-Xmx2G -Xms1G";
+        public string Icon { get; set; } = "grass_block";
+        public DateTime Created { get; set; } = DateTime.Now;
+        public DateTime LastPlayed { get; set; }
+        public bool IsModded { get; set; }
+        public string ModLoader { get; set; }
+        public string ModLoaderVersion { get; set; }
+        public string BaseVersion { get; set; }
+        public int PlayTime { get; set; }
+        public bool IsInstalled { get; set; }
+    }
+
+    public class InstallationsConfig
+    {
+        public List<Installation> Installations { get; set; } = new List<Installation>();
+        public string SelectedInstallationId { get; set; }
+    }
+
+    public class AssetManifest
+    {
+        [JsonPropertyName("objects")]
+        public Dictionary<string, AssetObject> Objects { get; set; }
     }
 }

@@ -36,3 +36,5 @@ D:\GithubProjects\JustLauncher\bin\Debug\net8.0-windows\DocumentFormat.OpenXml.d
 D:\GithubProjects\JustLauncher\bin\Debug\net8.0-windows\DocumentFormat.OpenXml.Framework.dll
 D:\GithubProjects\JustLauncher\bin\Debug\net8.0-windows\System.IO.Packaging.dll
 D:\GithubProjects\JustLauncher\obj\Debug\net8.0-windows\JustLaun.987C9A81.Up2Date
+D:\GithubProjects\JustLauncher\obj\Debug\net8.0-windows\InstallationDialog.baml
+D:\GithubProjects\JustLauncher\obj\Debug\net8.0-windows\InstallationDialog.g.cs

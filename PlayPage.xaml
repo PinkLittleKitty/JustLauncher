@@ -5,36 +5,97 @@
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="200"/>
         </Grid.RowDefinitions>
 
-        <!-- Version selection -->
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
-            <TextBlock Text="Version:" Foreground="White" VerticalAlignment="Center"/>
-            <ComboBox x:Name="VersionComboBox" Width="200" Margin="10,0"/>
-            <Button Content="Refresh" x:Name="RefreshVersionsButton" Margin="5,0" Click="RefreshVersionsButton_Click"/>
-        </StackPanel>
-
-        <!-- Download panel -->
-        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,0,0,10">
-            <Button Content="Download" x:Name="DownloadButton" Margin="0,0,10,0" Click="DownloadButton_Click"/>
-            <Button Content="Download Selected" x:Name="DownloadSelectedButton" Margin="0,0,10,0" Click="DownloadSelectedButton_Click"/>
-            <ProgressBar x:Name="DownloadProgressBar" Width="200" Height="20" Visibility="Collapsed"/>
-        </StackPanel>
-
-        <!-- Download list and launch -->
-        <Grid Grid.Row="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="2*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <ListBox x:Name="DownloadListBox" Grid.Row="0" Height="100" Margin="0,0,0,10" SelectionChanged="DownloadListBox_SelectionChanged"/>
-            <Button Content="🚀 Launch Minecraft" x:Name="LaunchButton" Grid.Row="1" Height="40" Margin="0,10,0,0" Click="LaunchButton_Click"/>
+        <!-- Header with Java info and main actions -->
+        <Grid Grid.Row="0" Margin="0,0,0,15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Installations" FontSize="24" Foreground="White" FontWeight="Bold" Margin="0,0,0,5"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock x:Name="JavaVersionText" Text="Java: Checking..." Foreground="Gray" VerticalAlignment="Center"/>
+                    <Button x:Name="DownloadJavaButton" Content="Download Java" Margin="10,0" Click="DownloadJavaButton_Click" Visibility="Collapsed" Height="25" FontSize="10"/>
+                    <Button x:Name="SelectJavaButton" Content="Select Java" Margin="5,0" Click="SelectJavaButton_Click" Height="25" FontSize="10"/>
+                </StackPanel>
+            </StackPanel>
+            
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Button x:Name="NewInstallationButton" Content="+ New Installation" Margin="0,0,10,0" Click="NewInstallationButton_Click" 
+                        Background="#00C851" Foreground="White" Padding="15,8" FontWeight="Bold"/>
+                <Button x:Name="RefreshButton" Content="🔄 Refresh" Click="RefreshButton_Click" Padding="10,8"/>
+            </StackPanel>
         </Grid>
 
+        <!-- Installations List -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="InstallationsPanel">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="#2C2F33" Margin="0,0,0,10" CornerRadius="8" Padding="15">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <!-- Icon -->
+                                <Border Grid.Column="0" Width="48" Height="48" Background="#4CAF50" CornerRadius="6" Margin="0,0,15,0">
+                                    <TextBlock Text="🧱" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                
+                                <!-- Installation Info -->
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" Foreground="White"/>
+                                    <TextBlock Text="{Binding Version}" FontSize="12" Foreground="Gray" Margin="0,2,0,0"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                        <TextBlock Text="Last played: " FontSize="10" Foreground="Gray"/>
+                                        <TextBlock Text="{Binding LastPlayed, StringFormat='MMM dd, yyyy'}" FontSize="10" Foreground="Gray"/>
+                                        <TextBlock Text=" • " FontSize="10" Foreground="Gray" Margin="5,0"/>
+                                        <TextBlock Text="{Binding PlayTime}" FontSize="10" Foreground="Gray"/>
+                                        <TextBlock Text=" min" FontSize="10" Foreground="Gray"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                
+                                <!-- Actions -->
+                                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                    <Button Content="▶️ Play" Tag="{Binding}" Click="PlayInstallation_Click" 
+                                            Background="#00C851" Foreground="White" Padding="12,6" Margin="0,0,5,0"/>
+                                    <Button Content="⚙️" Tag="{Binding}" Click="EditInstallation_Click" 
+                                            Background="#2196F3" Foreground="White" Padding="8,6" Margin="0,0,5,0"/>
+                                    <Button Content="🗑️" Tag="{Binding}" Click="DeleteInstallation_Click" 
+                                            Background="#F44336" Foreground="White" Padding="8,6"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Progress Bar (hidden by default) -->
+        <ProgressBar x:Name="ProgressBar" Grid.Row="2" Height="4" Margin="0,10" Visibility="Collapsed" 
+                     Background="#1e2124" Foreground="#00C851"/>
+
         <!-- Log output -->
-        <TextBox x:Name="LogTextBox" Grid.Row="3" Height="100" Margin="0,10,0,0" VerticalScrollBarVisibility="Auto" IsReadOnly="True" Background="#1e2124" Foreground="White"/>
+        <Border Grid.Row="3" Background="#1e2124" CornerRadius="6" Margin="0,10,0,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="Console Output" Foreground="Gray" FontSize="12" Margin="10,8,10,0"/>
+                <TextBox x:Name="LogTextBox" Grid.Row="1" Margin="10,5,10,10" 
+                         VerticalScrollBarVisibility="Auto" IsReadOnly="True" 
+                         Background="Transparent" Foreground="White" BorderThickness="0"/>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

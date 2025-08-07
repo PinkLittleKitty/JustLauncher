@@ -1,0 +1,42 @@
+[18:15:17] [Datafixer Bootstrap/INFO]: 269 Datafixer optimizations took 491 milliseconds
+[18:15:21] [Render thread/INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[18:15:21] [Render thread/INFO]: Setting user: TEST
+[18:15:22] [Render thread/INFO]: Backend library: LWJGL version 3.3.3+5
+[18:15:23] [Render thread/INFO]: Using optional rendering extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access
+[18:15:23] [Render thread/INFO]: Reloading ResourceManager: vanilla
+[18:15:23] [Worker-Main-9/INFO]: Found unifont_all_no_pua-16.0.03.hex, loading
+[18:15:23] [Worker-Main-10/INFO]: Found unifont_pua-16.0.03.hex, loading
+[18:15:23] [Worker-Main-6/INFO]: Found unifont_jp_patch-16.0.03.hex, loading
+[18:15:25] [Render thread/INFO]: OpenAL initialized on device OpenAL Soft on Auriculares (High Definition Audio Device)
+[18:15:25] [Render thread/INFO]: Sound engine started
+[18:15:25] [Render thread/INFO]: Created: 1024x512x4 minecraft:textures/atlas/blocks.png-atlas
+[18:15:25] [Render thread/INFO]: Created: 256x256x4 minecraft:textures/atlas/signs.png-atlas
+[18:15:25] [Render thread/INFO]: Created: 512x512x4 minecraft:textures/atlas/shield_patterns.png-atlas
+[18:15:25] [Render thread/INFO]: Created: 512x512x4 minecraft:textures/atlas/banner_patterns.png-atlas
+[18:15:25] [Render thread/INFO]: Created: 2048x1024x4 minecraft:textures/atlas/armor_trims.png-atlas
+[18:15:25] [Render thread/INFO]: Created: 128x64x4 minecraft:textures/atlas/decorated_pot.png-atlas
+[18:15:25] [Render thread/INFO]: Created: 256x256x4 minecraft:textures/atlas/chest.png-atlas
+[18:15:25] [Render thread/INFO]: Created: 512x256x4 minecraft:textures/atlas/shulker_boxes.png-atlas
+[18:15:25] [Render thread/INFO]: Created: 512x256x4 minecraft:textures/atlas/beds.png-atlas
+[18:15:25] [Render thread/INFO]: Created: 64x64x0 minecraft:textures/atlas/map_decorations.png-atlas
+[18:15:25] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
+[18:15:25] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
+[18:15:25] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/gui.png-atlas
+[18:15:34] [Render thread/INFO]: Connecting to mc.justneki.com, 1133
+[18:15:37] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
+[18:15:37] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
+[18:15:37] [Render thread/WARN]: Ignoring player info update for unknown player b9b618bd-671c-303a-9900-ce0b3f6de348 ([UPDATE_DISPLAY_NAME])
+[18:15:37] [Render thread/INFO]: [System] [CHAT] TEST joined the game
+[18:15:37] [Render thread/INFO]: Loaded 1381 advancements
+[18:15:38] [Render thread/INFO]: Loaded 1418 advancements
+[18:15:39] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
+[18:15:39] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
+[18:15:39] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
+[18:15:39] [Render thread/WARN]: Received passengers for unknown entity
+[18:15:39] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 64 reached during a single frame. New capacity will be 128.
+[18:15:39] [Render thread/INFO]: Loaded 1420 advancements
+[18:15:40] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 128 reached during a single frame. New capacity will be 256.
+[18:15:41] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 256 reached during a single frame. New capacity will be 512.
+[18:15:43] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 512 reached during a single frame. New capacity will be 1024.
+[18:15:51] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 1024 reached during a single frame. New capacity will be 2048.
+[18:15:56] [Render thread/INFO]: Stopping!

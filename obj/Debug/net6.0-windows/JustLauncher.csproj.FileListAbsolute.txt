@@ -1,4 +1,0 @@
-D:\GithubProjects\JustLauncher\obj\Debug\net6.0-windows\MainWindow.g.cs
-D:\GithubProjects\JustLauncher\obj\Debug\net6.0-windows\App.g.cs
-D:\GithubProjects\JustLauncher\obj\Debug\net6.0-windows\JustLauncher_MarkupCompile.cache
-D:\GithubProjects\JustLauncher\obj\Debug\net6.0-windows\JustLauncher_MarkupCompile.lref

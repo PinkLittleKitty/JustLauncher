@@ -24,7 +24,6 @@ namespace JustLauncher
                 GameDirectoryTextBox.Text = existingProfile.GameDirectory;
                 UsernameTextBox.Text = existingProfile.LastUsedUsername ?? "Player";
                 
-                // Extract memory from Java args
                 var memoryMatch = Regex.Match(existingProfile.JavaArgs ?? "", @"-Xmx(\d+)M");
                 MemoryTextBox.Text = memoryMatch.Success ? memoryMatch.Groups[1].Value : "4096";
                 

@@ -1,6 +1,7 @@
 ﻿<UserControl x:Class="JustLauncher.PlayPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:JustLauncher"
              Background="#23272A">
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -10,7 +11,6 @@
             <RowDefinition Height="200"/>
         </Grid.RowDefinitions>
 
-        <!-- Header with Java info and main actions -->
         <Grid Grid.Row="0" Margin="0,0,0,15">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -33,12 +33,15 @@
             </StackPanel>
         </Grid>
 
-        <!-- Installations List -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <ItemsControl x:Name="InstallationsPanel">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Background="#2C2F33" Margin="0,0,0,10" CornerRadius="8" Padding="15">
+                        <Border Background="#2C2F33" Margin="0,0,0,12" CornerRadius="10" Padding="20"
+                                BorderBrush="#404040" BorderThickness="1">
+                            <Border.Effect>
+                                <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" Opacity="0.3" BlurRadius="8"/>
+                            </Border.Effect>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
@@ -46,32 +49,116 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 
-                                <!-- Icon -->
-                                <Border Grid.Column="0" Width="48" Height="48" Background="#4CAF50" CornerRadius="6" Margin="0,0,15,0">
-                                    <TextBlock Text="🧱" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
+                                <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                                    <Border Width="56" Height="56" Background="#4CAF50" CornerRadius="8" Margin="0,0,0,8">
+                                        <TextBlock Text="🧱" FontSize="28" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <Border Background="{Binding IsInstalled, Converter={x:Static local:BoolToColorConverter.Instance}}" 
+                                            CornerRadius="10" Padding="6,2" HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding IsInstalled, Converter={x:Static local:BoolToStatusConverter.Instance}}" 
+                                                   FontSize="10" FontWeight="Bold" Foreground="White"/>
+                                    </Border>
+                                </StackPanel>
                                 
-                                <!-- Installation Info -->
-                                <StackPanel Grid.Column="1">
-                                    <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" Foreground="White"/>
-                                    <TextBlock Text="{Binding Version}" FontSize="12" Foreground="Gray" Margin="0,2,0,0"/>
-                                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                                        <TextBlock Text="Last played: " FontSize="10" Foreground="Gray"/>
-                                        <TextBlock Text="{Binding LastPlayed, StringFormat='MMM dd, yyyy'}" FontSize="10" Foreground="Gray"/>
-                                        <TextBlock Text=" • " FontSize="10" Foreground="Gray" Margin="5,0"/>
-                                        <TextBlock Text="{Binding PlayTime}" FontSize="10" Foreground="Gray"/>
-                                        <TextBlock Text=" min" FontSize="10" Foreground="Gray"/>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Name}" FontSize="18" FontWeight="Bold" Foreground="White" Margin="0,0,0,4"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                        <TextBlock Text="{Binding Version}" FontSize="13" Foreground="#00C851" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding IsModded, Converter={x:Static local:BoolToModdedConverter.Instance}}" 
+                                                   FontSize="11" Foreground="#FF9800" Margin="8,0,0,0" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Last played: " FontSize="11" Foreground="Gray"/>
+                                        <TextBlock Text="{Binding LastPlayed, StringFormat='MMM dd, yyyy'}" FontSize="11" Foreground="Gray"/>
+                                        <TextBlock Text=" • " FontSize="11" Foreground="Gray" Margin="6,0"/>
+                                        <TextBlock Text="{Binding PlayTime}" FontSize="11" Foreground="Gray"/>
+                                        <TextBlock Text=" minutes" FontSize="11" Foreground="Gray"/>
                                     </StackPanel>
                                 </StackPanel>
                                 
-                                <!-- Actions -->
-                                <StackPanel Grid.Column="2" Orientation="Horizontal">
-                                    <Button Content="▶️ Play" Tag="{Binding}" Click="PlayInstallation_Click" 
-                                            Background="#00C851" Foreground="White" Padding="12,6" Margin="0,0,5,0"/>
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Button Tag="{Binding}" Click="PlayInstallation_Click" Margin="0,0,8,0"
+                                            Background="#00C851" Foreground="White" Padding="16,10" 
+                                            FontWeight="Bold" FontSize="14"
+                                            BorderThickness="0" Cursor="Hand">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border Background="{TemplateBinding Background}" 
+                                                                    CornerRadius="6" Padding="{TemplateBinding Padding}">
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <TextBlock Text="▶️" FontSize="14" Margin="0,0,6,0"/>
+                                                                    <TextBlock Text="Play" FontSize="14" FontWeight="Bold"/>
+                                                                </StackPanel>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="Background" Value="#00A041"/>
+                                                                </Trigger>
+                                                                <Trigger Property="IsPressed" Value="True">
+                                                                    <Setter Property="Background" Value="#008A31"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
                                     <Button Content="⚙️" Tag="{Binding}" Click="EditInstallation_Click" 
-                                            Background="#2196F3" Foreground="White" Padding="8,6" Margin="0,0,5,0"/>
+                                            Background="#2196F3" Foreground="White" Padding="10" Margin="0,0,8,0"
+                                            FontSize="16" BorderThickness="0" Cursor="Hand">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border Background="{TemplateBinding Background}" 
+                                                                    CornerRadius="6" Padding="{TemplateBinding Padding}">
+                                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="Background" Value="#1976D2"/>
+                                                                </Trigger>
+                                                                <Trigger Property="IsPressed" Value="True">
+                                                                    <Setter Property="Background" Value="#1565C0"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
                                     <Button Content="🗑️" Tag="{Binding}" Click="DeleteInstallation_Click" 
-                                            Background="#F44336" Foreground="White" Padding="8,6"/>
+                                            Background="#F44336" Foreground="White" Padding="10"
+                                            FontSize="16" BorderThickness="0" Cursor="Hand">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border Background="{TemplateBinding Background}" 
+                                                                    CornerRadius="6" Padding="{TemplateBinding Padding}">
+                                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="Background" Value="#D32F2F"/>
+                                                                </Trigger>
+                                                                <Trigger Property="IsPressed" Value="True">
+                                                                    <Setter Property="Background" Value="#B71C1C"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -80,11 +167,8 @@
             </ItemsControl>
         </ScrollViewer>
 
-        <!-- Progress Bar (hidden by default) -->
         <ProgressBar x:Name="ProgressBar" Grid.Row="2" Height="4" Margin="0,10" Visibility="Collapsed" 
                      Background="#1e2124" Foreground="#00C851"/>
-
-        <!-- Log output -->
         <Border Grid.Row="3" Background="#1e2124" CornerRadius="6" Margin="0,10,0,0">
             <Grid>
                 <Grid.RowDefinitions>

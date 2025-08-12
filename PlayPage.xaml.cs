@@ -1,15 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace JustLauncher
 {
@@ -79,7 +82,7 @@ namespace JustLauncher
 
         private void CreateDefaultInstallations()
         {
-            // Create a default "Latest Release" installation
+
             var defaultInstallation = new Installation
             {
                 Name = "Latest Release",
@@ -113,7 +116,7 @@ namespace JustLauncher
         {
             InstallationsPanel.ItemsSource = null;
             
-            // Check which installations are actually installed
+
             foreach (var installation in installationsConfig.Installations)
             {
                 CheckInstallationStatus(installation);
@@ -125,11 +128,30 @@ namespace JustLauncher
         private void CheckInstallationStatus(Installation installation)
         {
             string versionsDir = Path.Combine(installation.GameDirectory, "versions");
-            string versionDir = Path.Combine(versionsDir, installation.Version);
-            string versionJson = Path.Combine(versionDir, $"{installation.Version}.json");
-            string versionJar = Path.Combine(versionDir, $"{installation.Version}.jar");
             
-            installation.IsInstalled = File.Exists(versionJson) && (File.Exists(versionJar) || installation.IsModded);
+            if (installation.IsModded)
+            {
+
+                string moddedVersionDir = Path.Combine(versionsDir, installation.Version);
+                string moddedVersionJson = Path.Combine(moddedVersionDir, $"{installation.Version}.json");
+                
+                string baseVersionDir = Path.Combine(versionsDir, installation.BaseVersion);
+                string baseVersionJson = Path.Combine(baseVersionDir, $"{installation.BaseVersion}.json");
+                string baseVersionJar = Path.Combine(baseVersionDir, $"{installation.BaseVersion}.jar");
+                
+                installation.IsInstalled = File.Exists(moddedVersionJson) && 
+                                          File.Exists(baseVersionJson) && 
+                                          File.Exists(baseVersionJar);
+            }
+            else
+            {
+
+                string versionDir = Path.Combine(versionsDir, installation.Version);
+                string versionJson = Path.Combine(versionDir, $"{installation.Version}.json");
+                string versionJar = Path.Combine(versionDir, $"{installation.Version}.jar");
+                
+                installation.IsInstalled = File.Exists(versionJson) && File.Exists(versionJar);
+            }
         }
 
         private async Task CheckJavaAndShowCompatibleVersions()
@@ -245,23 +267,19 @@ namespace JustLauncher
 
         private int GetRequiredJavaVersion(string minecraftVersion)
         {
-            // Extract base Minecraft version from modded versions
             string baseVersion = minecraftVersion;
             
-            // Handle modded versions like "fabric-loader-0.16.9-1.21.1" or "forge-1.20.1-47.2.0"
             if (minecraftVersion.Contains("fabric-loader") || minecraftVersion.Contains("forge") || minecraftVersion.Contains("quilt"))
             {
-                // Extract the Minecraft version part (look for pattern like -1.21.1 or -1.20.1)
-                var match = Regex.Match(minecraftVersion, @"-(\d+\.\d+(?:\.\d+)?)(?:-|$)");
-                if (match.Success)
+                var parts = minecraftVersion.Split('-');
+                if (parts.Length >= 4)
                 {
-                    baseVersion = match.Groups[1].Value;
+                    baseVersion = parts[parts.Length - 1]; // Get the last part
                     LogMessage($"Extracted Minecraft version '{baseVersion}' from '{minecraftVersion}'");
                 }
                 else
                 {
-                    // Fallback: try to find any version that looks like Minecraft (1.x.x)
-                    match = Regex.Match(minecraftVersion, @"(1\.\d+(?:\.\d+)?)");
+                    var match = Regex.Match(minecraftVersion, @"(1\.\d+(?:\.\d+)?)");
                     if (match.Success)
                     {
                         baseVersion = match.Groups[1].Value;
@@ -270,27 +288,24 @@ namespace JustLauncher
                 }
             }
             
-            // Map Minecraft versions to required Java versions
             var versionParts = baseVersion.Split('.');
             if (versionParts.Length >= 2)
             {
                 if (int.TryParse(versionParts[1], out int minorVersion))
                 {
-                    // Minecraft version mapping to Java requirements
-                    if (minorVersion >= 21) return 21; // MC 1.21+ requires Java 21+
-                    if (minorVersion >= 20) return 17; // MC 1.20+ requires Java 17+
-                    if (minorVersion >= 18) return 17; // MC 1.18+ requires Java 17+
-                    if (minorVersion >= 17) return 16; // MC 1.17 requires Java 16+
-                    if (minorVersion >= 12) return 8;  // MC 1.12+ requires Java 8+
+                    if (minorVersion >= 21) return 21;
+                    if (minorVersion >= 20) return 17;
+                    if (minorVersion >= 18) return 17;
+                    if (minorVersion >= 17) return 16;
+                    if (minorVersion >= 12) return 8;
                 }
             }
             
-            return 8; // Default to Java 8 for older versions
+            return 8;
         }
 
         private async Task<string> FindBestJavaExecutableAsync(Installation installation, int requiredVersion = 8)
         {
-            // Check if installation has custom Java path
             if (!string.IsNullOrEmpty(installation.JavaPath) && installation.JavaPath != "Use system default")
             {
                 if (File.Exists(installation.JavaPath))
@@ -312,17 +327,14 @@ namespace JustLauncher
                 }
             }
 
-            // Try to find the best Java executable for the required version
             var javaExecutables = new List<string>();
             
-            // Check custom Java path first
             string customJava = Environment.GetEnvironmentVariable("CUSTOM_JAVA_PATH");
             if (!string.IsNullOrEmpty(customJava) && File.Exists(customJava))
             {
                 javaExecutables.Add(customJava);
             }
             
-            // Check JAVA_HOME
             string javaHome = Environment.GetEnvironmentVariable("JAVA_HOME");
             if (!string.IsNullOrEmpty(javaHome))
             {
@@ -338,10 +350,7 @@ namespace JustLauncher
                 }
             }
 
-            // Add PATH java
             javaExecutables.Add("java");
-
-            // Check common installation directories
             var programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
             var programFilesX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
             
@@ -349,7 +358,6 @@ namespace JustLauncher
             {
                 try
                 {
-                    // Check Java directory
                     var javaDir = Path.Combine(baseDir, "Java");
                     if (Directory.Exists(javaDir))
                     {
@@ -367,7 +375,6 @@ namespace JustLauncher
                         }
                     }
 
-                    // Check Eclipse Adoptium directory
                     var adoptiumDir = Path.Combine(baseDir, "Eclipse Adoptium");
                     if (Directory.Exists(adoptiumDir))
                     {
@@ -386,11 +393,9 @@ namespace JustLauncher
                 }
                 catch
                 {
-                    // Ignore directory access errors
                 }
             }
 
-            // Test each executable and find the best match
             string bestExecutable = null;
             int bestVersion = 0;
 
@@ -417,7 +422,6 @@ namespace JustLauncher
                 }
                 catch
                 {
-                    // Continue with next executable
                 }
             }
 
@@ -429,9 +433,10 @@ namespace JustLauncher
             // For modded versions, we need to include parent version libraries
             var allLibraries = new List<Library>();
             
-            // Add current version libraries
+            // Add current version libraries (these are the mod loader libraries) - prioritize these
             if (versionInfo.Libraries != null)
             {
+                LogMessage($"Adding {versionInfo.Libraries.Count} mod loader libraries");
                 allLibraries.AddRange(versionInfo.Libraries);
             }
 
@@ -447,6 +452,7 @@ namespace JustLauncher
                         var parentInfo = JsonSerializer.Deserialize<VersionInfo>(parentJson);
                         if (parentInfo.Libraries != null)
                         {
+                            LogMessage($"Adding {parentInfo.Libraries.Count} base game libraries");
                             allLibraries.AddRange(parentInfo.Libraries);
                         }
                     }
@@ -457,8 +463,14 @@ namespace JustLauncher
                 }
             }
 
+            // Deduplicate libraries - prefer mod loader versions over base game versions
+            allLibraries = DeduplicateLibraries(allLibraries);
+
             // Add all libraries to classpath
             string libDir = Path.Combine(installation.GameDirectory, "libraries");
+            int addedLibraries = 0;
+            int missingLibraries = 0;
+            
             foreach (var library in allLibraries)
             {
                 if (library.Downloads?.Artifact != null && !string.IsNullOrEmpty(library.Downloads.Artifact.Path))
@@ -469,10 +481,12 @@ namespace JustLauncher
                         if (File.Exists(libraryPath))
                         {
                             classpathEntries.Add(libraryPath);
+                            addedLibraries++;
                         }
                         else
                         {
-                            LogMessage($"Missing library: {libraryPath}");
+                            LogMessage($"Missing library: {library.Name} at {libraryPath}");
+                            missingLibraries++;
                         }
                     }
                     catch (Exception ex)
@@ -480,7 +494,42 @@ namespace JustLauncher
                         LogMessage($"Error processing library {library.Name}: {ex.Message}");
                     }
                 }
+                else
+                {
+                    // Try to construct download URL for Fabric libraries that don't have download artifacts
+                    string constructedUrl = TryConstructFabricLibraryUrl(library.Name);
+                    if (!string.IsNullOrEmpty(constructedUrl))
+                    {
+                        string libraryPath = Path.Combine(libDir, ConvertMavenToPath(library.Name));
+                        try
+                        {
+                            if (!File.Exists(libraryPath))
+                            {
+                                await DownloadFileAsync(constructedUrl, libraryPath);
+                                classpathEntries.Add(libraryPath);
+                                addedLibraries++;
+                                LogMessage($"Downloaded Fabric library: {library.Name}");
+                            }
+                            else
+                            {
+                                classpathEntries.Add(libraryPath);
+                                addedLibraries++;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            LogMessage($"Failed to download Fabric library {library.Name}: {ex.Message}");
+                            missingLibraries++;
+                        }
+                    }
+                    else
+                    {
+                        LogMessage($"Library {library.Name} has no download artifact and couldn't construct URL");
+                    }
+                }
             }
+            
+            LogMessage($"Added {addedLibraries} libraries to classpath, {missingLibraries} missing");
 
             // Add main jar (try current version first, then parent if inheriting)
             string versionDir = Path.Combine(installation.GameDirectory, "versions", installation.Version);
@@ -488,6 +537,7 @@ namespace JustLauncher
             if (File.Exists(mainJarPath))
             {
                 classpathEntries.Add(mainJarPath);
+                LogMessage($"Using modded version jar: {mainJarPath}");
             }
             else if (!string.IsNullOrEmpty(versionInfo.InheritsFrom))
             {
@@ -497,6 +547,10 @@ namespace JustLauncher
                 {
                     classpathEntries.Add(parentJarPath);
                     LogMessage($"Using parent jar: {parentJarPath}");
+                }
+                else
+                {
+                    LogMessage($"Parent jar not found: {parentJarPath}");
                 }
             }
         }
@@ -527,6 +581,70 @@ namespace JustLauncher
             return mainClass;
         }
 
+        private async Task VerifyAndDownloadMissingLibraries(Installation installation, VersionInfo versionInfo)
+        {
+            try
+            {
+                var missingLibraries = new List<Library>();
+                string libDir = Path.Combine(installation.GameDirectory, "libraries");
+
+                // Check current version libraries
+                if (versionInfo.Libraries != null)
+                {
+                    foreach (var library in versionInfo.Libraries)
+                    {
+                        if (library.Downloads?.Artifact != null && !string.IsNullOrEmpty(library.Downloads.Artifact.Path))
+                        {
+                            string libraryPath = Path.Combine(libDir, library.Downloads.Artifact.Path);
+                            if (!File.Exists(libraryPath))
+                            {
+                                missingLibraries.Add(library);
+                            }
+                        }
+                    }
+                }
+
+                // Check parent version libraries if applicable
+                if (!string.IsNullOrEmpty(versionInfo.InheritsFrom))
+                {
+                    string parentJsonPath = Path.Combine(installation.GameDirectory, "versions", versionInfo.InheritsFrom, $"{versionInfo.InheritsFrom}.json");
+                    if (File.Exists(parentJsonPath))
+                    {
+                        string parentJson = await File.ReadAllTextAsync(parentJsonPath);
+                        var parentInfo = JsonSerializer.Deserialize<VersionInfo>(parentJson);
+                        if (parentInfo.Libraries != null)
+                        {
+                            foreach (var library in parentInfo.Libraries)
+                            {
+                                if (library.Downloads?.Artifact != null && !string.IsNullOrEmpty(library.Downloads.Artifact.Path))
+                                {
+                                    string libraryPath = Path.Combine(libDir, library.Downloads.Artifact.Path);
+                                    if (!File.Exists(libraryPath))
+                                    {
+                                        missingLibraries.Add(library);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (missingLibraries.Any())
+                {
+                    LogMessage($"Found {missingLibraries.Count} missing libraries, downloading...");
+                    await DownloadLibrariesAsync(missingLibraries, installation.GameDirectory);
+                }
+                else
+                {
+                    LogMessage("All required libraries are present");
+                }
+            }
+            catch (Exception ex)
+            {
+                LogMessage($"Failed to verify libraries: {ex.Message}");
+            }
+        }
+
         private async Task<bool> DownloadVersion(Installation installation)
         {
             try
@@ -546,7 +664,13 @@ namespace JustLauncher
                     await LoadAvailableVersionsAsync();
                 }
 
-                // Find the version to download
+                // Handle modded versions differently
+                if (installation.IsModded)
+                {
+                    return await DownloadModdedVersion(installation);
+                }
+
+                // Find the vanilla version to download
                 var versionToDownload = availableVersions?.FirstOrDefault(v => v.Id == installation.Version);
                 if (versionToDownload == null)
                 {
@@ -556,93 +680,11 @@ namespace JustLauncher
                     return false;
                 }
 
-                string versionDir = Path.Combine(installation.GameDirectory, "versions", installation.Version);
-                Directory.CreateDirectory(versionDir);
-
-                // Download version JSON
-                string versionJsonPath = Path.Combine(versionDir, $"{installation.Version}.json");
-                string versionJson = await httpClient.GetStringAsync(versionToDownload.Url);
-                await File.WriteAllTextAsync(versionJsonPath, versionJson);
-
-                var versionInfo = JsonSerializer.Deserialize<VersionInfo>(versionJson);
-                Dispatcher.Invoke(() => ProgressBar.Value = 10);
-
-                // Handle parent version for modded versions
-                if (!string.IsNullOrEmpty(versionInfo.InheritsFrom))
+                // Download the vanilla version
+                bool downloadSuccess = await DownloadVanillaVersion(installation, versionToDownload);
+                if (!downloadSuccess)
                 {
-                    LogMessage($"This version inherits from {versionInfo.InheritsFrom}");
-                    
-                    string parentVersionDir = Path.Combine(installation.GameDirectory, "versions", versionInfo.InheritsFrom);
-                    if (!Directory.Exists(parentVersionDir))
-                    {
-                        LogMessage($"Parent version {versionInfo.InheritsFrom} not found. Attempting to download...");
-                        
-                        var parentVersion = availableVersions?.FirstOrDefault(v => v.Id == versionInfo.InheritsFrom);
-                        if (parentVersion != null)
-                        {
-                            // Create temporary installation for parent version
-                            var parentInstallation = new Installation
-                            {
-                                Version = versionInfo.InheritsFrom,
-                                GameDirectory = installation.GameDirectory
-                            };
-                            
-                            bool parentDownloaded = await DownloadVersion(parentInstallation);
-                            if (!parentDownloaded)
-                            {
-                                LogMessage($"Failed to download parent version {versionInfo.InheritsFrom}");
-                                return false;
-                            }
-                        }
-                        else
-                        {
-                            LogMessage($"Parent version {versionInfo.InheritsFrom} not found in available versions list");
-                            return false;
-                        }
-                    }
-                }
-
-                // Download client jar if available
-                if (versionInfo.Downloads?.Client != null)
-                {
-                    string jarPath = Path.Combine(versionDir, $"{installation.Version}.jar");
-                    await DownloadFileAsync(versionInfo.Downloads.Client.Url, jarPath);
-                    LogMessage($"Downloaded client jar: {installation.Version}.jar");
-                    Dispatcher.Invoke(() => ProgressBar.Value = 40);
-                }
-                else
-                {
-                    LogMessage("No client download found - this version uses the parent version's jar");
-                    Dispatcher.Invoke(() => ProgressBar.Value = 40);
-                }
-
-                // Download libraries
-                if (versionInfo.Libraries != null)
-                {
-                    LogMessage($"Downloading {versionInfo.Libraries.Count} libraries...");
-                    await DownloadLibrariesAsync(versionInfo.Libraries, installation.GameDirectory);
-                    Dispatcher.Invoke(() => ProgressBar.Value = 70);
-
-                    await ExtractNativesAsync(versionInfo.Libraries, versionDir, installation.GameDirectory);
-                    Dispatcher.Invoke(() => ProgressBar.Value = 85);
-                }
-
-                // Download assets
-                var assetIndex = versionInfo.AssetIndex;
-                if (assetIndex == null && !string.IsNullOrEmpty(versionInfo.InheritsFrom))
-                {
-                    string parentJsonPath = Path.Combine(installation.GameDirectory, "versions", versionInfo.InheritsFrom, $"{versionInfo.InheritsFrom}.json");
-                    if (File.Exists(parentJsonPath))
-                    {
-                        string parentJson = await File.ReadAllTextAsync(parentJsonPath);
-                        var parentInfo = JsonSerializer.Deserialize<VersionInfo>(parentJson);
-                        assetIndex = parentInfo.AssetIndex;
-                    }
-                }
-
-                if (assetIndex != null)
-                {
-                    await DownloadAssetsAsync(assetIndex, installation.GameDirectory);
+                    return false;
                 }
 
                 Dispatcher.Invoke(() => ProgressBar.Value = 100);
@@ -713,6 +755,10 @@ namespace JustLauncher
             try
             {
                 string libDir = Path.Combine(gameDirectory, "libraries");
+                int downloadedCount = 0;
+                int skippedCount = 0;
+                int failedCount = 0;
+                
                 foreach (var library in libraries)
                 {
                     if (library.Downloads?.Artifact != null && !string.IsNullOrEmpty(library.Downloads.Artifact.Path))
@@ -720,11 +766,61 @@ namespace JustLauncher
                         string libraryPath = Path.Combine(libDir, library.Downloads.Artifact.Path);
                         if (!File.Exists(libraryPath))
                         {
-                            await DownloadFileAsync(library.Downloads.Artifact.Url, libraryPath);
+                            try
+                            {
+                                await DownloadFileAsync(library.Downloads.Artifact.Url, libraryPath);
+                                downloadedCount++;
+                            }
+                            catch (Exception ex)
+                            {
+                                LogMessage($"Failed to download library {library.Name}: {ex.Message}");
+                                failedCount++;
+                            }
+                        }
+                        else
+                        {
+                            skippedCount++;
+                        }
+                    }
+                    else
+                    {
+                        // Try to construct download URL for Fabric libraries
+                        string constructedUrl = TryConstructFabricLibraryUrl(library.Name);
+                        if (!string.IsNullOrEmpty(constructedUrl))
+                        {
+                            string libraryPath = Path.Combine(libDir, ConvertMavenToPath(library.Name));
+                            try
+                            {
+                                if (!File.Exists(libraryPath))
+                                {
+                                    await DownloadFileAsync(constructedUrl, libraryPath);
+                                    downloadedCount++;
+                                    LogMessage($"Downloaded Fabric library: {library.Name}");
+                                }
+                                else
+                                {
+                                    skippedCount++;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                LogMessage($"Failed to download Fabric library {library.Name}: {ex.Message}");
+                                failedCount++;
+                            }
+                        }
+                        else
+                        {
+                            LogMessage($"Library {library.Name} has no download information and couldn't construct URL");
                         }
                     }
                 }
-                LogMessage("Libraries downloaded successfully.");
+                
+                LogMessage($"Libraries: {downloadedCount} downloaded, {skippedCount} already existed, {failedCount} failed");
+                
+                if (failedCount > 0)
+                {
+                    LogMessage($"Warning: {failedCount} libraries failed to download - this may cause launch issues");
+                }
             }
             catch (Exception ex)
             {
@@ -741,25 +837,133 @@ namespace JustLauncher
                 Directory.CreateDirectory(nativesDir);
                 string libDir = Path.Combine(gameDirectory, "libraries");
 
+                // Track which DLLs we've already extracted to avoid conflicts
+                var extractedDlls = new HashSet<string>();
+                int extractedCount = 0;
+                
+                // First pass: Extract from modern classifier-based natives (preferred)
                 foreach (var library in libraries)
                 {
-                    if (library.Downloads?.Artifact != null && !string.IsNullOrEmpty(library.Downloads.Artifact.Path) && library.Name.Contains("natives"))
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && library.Downloads?.Classifiers != null)
                     {
+                        var classifiers = library.Downloads.Classifiers;
+                        
+                        // Try to find the best Windows native classifier for x64 systems
+                        Artifact nativeDownload = null;
+                        string classifierUsed = "none";
+                        
+                        // Priority order for 64-bit Windows: x64 specific, generic windows (but NOT x86)
+                        if (classifiers.NativesWindowsX64 != null)
+                        {
+                            nativeDownload = classifiers.NativesWindowsX64;
+                            classifierUsed = "natives-windows-x86_64";
+                        }
+                        else if (classifiers.NativesWindows != null)
+                        {
+                            nativeDownload = classifiers.NativesWindows;
+                            classifierUsed = "natives-windows";
+                        }
+                        else if (classifiers.AdditionalClassifiers != null)
+                        {
+                            // Check for other 64-bit Windows classifier patterns, avoid 32-bit
+                            foreach (var kvp in classifiers.AdditionalClassifiers)
+                            {
+                                string key = kvp.Key.ToLower();
+                                if (key.Contains("windows") && !key.Contains("x86") && !key.Contains("32") && !key.Contains("arm"))
+                                {
+                                    try
+                                    {
+                                        var artifact = JsonSerializer.Deserialize<Artifact>(kvp.Value.GetRawText());
+                                        if (artifact != null)
+                                        {
+                                            nativeDownload = artifact;
+                                            classifierUsed = kvp.Key;
+                                            break;
+                                        }
+                                    }
+                                    catch { }
+                                }
+                            }
+                        }
+                        
+                        if (nativeDownload != null)
+                        {
+                            string nativePath = Path.Combine(libDir, nativeDownload.Path);
+                            LogMessage($"Using classifier '{classifierUsed}' for {library.Name}");
+                            
+                            if (File.Exists(nativePath))
+                            {
+                                using (var archive = System.IO.Compression.ZipFile.OpenRead(nativePath))
+                                {
+                                    foreach (var entry in archive.Entries)
+                                    {
+                                        if (!string.IsNullOrEmpty(entry.Name) && entry.Name.EndsWith(".dll"))
+                                        {
+                                            string dllName = entry.Name.ToLower();
+                                            
+                                            // Skip if we've already extracted this DLL from a higher priority source
+                                            if (extractedDlls.Contains(dllName))
+                                            {
+                                                LogMessage($"Skipping {entry.Name} - already extracted from higher priority source");
+                                                continue;
+                                            }
+                                            
+                                            string destinationPath = Path.Combine(nativesDir, entry.Name);
+                                            using (var entryStream = entry.Open())
+                                            using (var fileStream = File.Create(destinationPath))
+                                            {
+                                                await entryStream.CopyToAsync(fileStream);
+                                            }
+                                            extractedCount++;
+                                            extractedDlls.Add(dllName);
+                                            LogMessage($"Extracted native: {entry.Name} ({entry.Length} bytes) from {classifierUsed}");
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                LogMessage($"Native library file not found: {nativePath}");
+                            }
+                        }
+                    }
+                }
+
+                // Second pass: Extract from old-style natives only if we haven't got the DLL yet
+                foreach (var library in libraries)
+                {
+                    if (library.Downloads?.Artifact != null && !string.IsNullOrEmpty(library.Downloads.Artifact.Path) && 
+                        library.Name.Contains("natives") && library.Name.Contains("windows") && !library.Name.Contains("x86"))
+                    {
+                        LogMessage($"Processing old-style native library: {library.Name}");
                         string nativePath = Path.Combine(libDir, library.Downloads.Artifact.Path);
+                        
                         if (File.Exists(nativePath))
                         {
                             using (var archive = System.IO.Compression.ZipFile.OpenRead(nativePath))
                             {
                                 foreach (var entry in archive.Entries)
                                 {
-                                    if (!string.IsNullOrEmpty(entry.Name)) // Skip directories
+                                    if (!string.IsNullOrEmpty(entry.Name) && entry.Name.EndsWith(".dll"))
                                     {
-                                        string destinationPath = Path.Combine(nativesDir, entry.FullName);
-                                        Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
-                                        using (var entryStream = entry.Open())
-                                        using (var fileStream = File.Create(destinationPath))
+                                        string dllName = entry.Name.ToLower();
+                                        
+                                        // Only extract if we haven't already got this DLL
+                                        if (!extractedDlls.Contains(dllName))
                                         {
-                                            await entryStream.CopyToAsync(fileStream);
+                                            string destinationPath = Path.Combine(nativesDir, entry.Name);
+                                            using (var entryStream = entry.Open())
+                                            using (var fileStream = File.Create(destinationPath))
+                                            {
+                                                await entryStream.CopyToAsync(fileStream);
+                                            }
+                                            extractedCount++;
+                                            extractedDlls.Add(dllName);
+                                            LogMessage($"Extracted old-style native: {entry.Name} ({entry.Length} bytes)");
+                                        }
+                                        else
+                                        {
+                                            LogMessage($"Skipping {entry.Name} - already extracted");
                                         }
                                     }
                                 }
@@ -768,14 +972,24 @@ namespace JustLauncher
                     }
                 }
 
-                LogMessage("Natives extracted successfully.");
+                LogMessage($"Natives extracted successfully. {extractedCount} native files extracted.");
             }
             catch (Exception ex)
             {
                 LogMessage($"Failed to extract natives: {ex.Message}");
             }
-            
+        }
 
+        private string GetOSName()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                return "windows";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                return "osx";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                return "linux";
+            else
+                return "unknown";
         }
 
         private async Task DownloadAssetsAsync(AssetIndex assetIndex, string gameDirectory)
@@ -787,18 +1001,40 @@ namespace JustLauncher
                 string indexPath = Path.Combine(assetsDir, "indexes", $"{assetIndex.Id}.json");
                 Directory.CreateDirectory(Path.GetDirectoryName(indexPath));
 
-                string indexJson = await httpClient.GetStringAsync(assetIndex.Url);
-                await File.WriteAllTextAsync(indexPath, indexJson);
+                // Download asset index if it doesn't exist
+                if (!File.Exists(indexPath))
+                {
+                    LogMessage($"Downloading asset index from: {assetIndex.Url}");
+                    string indexJson = await httpClient.GetStringAsync(assetIndex.Url);
+                    await File.WriteAllTextAsync(indexPath, indexJson);
+                    LogMessage($"Downloaded asset index: {assetIndex.Id}.json");
+                }
+                else
+                {
+                    LogMessage($"Asset index {assetIndex.Id}.json already exists");
+                }
 
-                var assetManifest = JsonSerializer.Deserialize<AssetManifest>(indexJson);
+                // Read the asset index
+                string existingIndexJson = await File.ReadAllTextAsync(indexPath);
+                var assetManifest = JsonSerializer.Deserialize<AssetManifest>(existingIndexJson);
+                
                 if (assetManifest?.Objects != null)
                 {
                     string objectsDir = Path.Combine(assetsDir, "objects");
                     Directory.CreateDirectory(objectsDir);
 
                     int downloadedCount = 0;
-                    foreach (var asset in assetManifest.Objects.Take(100)) // Limit for demo
+                    int skippedCount = 0;
+                    int failedCount = 0;
+                    int totalAssets = assetManifest.Objects.Count;
+                    
+                    LogMessage($"Processing {totalAssets} assets...");
+                    
+                    // Download all assets (not just first 100)
+                    int processedCount = 0;
+                    foreach (var asset in assetManifest.Objects)
                     {
+                        processedCount++;
                         string hash = asset.Value.Hash;
                         string subDir = Path.Combine(objectsDir, hash.Substring(0, 2));
                         Directory.CreateDirectory(subDir);
@@ -806,16 +1042,61 @@ namespace JustLauncher
                         string assetPath = Path.Combine(subDir, hash);
                         if (!File.Exists(assetPath))
                         {
-                            string assetUrl = $"https://resources.download.minecraft.net/{hash.Substring(0, 2)}/{hash}";
-                            await DownloadFileAsync(assetUrl, assetPath);
-                            downloadedCount++;
+                            try
+                            {
+                                string assetUrl = $"https://resources.download.minecraft.net/{hash.Substring(0, 2)}/{hash}";
+                                await DownloadFileAsync(assetUrl, assetPath);
+                                downloadedCount++;
+                                
+                                // Small delay to avoid overwhelming the server
+                                if (downloadedCount % 10 == 0)
+                                {
+                                    await Task.Delay(100);
+                                }
+                                
+                                if (downloadedCount % 100 == 0)
+                                {
+                                    LogMessage($"Downloaded {downloadedCount}/{totalAssets} assets... (processed {processedCount})");
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                LogMessage($"Failed to download asset {asset.Key} (hash: {hash}): {ex.Message}");
+                                failedCount++;
+                                
+                                // Stop downloading if too many failures
+                                if (failedCount > 50)
+                                {
+                                    LogMessage($"Too many asset download failures ({failedCount}), stopping asset download");
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            skippedCount++;
+                        }
+                        
+                        // Log progress every 500 assets processed
+                        if (processedCount % 500 == 0)
+                        {
+                            LogMessage($"Processed {processedCount}/{totalAssets} assets ({downloadedCount} downloaded, {skippedCount} skipped, {failedCount} failed)");
                         }
                     }
                     
-                    LogMessage($"Downloaded {downloadedCount} assets for {assetIndex.Id}");
+                    LogMessage($"Assets complete: {downloadedCount} downloaded, {skippedCount} already existed, {failedCount} failed");
+                    
+                    if (failedCount > 0)
+                    {
+                        LogMessage($"Warning: {failedCount} assets failed to download - this may cause game crashes");
+                    }
+                }
+                else
+                {
+                    LogMessage($"Error: Asset manifest is null or has no objects");
                 }
 
-                LogMessage($"Assets for {assetIndex.Id} downloaded successfully.");
+                LogMessage($"Assets for {assetIndex.Id} processed successfully.");
             }
             catch (Exception ex)
             {
@@ -834,7 +1115,6 @@ namespace JustLauncher
             Debug.WriteLine(message);
         }
 
-        // Event Handlers
         private void NewInstallationButton_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new InstallationDialog();
@@ -1017,6 +1297,42 @@ namespace JustLauncher
                     }
                 }
 
+                // Extract native libraries for all installations
+                LogMessage("Extracting native libraries...");
+                string currentVersionDir = Path.Combine(installation.GameDirectory, "versions", installation.Version);
+                
+                if (installation.IsModded)
+                {
+                    LogMessage("Verifying mod loader libraries...");
+                    await VerifyAndDownloadMissingLibraries(installation, versionInfo);
+                    
+                    // Extract natives for modded versions
+                    await ExtractNativesAsync(versionInfo.Libraries, currentVersionDir, installation.GameDirectory);
+                    
+                    // Also extract natives from parent version if needed
+                    if (!string.IsNullOrEmpty(versionInfo.InheritsFrom))
+                    {
+                        string parentJsonPath = Path.Combine(installation.GameDirectory, "versions", versionInfo.InheritsFrom, $"{versionInfo.InheritsFrom}.json");
+                        if (File.Exists(parentJsonPath))
+                        {
+                            string parentJson = await File.ReadAllTextAsync(parentJsonPath);
+                            var parentInfo = JsonSerializer.Deserialize<VersionInfo>(parentJson);
+                            if (parentInfo.Libraries != null)
+                            {
+                                await ExtractNativesAsync(parentInfo.Libraries, currentVersionDir, installation.GameDirectory);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // Extract natives for vanilla versions
+                    if (versionInfo.Libraries != null)
+                    {
+                        await ExtractNativesAsync(versionInfo.Libraries, currentVersionDir, installation.GameDirectory);
+                    }
+                }
+
                 // Build classpath
                 var classpathEntries = new List<string>();
                 await BuildClasspath(installation, versionInfo, classpathEntries);
@@ -1050,7 +1366,15 @@ namespace JustLauncher
                 args.AddRange(javaArgs);
                 
                 // Add library path for natives
-                args.Add($"-Djava.library.path={Path.Combine(versionDir, "natives")}");
+                string nativesPath = Path.Combine(versionDir, "natives");
+                args.Add($"-Djava.library.path={nativesPath}");
+                
+                // Additional LWJGL debugging and library path options
+                args.Add("-Dorg.lwjgl.util.Debug=true");
+                args.Add("-Dorg.lwjgl.util.DebugLoader=true");
+                args.Add($"-Dorg.lwjgl.librarypath={nativesPath}");
+                
+                LogMessage($"Native library path: {nativesPath}");
                 args.Add("-cp");
                 args.Add($"\"{classpath}\"");
                 args.Add(mainClass);
@@ -1064,8 +1388,28 @@ namespace JustLauncher
                 args.Add(installation.GameDirectory);
                 args.Add("--assetsDir");
                 args.Add(Path.Combine(installation.GameDirectory, "assets"));
+                // Get asset index (use parent's if current doesn't have one)
+                string assetIndexId = versionInfo.AssetIndex?.Id;
+                if (string.IsNullOrEmpty(assetIndexId) && !string.IsNullOrEmpty(versionInfo.InheritsFrom))
+                {
+                    string parentJsonPath = Path.Combine(installation.GameDirectory, "versions", versionInfo.InheritsFrom, $"{versionInfo.InheritsFrom}.json");
+                    if (File.Exists(parentJsonPath))
+                    {
+                        try
+                        {
+                            string parentJson = await File.ReadAllTextAsync(parentJsonPath);
+                            var parentInfo = JsonSerializer.Deserialize<VersionInfo>(parentJson);
+                            assetIndexId = parentInfo.AssetIndex?.Id;
+                        }
+                        catch (Exception ex)
+                        {
+                            LogMessage($"Failed to get parent asset index: {ex.Message}");
+                        }
+                    }
+                }
+                
                 args.Add("--assetIndex");
-                args.Add(versionInfo.AssetIndex?.Id ?? "legacy");
+                args.Add(assetIndexId ?? "legacy");
                 args.Add("--uuid");
                 args.Add(Guid.NewGuid().ToString().Replace("-", ""));
                 args.Add("--accessToken");
@@ -1195,6 +1539,345 @@ namespace JustLauncher
             {
                 LogMessage($"Failed to select Java: {ex.Message}");
             }
+        }
+
+        private async Task<bool> DownloadModdedVersion(Installation installation)
+        {
+            try
+            {
+                LogMessage($"Downloading modded version: {installation.ModLoader} {installation.ModLoaderVersion} for Minecraft {installation.BaseVersion}");
+                
+                // First, ensure the base Minecraft version is downloaded
+                LogMessage($"Checking base Minecraft version: {installation.BaseVersion}");
+                var baseVersionToDownload = availableVersions?.FirstOrDefault(v => v.Id == installation.BaseVersion);
+                if (baseVersionToDownload == null)
+                {
+                    LogMessage($"Base version {installation.BaseVersion} not found in available versions");
+                    MessageBox.Show($"Base Minecraft version {installation.BaseVersion} not found.",
+                        "Base Version Not Found", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                }
+
+                // Download base version first
+                string baseVersionDir = Path.Combine(installation.GameDirectory, "versions", installation.BaseVersion);
+                string baseVersionJsonPath = Path.Combine(baseVersionDir, $"{installation.BaseVersion}.json");
+                
+                if (!File.Exists(baseVersionJsonPath))
+                {
+                    LogMessage($"Downloading base Minecraft version {installation.BaseVersion}...");
+                    
+                    // Create temporary installation for base version
+                    var baseInstallation = new Installation
+                    {
+                        Version = installation.BaseVersion,
+                        BaseVersion = installation.BaseVersion,
+                        GameDirectory = installation.GameDirectory,
+                        IsModded = false
+                    };
+                    
+                    bool baseDownloaded = await DownloadVanillaVersion(baseInstallation, baseVersionToDownload);
+                    if (!baseDownloaded)
+                    {
+                        LogMessage($"Failed to download base version {installation.BaseVersion}");
+                        return false;
+                    }
+                }
+                else
+                {
+                    LogMessage($"Base version {installation.BaseVersion} already exists");
+                }
+
+                Dispatcher.Invoke(() => ProgressBar.Value = 30);
+
+                // Now download the mod loader profile
+                LogMessage($"Downloading {installation.ModLoader} loader profile...");
+                bool modLoaderDownloaded = await DownloadModLoaderProfile(installation);
+                
+                if (!modLoaderDownloaded)
+                {
+                    LogMessage($"Failed to download {installation.ModLoader} loader profile");
+                    return false;
+                }
+
+                Dispatcher.Invoke(() => ProgressBar.Value = 100);
+                LogMessage($"Successfully downloaded modded version {installation.Version}");
+                
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LogMessage($"Failed to download modded version: {ex.Message}");
+                return false;
+            }
+        }
+
+        private async Task<bool> DownloadVanillaVersion(Installation installation, MinecraftVersion versionToDownload)
+        {
+            string versionDir = Path.Combine(installation.GameDirectory, "versions", installation.Version);
+            Directory.CreateDirectory(versionDir);
+
+            // Download version JSON
+            string versionJsonPath = Path.Combine(versionDir, $"{installation.Version}.json");
+            string versionJson = await httpClient.GetStringAsync(versionToDownload.Url);
+            await File.WriteAllTextAsync(versionJsonPath, versionJson);
+
+            var versionInfo = JsonSerializer.Deserialize<VersionInfo>(versionJson);
+
+            // Download client jar if available
+            if (versionInfo.Downloads?.Client != null)
+            {
+                string jarPath = Path.Combine(versionDir, $"{installation.Version}.jar");
+                await DownloadFileAsync(versionInfo.Downloads.Client.Url, jarPath);
+                LogMessage($"Downloaded client jar: {installation.Version}.jar");
+            }
+
+            // Download libraries
+            if (versionInfo.Libraries != null)
+            {
+                LogMessage($"Downloading {versionInfo.Libraries.Count} libraries...");
+                await DownloadLibrariesAsync(versionInfo.Libraries, installation.GameDirectory);
+                await ExtractNativesAsync(versionInfo.Libraries, versionDir, installation.GameDirectory);
+            }
+
+            // Download assets
+            if (versionInfo.AssetIndex != null)
+            {
+                await DownloadAssetsAsync(versionInfo.AssetIndex, installation.GameDirectory);
+            }
+
+            return true;
+        }
+
+        private async Task<bool> DownloadModLoaderProfile(Installation installation)
+        {
+            try
+            {
+                string profileUrl = "";
+                
+                switch (installation.ModLoader?.ToLower())
+                {
+                    case "fabric":
+                        profileUrl = $"https://meta.fabricmc.net/v2/versions/loader/{installation.BaseVersion}/{installation.ModLoaderVersion}/profile/json";
+                        break;
+                    case "quilt":
+                        profileUrl = $"https://meta.quiltmc.org/v3/versions/loader/{installation.BaseVersion}/{installation.ModLoaderVersion}/profile/json";
+                        break;
+                    case "forge":
+                        // Forge has a more complex API - this is simplified
+                        LogMessage("Forge downloading not fully implemented yet");
+                        return false;
+                    default:
+                        LogMessage($"Unknown mod loader: {installation.ModLoader}");
+                        return false;
+                }
+
+                LogMessage($"Downloading mod loader profile from: {profileUrl}");
+                
+                // Download the mod loader profile JSON
+                string profileJson = await httpClient.GetStringAsync(profileUrl);
+                
+                // Create the modded version directory
+                string moddedVersionDir = Path.Combine(installation.GameDirectory, "versions", installation.Version);
+                Directory.CreateDirectory(moddedVersionDir);
+                
+                // Save the profile JSON
+                string moddedVersionJsonPath = Path.Combine(moddedVersionDir, $"{installation.Version}.json");
+                await File.WriteAllTextAsync(moddedVersionJsonPath, profileJson);
+                
+                LogMessage($"Downloaded mod loader profile: {installation.Version}.json");
+                
+                // Parse and download any additional libraries required by the mod loader
+                var moddedVersionInfo = JsonSerializer.Deserialize<VersionInfo>(profileJson);
+                if (moddedVersionInfo.Libraries != null)
+                {
+                    LogMessage($"Downloading {moddedVersionInfo.Libraries.Count} mod loader libraries...");
+                    await DownloadLibrariesAsync(moddedVersionInfo.Libraries, installation.GameDirectory);
+                    
+                    // Verify all libraries were downloaded
+                    string libDir = Path.Combine(installation.GameDirectory, "libraries");
+                    int missingCount = 0;
+                    foreach (var library in moddedVersionInfo.Libraries)
+                    {
+                        if (library.Downloads?.Artifact != null && !string.IsNullOrEmpty(library.Downloads.Artifact.Path))
+                        {
+                            string libraryPath = Path.Combine(libDir, library.Downloads.Artifact.Path);
+                            if (!File.Exists(libraryPath))
+                            {
+                                LogMessage($"Failed to download library: {library.Name}");
+                                missingCount++;
+                            }
+                        }
+                    }
+                    
+                    if (missingCount > 0)
+                    {
+                        LogMessage($"Warning: {missingCount} mod loader libraries failed to download");
+                    }
+                    else
+                    {
+                        LogMessage("All mod loader libraries downloaded successfully");
+                    }
+                }
+                
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LogMessage($"Failed to download mod loader profile: {ex.Message}");
+                return false;
+            }
+        }
+
+        private string TryConstructFabricLibraryUrl(string libraryName)
+        {
+            try
+            {
+                // Parse library name format: group:artifact:version
+                var parts = libraryName.Split(':');
+                if (parts.Length != 3) return null;
+
+                string group = parts[0];
+                string artifact = parts[1];
+                string version = parts[2];
+
+                // Handle different library types
+                if (group == "net.fabricmc")
+                {
+                    // Fabric libraries from Fabric Maven
+                    string baseUrl = "https://maven.fabricmc.net/";
+                    string path = $"{group.Replace('.', '/')}/{artifact}/{version}/{artifact}-{version}.jar";
+                    return baseUrl + path;
+                }
+                else if (group == "org.ow2.asm")
+                {
+                    // ASM libraries from Maven Central
+                    string baseUrl = "https://repo1.maven.org/maven2/";
+                    string path = $"{group.Replace('.', '/')}/{artifact}/{version}/{artifact}-{version}.jar";
+                    return baseUrl + path;
+                }
+
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private string ConvertMavenToPath(string libraryName)
+        {
+            try
+            {
+                // Convert Maven coordinates to file path
+                // Example: net.fabricmc:fabric-loader:0.17.1 -> net/fabricmc/fabric-loader/0.17.1/fabric-loader-0.17.1.jar
+                var parts = libraryName.Split(':');
+                if (parts.Length != 3) return libraryName;
+
+                string group = parts[0];
+                string artifact = parts[1];
+                string version = parts[2];
+
+                return $"{group.Replace('.', '/')}/{artifact}/{version}/{artifact}-{version}.jar";
+            }
+            catch
+            {
+                return libraryName;
+            }
+        }
+
+        private List<Library> DeduplicateLibraries(List<Library> libraries)
+        {
+            var deduplicatedLibraries = new List<Library>();
+            var seenLibraries = new HashSet<string>();
+
+            foreach (var library in libraries)
+            {
+                // Extract the base library name (group:artifact) without version
+                string baseName = GetLibraryBaseName(library.Name);
+                
+                if (!seenLibraries.Contains(baseName))
+                {
+                    seenLibraries.Add(baseName);
+                    deduplicatedLibraries.Add(library);
+                }
+                else
+                {
+                    LogMessage($"Skipping duplicate library: {library.Name}");
+                }
+            }
+
+            LogMessage($"Deduplicated {libraries.Count} libraries to {deduplicatedLibraries.Count}");
+            return deduplicatedLibraries;
+        }
+
+        private string GetLibraryBaseName(string libraryName)
+        {
+            if (string.IsNullOrEmpty(libraryName)) return "";
+            
+            var parts = libraryName.Split(':');
+            if (parts.Length >= 2)
+            {
+                return $"{parts[0]}:{parts[1]}";
+            }
+            return libraryName;
+        }
+    }
+
+    public class BoolToColorConverter : IValueConverter
+    {
+        public static BoolToColorConverter Instance { get; } = new BoolToColorConverter();
+
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value is bool isInstalled)
+            {
+                return new System.Windows.Media.SolidColorBrush(
+                    isInstalled ? System.Windows.Media.Colors.Green : System.Windows.Media.Colors.Orange);
+            }
+            return new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Gray);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class BoolToStatusConverter : IValueConverter
+    {
+        public static BoolToStatusConverter Instance { get; } = new BoolToStatusConverter();
+
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value is bool isInstalled)
+            {
+                return isInstalled ? "INSTALLED" : "NOT INSTALLED";
+            }
+            return "UNKNOWN";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class BoolToModdedConverter : IValueConverter
+    {
+        public static BoolToModdedConverter Instance { get; } = new BoolToModdedConverter();
+
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value is bool isModded)
+            {
+                return isModded ? "• MODDED" : "";
+            }
+            return "";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

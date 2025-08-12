@@ -85,7 +85,29 @@ namespace JustLauncher
 
     public class Classifiers
     {
+        [JsonPropertyName("natives-windows")]
         public Artifact NativesWindows { get; set; }
+        
+        [JsonPropertyName("natives-windows-x86_64")]
+        public Artifact NativesWindowsX64 { get; set; }
+        
+        [JsonPropertyName("natives-windows-x86")]
+        public Artifact NativesWindowsX86 { get; set; }
+        
+        [JsonPropertyName("natives-linux")]
+        public Artifact NativesLinux { get; set; }
+        
+        [JsonPropertyName("natives-linux-x86_64")]
+        public Artifact NativesLinuxX64 { get; set; }
+        
+        [JsonPropertyName("natives-macos")]
+        public Artifact NativesMacOS { get; set; }
+        
+        [JsonPropertyName("natives-macos-arm64")]
+        public Artifact NativesMacOSArm64 { get; set; }
+        
+        [JsonExtensionData]
+        public Dictionary<string, JsonElement> AdditionalClassifiers { get; set; }
     }
 
     public class Artifact

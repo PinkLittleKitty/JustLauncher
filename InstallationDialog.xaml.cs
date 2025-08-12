@@ -4,8 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using Microsoft.Win32;
 
 namespace JustLauncher
@@ -15,6 +17,7 @@ namespace JustLauncher
         private readonly HttpClient httpClient;
         private List<MinecraftVersion> availableVersions;
         private Installation editingInstallation;
+        private Dictionary<string, List<ModLoaderVersion>> modLoaderVersions;
         
         public Installation Result { get; private set; }
 
@@ -26,36 +29,60 @@ namespace JustLauncher
             httpClient.DefaultRequestHeaders.Add("User-Agent", "JustLauncher/1.0");
             
             editingInstallation = installation;
+            modLoaderVersions = new Dictionary<string, List<ModLoaderVersion>>();
+            
+            LoadDefaultGameDirectory();
             
             if (installation != null)
             {
                 DialogTitle.Text = "Edit Installation";
-                CreateButton.Content = "Save";
-                LoadInstallationData(installation);
+                CreateButton.Content = "Save Changes";
+                _ = LoadAvailableVersionsAsync().ContinueWith(_ => 
+                    Dispatcher.Invoke(() => LoadInstallationData(installation)));
+            }
+            else
+            {
+                _ = LoadAvailableVersionsAsync();
             }
             
-            LoadDefaultGameDirectory();
-            _ = LoadAvailableVersionsAsync();
+            Dispatcher.BeginInvoke(new Action(() => UpdateMemoryFromSlider()), System.Windows.Threading.DispatcherPriority.Loaded);
         }
 
         private void LoadInstallationData(Installation installation)
         {
             NameTextBox.Text = installation.Name;
             GameDirectoryTextBox.Text = installation.GameDirectory;
-            JavaArgsTextBox.Text = installation.JavaArgs;
+            JavaArgsTextBox.Text = installation.JavaArgs ?? "-Xmx2G -Xms1G";
             
             if (!string.IsNullOrEmpty(installation.JavaPath) && installation.JavaPath != "Use system default")
             {
                 JavaPathTextBox.Text = installation.JavaPath;
             }
             
-            // Set icon
-            foreach (var item in IconComboBox.Items.Cast<System.Windows.Controls.ComboBoxItem>())
+            var memoryMatch = System.Text.RegularExpressions.Regex.Match(installation.JavaArgs ?? "", @"-Xmx(\d+)G");
+            if (memoryMatch.Success && int.TryParse(memoryMatch.Groups[1].Value, out int memory))
+            {
+                MemorySlider.Value = Math.Min(Math.Max(memory, 1), 8);
+            }
+            
+            foreach (var item in IconComboBox.Items.Cast<ComboBoxItem>())
             {
                 if (item.Tag?.ToString() == installation.Icon)
                 {
                     IconComboBox.SelectedItem = item;
                     break;
+                }
+            }
+            
+            if (installation.IsModded && !string.IsNullOrEmpty(installation.ModLoader))
+            {
+                foreach (var item in ModLoaderComboBox.Items.Cast<ComboBoxItem>())
+                {
+                    if (item.Tag?.ToString() == installation.ModLoader)
+                    {
+                        ModLoaderComboBox.SelectedItem = item;
+                        break;
+                    }
                 }
             }
         }
@@ -98,8 +125,11 @@ namespace JustLauncher
                 // Select current version if editing
                 if (editingInstallation != null)
                 {
+                    // For modded installations, use the base version
+                    string versionToFind = editingInstallation.IsModded ? editingInstallation.BaseVersion : editingInstallation.Version;
+                    
                     var currentVersion = VersionComboBox.Items.Cast<VersionItem>()
-                        .FirstOrDefault(v => v.Version.Id == editingInstallation.Version);
+                        .FirstOrDefault(v => v.Version.Id == versionToFind);
                     if (currentVersion != null)
                     {
                         VersionComboBox.SelectedItem = currentVersion;
@@ -117,19 +147,64 @@ namespace JustLauncher
             }
         }
 
-        private void VersionComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void VersionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Show mod loader options for newer versions
-            if (VersionComboBox.SelectedItem is VersionItem versionItem)
+            // Reset mod loader when version changes
+            if (ModLoaderComboBox != null)
             {
-                var version = versionItem.Version.Id;
-                var versionParts = version.Split('.');
+                ModLoaderComboBox.SelectedIndex = 0; // Select "None"
+            }
+            
+            if (ModLoaderVersionPanel != null)
+            {
+                ModLoaderVersionPanel.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private async void ModLoaderComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ModLoaderComboBox.SelectedItem is ComboBoxItem selectedItem && ModLoaderVersionPanel != null)
+            {
+                string modLoader = selectedItem.Tag?.ToString();
                 
-                if (versionParts.Length >= 2 && int.TryParse(versionParts[1], out int minorVersion))
+                if (modLoader == "none")
                 {
-                    // Show mod loader options for 1.14+ (when Fabric became popular)
-                    ModLoaderPanel.Visibility = minorVersion >= 14 ? Visibility.Visible : Visibility.Collapsed;
+                    ModLoaderVersionPanel.Visibility = Visibility.Collapsed;
                 }
+                else
+                {
+                    ModLoaderVersionPanel.Visibility = Visibility.Visible;
+                    await LoadModLoaderVersionsAsync(modLoader);
+                }
+            }
+        }
+
+        private void MemorySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            UpdateMemoryFromSlider();
+        }
+
+        private void UpdateMemoryFromSlider()
+        {
+            if (MemorySlider != null && MemoryLabel != null && JavaArgsTextBox != null)
+            {
+                int memoryGB = (int)MemorySlider.Value;
+                MemoryLabel.Text = $"Allocated Memory: {memoryGB}GB";
+                
+                // Update Java arguments
+                string currentArgs = JavaArgsTextBox.Text ?? "-Xmx2G -Xms1G";
+                
+                // Replace existing -Xmx and -Xms arguments
+                currentArgs = System.Text.RegularExpressions.Regex.Replace(currentArgs, @"-Xmx\d+[GMK]?", $"-Xmx{memoryGB}G");
+                currentArgs = System.Text.RegularExpressions.Regex.Replace(currentArgs, @"-Xms\d+[GMK]?", $"-Xms{Math.Min(memoryGB, 1)}G");
+                
+                // If no memory arguments found, add them
+                if (!currentArgs.Contains("-Xmx"))
+                {
+                    currentArgs = $"-Xmx{memoryGB}G -Xms{Math.Min(memoryGB, 1)}G " + currentArgs.Trim();
+                }
+                
+                JavaArgsTextBox.Text = currentArgs.Trim();
             }
         }
 
@@ -188,20 +263,43 @@ namespace JustLauncher
                     installation.BaseVersion = versionItem.Version.Id;
                 }
                 
-                if (IconComboBox.SelectedItem is System.Windows.Controls.ComboBoxItem iconItem)
+                if (IconComboBox.SelectedItem is ComboBoxItem iconItem)
                 {
                     installation.Icon = iconItem.Tag?.ToString() ?? "grass_block";
                 }
                 
                 // Handle mod loader
-                if (ModLoaderComboBox.SelectedItem is System.Windows.Controls.ComboBoxItem modLoaderItem)
+                if (ModLoaderComboBox.SelectedItem is ComboBoxItem modLoaderItem)
                 {
-                    var modLoader = modLoaderItem.Content.ToString();
-                    if (modLoader != "None")
+                    var modLoader = modLoaderItem.Tag?.ToString();
+                    if (modLoader != "none" && !string.IsNullOrEmpty(modLoader))
                     {
                         installation.IsModded = true;
-                        installation.ModLoader = modLoader.ToLower();
-                        // You would typically load mod loader versions here
+                        installation.ModLoader = modLoader;
+                        installation.BaseVersion = installation.Version; // Store base MC version
+                        
+                        // Get mod loader version
+                        if (ModLoaderVersionComboBox?.SelectedItem is ModLoaderVersionItem modLoaderVersionItem)
+                        {
+                            installation.ModLoaderVersion = modLoaderVersionItem.Version.Version;
+                            
+                            // Create modded version ID (e.g., "fabric-loader-0.15.11-1.21.1")
+                            installation.Version = $"{modLoader}-loader-{installation.ModLoaderVersion}-{installation.BaseVersion}";
+                        }
+                        else
+                        {
+                            // If no specific version selected, don't create modded installation
+                            MessageBox.Show("Please select a mod loader version.", "Validation Error", 
+                                MessageBoxButton.OK, MessageBoxImage.Warning);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        installation.IsModded = false;
+                        installation.ModLoader = null;
+                        installation.ModLoaderVersion = null;
+                        installation.BaseVersion = installation.Version;
                     }
                 }
                 
@@ -253,6 +351,204 @@ namespace JustLauncher
             DialogResult = false;
             Close();
         }
+
+        private async Task LoadModLoaderVersionsAsync(string modLoader)
+        {
+            try
+            {
+                if (VersionComboBox.SelectedItem is not VersionItem versionItem || ModLoaderVersionComboBox == null)
+                    return;
+
+                string minecraftVersion = versionItem.Version.Id;
+                
+                ModLoaderVersionComboBox.Items.Clear();
+                ModLoaderVersionComboBox.IsEnabled = false;
+                
+                if (LoadingVersionsText != null)
+                {
+                    LoadingVersionsText.Visibility = Visibility.Visible;
+                }
+
+                List<ModLoaderVersion> versions = new List<ModLoaderVersion>();
+
+                switch (modLoader.ToLower())
+                {
+                    case "fabric":
+                        versions = await LoadFabricVersionsAsync(minecraftVersion);
+                        break;
+                    case "forge":
+                        versions = await LoadForgeVersionsAsync(minecraftVersion);
+                        break;
+                    case "quilt":
+                        versions = await LoadQuiltVersionsAsync(minecraftVersion);
+                        break;
+                }
+
+                ModLoaderVersionComboBox.Items.Clear();
+                ModLoaderVersionComboBox.IsEnabled = true;
+                
+                if (LoadingVersionsText != null)
+                {
+                    LoadingVersionsText.Visibility = Visibility.Collapsed;
+                }
+                
+                if (versions.Any())
+                {
+                    foreach (var version in versions.Take(20)) // Limit to 20 most recent
+                    {
+                        ModLoaderVersionComboBox.Items.Add(new ModLoaderVersionItem
+                        {
+                            Version = version,
+                            DisplayText = $"{version.Version} ({version.Type})"
+                        });
+                    }
+                    ModLoaderVersionComboBox.SelectedIndex = 0;
+                }
+                else
+                {
+                    var noVersionsItem = new ModLoaderVersionItem
+                    {
+                        Version = new ModLoaderVersion { Version = "none", Type = "none", Url = "" },
+                        DisplayText = "No versions available"
+                    };
+                    ModLoaderVersionComboBox.Items.Add(noVersionsItem);
+                    ModLoaderVersionComboBox.SelectedIndex = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                ModLoaderVersionComboBox.Items.Clear();
+                ModLoaderVersionComboBox.IsEnabled = true;
+                
+                if (LoadingVersionsText != null)
+                {
+                    LoadingVersionsText.Visibility = Visibility.Collapsed;
+                }
+                
+                var errorItem = new ModLoaderVersionItem
+                {
+                    Version = new ModLoaderVersion { Version = "error", Type = "error", Url = "" },
+                    DisplayText = $"Error: {ex.Message}"
+                };
+                ModLoaderVersionComboBox.Items.Add(errorItem);
+                ModLoaderVersionComboBox.SelectedIndex = 0;
+            }
+        }
+
+        private async Task<List<ModLoaderVersion>> LoadFabricVersionsAsync(string minecraftVersion)
+        {
+            try
+            {
+                // Fabric Loader versions
+                string loaderUrl = "https://meta.fabricmc.net/v2/versions/loader";
+                string loaderJson = await httpClient.GetStringAsync(loaderUrl);
+                var loaderVersions = JsonSerializer.Deserialize<List<FabricLoaderVersion>>(loaderJson);
+
+                var versions = new List<ModLoaderVersion>();
+                foreach (var loader in loaderVersions.Take(10)) // Top 10 loader versions
+                {
+                    versions.Add(new ModLoaderVersion
+                    {
+                        Version = loader.Version,
+                        Type = loader.Stable ? "stable" : "beta",
+                        Url = $"https://meta.fabricmc.net/v2/versions/loader/{minecraftVersion}/{loader.Version}/profile/json"
+                    });
+                }
+
+                return versions;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to load Fabric versions: {ex.Message}");
+                return new List<ModLoaderVersion>();
+            }
+        }
+
+        private async Task<List<ModLoaderVersion>> LoadForgeVersionsAsync(string minecraftVersion)
+        {
+            try
+            {
+                // Forge versions (simplified - would need proper Forge API integration)
+                string forgeUrl = $"https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json";
+                string forgeJson = await httpClient.GetStringAsync(forgeUrl);
+                
+                // This is a simplified implementation - real Forge API is more complex
+                var versions = new List<ModLoaderVersion>
+                {
+                    new ModLoaderVersion { Version = "Latest", Type = "recommended", Url = "" },
+                    new ModLoaderVersion { Version = "Recommended", Type = "stable", Url = "" }
+                };
+
+                return versions;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to load Forge versions: {ex.Message}");
+                return new List<ModLoaderVersion>();
+            }
+        }
+
+        private async Task<List<ModLoaderVersion>> LoadQuiltVersionsAsync(string minecraftVersion)
+        {
+            try
+            {
+                // Quilt versions (similar to Fabric)
+                string quiltUrl = "https://meta.quiltmc.org/v3/versions/loader";
+                string quiltJson = await httpClient.GetStringAsync(quiltUrl);
+                var loaderVersions = JsonSerializer.Deserialize<List<QuiltLoaderVersion>>(quiltJson);
+
+                var versions = new List<ModLoaderVersion>();
+                foreach (var loader in loaderVersions.Take(10))
+                {
+                    versions.Add(new ModLoaderVersion
+                    {
+                        Version = loader.Version,
+                        Type = "stable",
+                        Url = $"https://meta.quiltmc.org/v3/versions/loader/{minecraftVersion}/{loader.Version}/profile/json"
+                    });
+                }
+
+                return versions;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to load Quilt versions: {ex.Message}");
+                return new List<ModLoaderVersion>();
+            }
+        }
+    }
+
+    public class ModLoaderVersion
+    {
+        public string Version { get; set; }
+        public string Type { get; set; }
+        public string Url { get; set; }
+    }
+
+    public class ModLoaderVersionItem
+    {
+        public ModLoaderVersion Version { get; set; }
+        public string DisplayText { get; set; }
+        
+        public override string ToString()
+        {
+            return DisplayText;
+        }
+    }
+
+    public class FabricLoaderVersion
+    {
+        [JsonPropertyName("version")]
+        public string Version { get; set; }
+        
+        [JsonPropertyName("stable")]
+        public bool Stable { get; set; }
+    }
+
+    public class QuiltLoaderVersion
+    {
+        [JsonPropertyName("version")]
+        public string Version { get; set; }
     }
 
     public class VersionItem

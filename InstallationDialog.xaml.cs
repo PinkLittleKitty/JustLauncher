@@ -107,10 +107,7 @@ namespace JustLauncher
                 availableVersions = manifest.Versions ?? new List<MinecraftVersion>();
 
                 // Filter to show only releases and recent snapshots
-                var filteredVersions = availableVersions
-                    .Where(v => v.Type == "release" || (v.Type == "snapshot" && v.ReleaseTime > DateTime.Now.AddMonths(-6)))
-                    .Take(50)
-                    .ToList();
+                var filteredVersions = FilterVersions(availableVersions);
 
                 VersionComboBox.Items.Clear();
                 foreach (var version in filteredVersions)
@@ -350,6 +347,69 @@ namespace JustLauncher
         {
             DialogResult = false;
             Close();
+        }
+
+        private void VersionFilter_Changed(object sender, RoutedEventArgs e)
+        {
+            if (availableVersions != null && VersionComboBox != null)
+            {
+                var filteredVersions = FilterVersions(availableVersions);
+                
+                VersionComboBox.Items.Clear();
+                foreach (var version in filteredVersions)
+                {
+                    VersionComboBox.Items.Add(new VersionItem 
+                    { 
+                        Version = version, 
+                        DisplayText = $"{version.Id} ({version.Type})" 
+                    });
+                }
+
+                if (VersionComboBox.Items.Count > 0)
+                {
+                    VersionComboBox.SelectedIndex = 0;
+                }
+            }
+        }
+
+        private List<MinecraftVersion> FilterVersions(List<MinecraftVersion> versions)
+        {
+            var filtered = versions.AsEnumerable();
+
+            // Apply filters based on checkboxes
+            var includeReleases = ShowReleasesCheckBox?.IsChecked == true;
+            var includeSnapshots = ShowSnapshotsCheckBox?.IsChecked == true;
+            var includeBetas = ShowBetasCheckBox?.IsChecked == true;
+
+            if (!includeReleases && !includeSnapshots && !includeBetas)
+            {
+                // If nothing is selected, default to releases
+                includeReleases = true;
+                if (ShowReleasesCheckBox != null)
+                    ShowReleasesCheckBox.IsChecked = true;
+            }
+
+            filtered = filtered.Where(v =>
+            {
+                return v.Type switch
+                {
+                    "release" => includeReleases,
+                    "snapshot" => includeSnapshots,
+                    "old_beta" or "old_alpha" => includeBetas,
+                    _ => false
+                };
+            });
+
+            // Limit snapshots to recent ones if included
+            if (includeSnapshots)
+            {
+                var recentDate = DateTime.Now.AddMonths(-6);
+                filtered = filtered.Where(v => 
+                    v.Type != "snapshot" || v.ReleaseTime > recentDate);
+            }
+
+            // Take top 100 versions to avoid overwhelming the UI
+            return filtered.Take(100).ToList();
         }
 
         private async Task LoadModLoaderVersionsAsync(string modLoader)

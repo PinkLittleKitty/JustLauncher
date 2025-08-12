@@ -161,6 +161,39 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <!-- Modern CheckBox Style -->
+        <Style TargetType="CheckBox">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <StackPanel Orientation="Horizontal">
+                            <Border x:Name="CheckBoxBorder" Width="18" Height="18" 
+                                    Background="#2A2A2A" BorderBrush="#404040" BorderThickness="1" 
+                                    CornerRadius="3" Margin="0,0,8,0">
+                                <Path x:Name="CheckMark" Data="M 2 6 L 6 10 L 14 2" 
+                                      Stroke="#00C851" StrokeThickness="2" 
+                                      Visibility="Collapsed"/>
+                            </Border>
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="CheckBoxBorder" Property="Background" Value="#1A4A2E"/>
+                                <Setter TargetName="CheckBoxBorder" Property="BorderBrush" Value="#00C851"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="CheckBoxBorder" Property="BorderBrush" Value="#606060"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
     
     <Border Background="#23272A" CornerRadius="12" BorderBrush="#404040" BorderThickness="1">
@@ -197,6 +230,17 @@
                         <!-- Installation Name -->
                         <TextBlock Text="Installation Name" Foreground="White" FontWeight="SemiBold" Margin="0,0,0,8"/>
                         <TextBox x:Name="NameTextBox" Style="{StaticResource ModernTextBox}" Margin="0,0,0,20"/>
+
+                        <!-- Version Filter -->
+                        <TextBlock Text="Version Filter" Foreground="White" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                            <CheckBox x:Name="ShowReleasesCheckBox" Content="Releases" Foreground="White" 
+                                      IsChecked="True" Margin="0,0,20,0" Checked="VersionFilter_Changed" Unchecked="VersionFilter_Changed"/>
+                            <CheckBox x:Name="ShowSnapshotsCheckBox" Content="Snapshots" Foreground="White" 
+                                      IsChecked="False" Margin="0,0,20,0" Checked="VersionFilter_Changed" Unchecked="VersionFilter_Changed"/>
+                            <CheckBox x:Name="ShowBetasCheckBox" Content="Beta/Alpha" Foreground="White" 
+                                      IsChecked="False" Margin="0,0,20,0" Checked="VersionFilter_Changed" Unchecked="VersionFilter_Changed"/>
+                        </StackPanel>
 
                         <!-- Version Selection -->
                         <TextBlock Text="Minecraft Version" Foreground="White" FontWeight="SemiBold" Margin="0,0,0,8"/>

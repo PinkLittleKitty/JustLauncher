@@ -48,7 +48,7 @@
                     <Border Grid.Row="0" Background="{DynamicResource ContentBackground}" 
                             Padding="20,16" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
                         <StackPanel Orientation="Horizontal" Spacing="10">
-                            <i:Icon Value="fa-solid fa-sparkles" FontSize="18" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center"/>
+                            <i:Icon Value="fa-solid fa-star" FontSize="18" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center"/>
                             <TextBlock Text="{loc:Localize Key=Update_Changelog}" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource PrimaryText}" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Border>

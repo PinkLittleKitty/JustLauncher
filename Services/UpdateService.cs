@@ -26,13 +26,16 @@ public class UpdateService
             
             if (!force && settings.LastUpdateCheck.Date == now.Date)
             {
+                ConsoleService.Instance.Log("[Update] Skipping check - already checked today");
                 return null;
             }
 
+            ConsoleService.Instance.Log($"[Update] Checking for updates from GitHub...");
             var response = await _httpClient.GetAsync(GITHUB_API_URL);
             
             if (!response.IsSuccessStatusCode)
             {
+                ConsoleService.Instance.Log($"[Update] GitHub API request failed: {response.StatusCode}");
                 return null;
             }
 
@@ -41,6 +44,7 @@ public class UpdateService
 
             if (release == null)
             {
+                ConsoleService.Instance.Log("[Update] Failed to deserialize GitHub release");
                 return null;
             }
 
@@ -50,11 +54,23 @@ public class UpdateService
             var latestVersion = release.TagName.TrimStart('v');
             var currentVersion = AppVersion.Version;
 
+            ConsoleService.Instance.Log($"[Update] Current version: {currentVersion}, Latest version: {latestVersion}");
+
             var isNewer = CompareVersions(latestVersion, currentVersion);
 
             if (!force && isNewer && settings.SkippedVersion == latestVersion)
             {
+                ConsoleService.Instance.Log($"[Update] Update {latestVersion} was previously skipped by user");
                 return null;
+            }
+
+            if (isNewer)
+            {
+                ConsoleService.Instance.Log($"[Update] New version available: {latestVersion}");
+            }
+            else
+            {
+                ConsoleService.Instance.Log("[Update] Already on latest version");
             }
 
             return new UpdateInfo
@@ -67,8 +83,9 @@ public class UpdateService
                 HtmlUrl = release.HtmlUrl
             };
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            ConsoleService.Instance.Log($"[Update] Error checking for updates: {ex.Message}");
             return null;
         }
     }
@@ -98,18 +115,31 @@ public class UpdateService
         }
     }
 
+
     private class GitHubRelease
     {
+        [System.Text.Json.Serialization.JsonPropertyName("tag_name")]
         public string TagName { get; set; } = string.Empty;
+        
+        [System.Text.Json.Serialization.JsonPropertyName("body")]
         public string Body { get; set; } = string.Empty;
+        
+        [System.Text.Json.Serialization.JsonPropertyName("html_url")]
         public string HtmlUrl { get; set; } = string.Empty;
+        
+        [System.Text.Json.Serialization.JsonPropertyName("published_at")]
         public DateTime PublishedAt { get; set; }
+        
+        [System.Text.Json.Serialization.JsonPropertyName("assets")]
         public GitHubAsset[]? Assets { get; set; }
     }
 
     private class GitHubAsset
     {
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
+        
+        [System.Text.Json.Serialization.JsonPropertyName("browser_download_url")]
         public string BrowserDownloadUrl { get; set; } = string.Empty;
     }
 }

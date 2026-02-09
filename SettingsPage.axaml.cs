@@ -314,21 +314,35 @@ public partial class SettingsPage : UserControl
 
             if (info != null && info.IsNewer)
             {
+                ConsoleService.Instance.Log($"[SettingsPage] Showing update dialog for version {info.Version}");
                 var topLevel = TopLevel.GetTopLevel(this) as Window;
                 if (topLevel != null)
                 {
                     var dialog = new ChangelogDialog(info);
                     await dialog.ShowDialog(topLevel);
                 }
+                else
+                {
+                    ConsoleService.Instance.Log("[SettingsPage] Could not get top level window for dialog");
+                }
             }
-            else
+            else if (info != null)
             {
+                ConsoleService.Instance.Log("[SettingsPage] Already on latest version");
                 btn.Content = LocalizationService.Instance["Update_UpToDate"];
                 await System.Threading.Tasks.Task.Delay(2000);
             }
+            else
+            {
+                ConsoleService.Instance.Log("[SettingsPage] Update check returned null");
+                btn.Content = LocalizationService.Instance["Update_CheckFailed"];
+                await System.Threading.Tasks.Task.Delay(2000);
+            }
         }
-        catch
+        catch (Exception ex)
         {
+            ConsoleService.Instance.Log($"[SettingsPage] Error in update check: {ex.Message}");
+            ConsoleService.Instance.Log($"[SettingsPage] Stack trace: {ex.StackTrace}");
             btn.Content = LocalizationService.Instance["Update_CheckFailed"];
             await System.Threading.Tasks.Task.Delay(2000);
         }

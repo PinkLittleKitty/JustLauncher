@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -69,7 +70,7 @@ public partial class InstallationDialog : UserControl
             };
         }
 
-        _ = LoadVersionsAsync();
+        _ = LoadDataAsync();
     }
 
     private void InitializeComponent()
@@ -87,8 +88,110 @@ public partial class InstallationDialog : UserControl
 
         var removeBtn = this.FindControl<Button>("RemoveButton");
         if (removeBtn != null) removeBtn.Click += RemoveButton_Click;
+
+        var browseJavaBtn = this.FindControl<Button>("BrowseJavaButton");
+        if (browseJavaBtn != null) browseJavaBtn.Click += BrowseJavaButton_Click;
+
+        var memLow = this.FindControl<Button>("MemLowBtn");
+        if (memLow != null) memLow.Click += (s, e) => SetMemory(2);
+        
+        var memMed = this.FindControl<Button>("MemMedBtn");
+        if (memMed != null) memMed.Click += (s, e) => SetMemory(4);
+        
+        var memHigh = this.FindControl<Button>("MemHighBtn");
+        if (memHigh != null) memHigh.Click += (s, e) => SetMemory(8);
     }
 
+    private void SetMemory(double gb)
+    {
+        var slider = this.FindControl<Slider>("MemorySlider");
+        if (slider != null) slider.Value = gb;
+    }
+
+    private async void BrowseJavaButton_Click(object? sender, RoutedEventArgs e)
+    {
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel == null) return;
+
+        var result = await topLevel.StorageProvider.OpenFilePickerAsync(new Avalonia.Platform.Storage.FilePickerOpenOptions
+        {
+            Title = "Select Java Executable",
+            AllowMultiple = false
+        });
+
+        if (result != null && result.Count > 0)
+        {
+            var path = result[0].Path.LocalPath;
+            var combo = this.FindControl<ComboBox>("JavaVersionComboBox");
+            if (combo != null)
+            {
+                 var items = new List<object>();
+                 if (combo.ItemsSource is IEnumerable<object> existing) items.AddRange(existing);
+                 
+                 var existingItem = items.OfType<JavaInfo>().FirstOrDefault(j => j.Path == path);
+                 if (existingItem != null)
+                 {
+                     combo.SelectedItem = existingItem;
+                 }
+                 else
+                 {
+                     var info = new JavaInfo { Path = path, Version = "Custom", MajorVersion = 0, IsJre = true };
+                     items.Add(info);
+                     combo.ItemsSource = items;
+                     combo.SelectedItem = info;
+                 }
+            }
+        }
+    }
+
+    private async Task LoadDataAsync()
+    {
+        await LoadVersionsAsync();
+        await LoadJavaVersionsAsync();
+    }
+
+    private async Task LoadJavaVersionsAsync()
+    {
+        try
+        {
+            var combo = this.FindControl<ComboBox>("JavaVersionComboBox");
+            if (combo == null) return;
+
+            var manager = new JavaManager();
+            var versions = await manager.GetInstalledJavaVersionsAsync();
+            
+            var items = new List<object>();
+            items.Add("Use Global Setting");
+            
+            foreach (var v in versions) items.Add(v);
+            combo.ItemsSource = items;
+
+            if (_existingInstallation != null && !string.IsNullOrEmpty(_existingInstallation.JavaPath))
+            {
+                var match = versions.FirstOrDefault(v => v.Path == _existingInstallation.JavaPath);
+                if (match != null)
+                {
+                    combo.SelectedItem = match;
+                }
+                else
+                {
+                    var custom = new JavaInfo { Path = _existingInstallation.JavaPath, Version = "Custom", MajorVersion = 0, DisplayName = $"Custom ({_existingInstallation.JavaPath})" };
+                    items.Add(custom);
+                    combo.ItemsSource = items;
+                    combo.SelectedItem = custom;
+                }
+            }
+            else
+            {
+                combo.SelectedIndex = 0;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[InstallationDialog] Error loading Java versions: {ex}");
+        }
+    }
+    
     private async Task LoadVersionsAsync()
     {
         var versionCombo = this.FindControl<ComboBox>("VersionComboBox");
@@ -162,8 +265,16 @@ public partial class InstallationDialog : UserControl
             GameDirectory = dirBox?.Text ?? PlatformManager.GetMinecraftDirectory(),
             JavaArgs = argsBox?.Text ?? "-Xmx2G",
             MemoryAllocationGb = memorySlider?.Value ?? 4.0,
-            Icon = "grass_block"
+            Icon = "grass_block",
+            JavaPath = GetSelectedJavaPath()
         };
         OverlayService.Close(this);
+    }
+    
+    private string GetSelectedJavaPath()
+    {
+        var combo = this.FindControl<ComboBox>("JavaVersionComboBox");
+        if (combo?.SelectedItem is JavaInfo info) return info.Path;
+        return "";
     }
 }

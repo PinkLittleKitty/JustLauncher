@@ -125,14 +125,17 @@
                 <TextBlock Text="{loc:Localize Key=Settings_JavaMemory}" Classes="SettingsHeader"/>
                 <Border Classes="Card" Padding="24">
                     <StackPanel Spacing="20">
-                        <!-- Java Path -->
+                        <!-- Java Version Selector -->
                         <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto">
                             <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,10,0">
                                 <TextBlock Text="{loc:Localize Key=Settings_JavaExecutablePath}" Classes="OptionTitle"/>
                                 <TextBlock Text="{loc:Localize Key=Settings_JavaExecutablePathDescription}" Classes="OptionDescription"/>
                             </StackPanel>
-                            <Button x:Name="BrowseJavaButton" Grid.Row="0" Grid.Column="1" Content="{loc:Localize Key=Common_Browse}..." Classes="Secondary"/>
-                            <TextBox x:Name="JavaPathTextBox" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,10,0,0" Watermark="Auto-detected"/>
+                            
+                            <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,0" ColumnDefinitions="*,Auto">
+                                <ComboBox x:Name="JavaVersionComboBox" HorizontalAlignment="Stretch" Margin="0,0,10,0" PlaceholderText="Select Java Version..."/>
+                                <Button Grid.Column="1" x:Name="BrowseJavaButton" Content="{loc:Localize Key=Common_Browse}..." Classes="Secondary"/>
+                            </Grid>
                         </Grid>
 
                         <Separator Height="1" Background="{DynamicResource BorderBrush}"/>
@@ -146,6 +149,14 @@
                                 </StackPanel>
                                 <TextBlock Grid.Column="1" x:Name="MemoryValueText" Text="2 GB" Classes="OptionTitle" Foreground="{DynamicResource AccentBrush}"/>
                             </Grid>
+                            
+                            <!-- Presets -->
+                            <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,0,5">
+                                <Button x:Name="MemLowBtn" Content="Low (2GB)" Classes="Secondary" FontSize="11" Padding="8,4" CornerRadius="12"/>
+                                <Button x:Name="MemMedBtn" Content="Med (4GB)" Classes="Secondary" FontSize="11" Padding="8,4" CornerRadius="12"/>
+                                <Button x:Name="MemHighBtn" Content="High (8GB)" Classes="Secondary" FontSize="11" Padding="8,4" CornerRadius="12"/>
+                            </StackPanel>
+                            
                             <Slider x:Name="MemorySlider" Minimum="1" Maximum="32" TickFrequency="1" IsSnapToTickEnabled="True"/>
                         </StackPanel>
                     </StackPanel>

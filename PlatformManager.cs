@@ -23,6 +23,16 @@ public static class PlatformManager
         return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
     }
 
+    public static bool IsLinux()
+    {
+        return RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+    }
+
+    public static bool IsMac()
+    {
+        return RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+    }
+
     public static bool IsArchitectureMatch(string classifier, string currentOs)
     {
         var arch = RuntimeInformation.OSArchitecture;

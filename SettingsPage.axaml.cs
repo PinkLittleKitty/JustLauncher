@@ -2,6 +2,8 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using System;
+using System.Collections.Generic;
+
 using System.Linq;
 using Avalonia.Platform.Storage;
 using JustLauncher.Services;
@@ -36,8 +38,24 @@ public partial class SettingsPage : UserControl
             slider.PropertyChanged += MemorySlider_PropertyChanged;
         }
 
+
         var checkUpdatesBtn = this.FindControl<Button>("CheckUpdatesButton");
         if (checkUpdatesBtn != null) checkUpdatesBtn.Click += CheckUpdatesButton_Click;
+
+        var memLow = this.FindControl<Button>("MemLowBtn");
+        if (memLow != null) memLow.Click += (s, e) => SetMemory(2);
+        
+        var memMed = this.FindControl<Button>("MemMedBtn");
+        if (memMed != null) memMed.Click += (s, e) => SetMemory(4);
+        
+        var memHigh = this.FindControl<Button>("MemHighBtn");
+        if (memHigh != null) memHigh.Click += (s, e) => SetMemory(8);
+    }
+
+    private void SetMemory(double gb)
+    {
+        var slider = this.FindControl<Slider>("MemorySlider");
+        if (slider != null) slider.Value = gb;
     }
 
     private void MemorySlider_PropertyChanged(object? sender, Avalonia.AvaloniaPropertyChangedEventArgs e)
@@ -74,8 +92,7 @@ public partial class SettingsPage : UserControl
     {
         _settings = ConfigManager.LoadSettings();
 
-        var pathBox = this.FindControl<TextBox>("JavaPathTextBox");
-        if (pathBox != null) pathBox.Text = _settings.JavaPath;
+        LoadJavaVersionsAsync();
 
         var separateDirToggle = this.FindControl<ToggleSwitch>("UseSeparateGameDirToggle");
         if (separateDirToggle != null) separateDirToggle.IsChecked = _settings.UseSeparateGameDir;
@@ -137,7 +154,7 @@ public partial class SettingsPage : UserControl
 
     private void SaveButton_Click(object? sender, RoutedEventArgs e)
     {
-        var pathBox = this.FindControl<TextBox>("JavaPathTextBox");
+        var javaCombo = this.FindControl<ComboBox>("JavaVersionComboBox");
         var slider = this.FindControl<Slider>("MemorySlider");
         var closeToggle = this.FindControl<ToggleSwitch>("CloseOnLaunchToggle");
         var separateDirToggle = this.FindControl<ToggleSwitch>("UseSeparateGameDirToggle");
@@ -146,7 +163,15 @@ public partial class SettingsPage : UserControl
         var themeCombo = this.FindControl<ComboBox>("ThemeComboBox");
         var updateToggle = this.FindControl<ToggleSwitch>("CheckUpdatesToggle");
 
-        _settings.JavaPath = pathBox?.Text ?? "";
+        if (javaCombo?.SelectedItem is JavaInfo info)
+        {
+            _settings.JavaPath = info.Path;
+        }
+        else if (javaCombo?.SelectedItem is string s && s == "Auto-detect")
+        {
+            _settings.JavaPath = "";
+        }
+
         _settings.MemoryAllocationGb = slider?.Value ?? 2.0;
         _settings.CloseOnLaunch = closeToggle?.IsChecked ?? false;
         _settings.UseSeparateGameDir = separateDirToggle?.IsChecked ?? false;
@@ -197,8 +222,77 @@ public partial class SettingsPage : UserControl
 
         if (result != null && result.Count > 0)
         {
-            var pathBox = this.FindControl<TextBox>("JavaPathTextBox");
-            if (pathBox != null) pathBox.Text = result[0].Path.LocalPath;
+            var path = result[0].Path.LocalPath;
+            var combo = this.FindControl<ComboBox>("JavaVersionComboBox");
+            if (combo != null)
+            {
+                var items = combo.ItemsSource as List<object>;
+                
+                var info = new JavaInfo 
+                { 
+                    Path = path, 
+                    Version = "Custom", 
+                    MajorVersion = 0, 
+                    IsJre = true 
+                };
+                
+                var currentList = new List<object>();
+                if (combo.ItemsSource is IEnumerable<object> existing) currentList.AddRange(existing);
+                
+                currentList.Add(info);
+                combo.ItemsSource = currentList;
+                combo.SelectedItem = info;
+            }
+        }
+    }
+
+    private async void LoadJavaVersionsAsync()
+    {
+        try
+        {
+            var combo = this.FindControl<ComboBox>("JavaVersionComboBox");
+            if (combo == null) return;
+
+            var manager = new JavaManager();
+            var versions = await manager.GetInstalledJavaVersionsAsync();
+            
+            var items = new List<object>();
+            items.Add("Auto-detect");
+            
+            foreach (var v in versions) items.Add(v);
+
+            combo.ItemsSource = items;
+
+            if (string.IsNullOrEmpty(_settings.JavaPath))
+            {
+                combo.SelectedIndex = 0;
+            }
+            else
+            {
+                var match = versions.FirstOrDefault(v => v.Path == _settings.JavaPath);
+                if (match != null)
+                {
+                    combo.SelectedItem = match;
+                }
+                else
+                {
+                    var custom = new JavaInfo 
+                    { 
+                        Path = _settings.JavaPath, 
+                        Version = "Unknown", 
+                        MajorVersion = 0, 
+                        DisplayName = $"Custom ({_settings.JavaPath})" 
+                    };
+
+                    items.Add(custom);
+                    combo.SelectedItem = custom;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+             // Log error but don't crash
+             Console.WriteLine($"[SettingsPage] Error loading Java versions: {ex}");
         }
     }
 

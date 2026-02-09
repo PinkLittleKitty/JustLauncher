@@ -21,6 +21,7 @@ namespace JustLauncher
         private InstallationsConfig installationsConfig = new();
         private string minecraftDirectory = string.Empty;
         private MinecraftService _minecraftService = default!;
+        private Services.JavaManager _javaManager = new();
         public string AppVersionText => AppVersion.Version;
 
         public PlayPage() : this("Player") { }
@@ -152,30 +153,82 @@ namespace JustLauncher
                 Log($"Fetching version details for {ver.Id}...");
                 var info = await _minecraftService.GetVersionInfoAsync(ver.Url);
 
-                int requiredJava = info.JavaVersion?.MajorVersion ?? 17;
-                var (foundVersion, foundPath) = await PlatformManager.FindJavaInstallationAsync(requiredJava);
-                
-                if (foundVersion != null && foundPath != null)
+                int requiredJava = info.JavaVersion?.MajorVersion ?? 8;
+                if (requiredJava == 0) requiredJava = 8;
+
+                string javaPathToUse = "";
+
+                if (!string.IsNullOrEmpty(installation.JavaPath))
                 {
-                    int foundMajor = PlatformManager.ExtractMajorVersion(foundVersion);
-                    if (foundMajor < requiredJava)
+                     if (File.Exists(installation.JavaPath)) 
+                     {
+                         javaPathToUse = installation.JavaPath;
+                         Log($"Using Installation-specific Java: {javaPathToUse}");
+                     }
+                     else
+                     {
+                         Log($"Warning: Installation Java path not found: {installation.JavaPath}");
+                     }
+                }
+
+                if (string.IsNullOrEmpty(javaPathToUse))
+                {
+                    var globalSettings = ConfigManager.LoadSettings();
+                    if (!string.IsNullOrEmpty(globalSettings.JavaPath))
                     {
-                        bool userApproved = await Dispatcher.UIThread.InvokeAsync(async () => 
-                            await Services.OverlayService.ShowDialog<bool>(new JavaVersionDialog(requiredJava.ToString(), foundMajor.ToString())));
-                        if (!userApproved) return;
-                    }
-                    else if (foundPath != PlatformManager.GetJavaExecutableName())
-                    {
-                         var javaSettings = ConfigManager.LoadSettings();
-                         javaSettings.JavaPath = foundPath;
-                         ConfigManager.SaveSettings(javaSettings);
+                        if (File.Exists(globalSettings.JavaPath))
+                        {
+                            javaPathToUse = globalSettings.JavaPath;
+                            Log($"Using Global Setting Java: {javaPathToUse}");
+                        }
                     }
                 }
-                else
+
+                if (string.IsNullOrEmpty(javaPathToUse))
                 {
-                    bool userApproved = await Dispatcher.UIThread.InvokeAsync(async () => 
-                        await Services.OverlayService.ShowDialog<bool>(new JavaVersionDialog(requiredJava.ToString(), "Not Found")));
-                    if (!userApproved) return;
+                    Log($"Auto-detecting Java {requiredJava}...");
+                    var installed = await _javaManager.GetInstalledJavaVersionsAsync();
+                    var bestMatch = installed.Where(j => j.MajorVersion == requiredJava).FirstOrDefault();
+                    
+                    if (bestMatch != null)
+                    {
+                        javaPathToUse = bestMatch.Path;
+                        Log($"Found compatible installed Java: {javaPathToUse}");
+                    }
+                    else
+                    {
+                        Log($"Java {requiredJava} not found. Downloading...");
+                        
+                        Dispatcher.UIThread.Post(() => 
+                        {
+                             if (statusText != null) statusText.Text = $"Downloading Java Runtime {requiredJava}...";
+                             if (progressBar != null) { progressBar.IsVisible = true; progressBar.IsIndeterminate = false; progressBar.Value = 0; }
+                        });
+
+                        var downloadedPath = await _javaManager.DownloadJavaAsync(requiredJava, new Progress<double>(p => 
+                        {
+                            Dispatcher.UIThread.Post(() => { if (progressBar != null) progressBar.Value = p; });
+                        }));
+                        
+                        if (!string.IsNullOrEmpty(downloadedPath) && File.Exists(downloadedPath))
+                        {
+                            javaPathToUse = downloadedPath;
+                            Log($"Java {requiredJava} downloaded successfully: {javaPathToUse}");
+                        }
+                        else
+                        {
+                             var (sysVer, sysPath) = await PlatformManager.FindJavaInstallationAsync(requiredJava);
+                             if (!string.IsNullOrEmpty(sysPath))
+                             {
+                                 javaPathToUse = sysPath;
+                                 Log($"Download failed/ambiguous, falling back to system Java: {javaPathToUse}");
+                             }
+                             else
+                             {
+                                 throw new Exception($"Could not find or download Java {requiredJava}. Please install it manually.");
+                             }
+                        }
+                    }
                 }
 
                 if (statusText != null) 
@@ -242,7 +295,7 @@ namespace JustLauncher
                 
                 var startInfo = new ProcessStartInfo
                 {
-                    FileName = string.IsNullOrEmpty(settings.JavaPath) ? PlatformManager.GetJavaExecutable() : settings.JavaPath,
+                    FileName = javaPathToUse,
                     Arguments = args,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,

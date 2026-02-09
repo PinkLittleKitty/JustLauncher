@@ -22,6 +22,7 @@ namespace JustLauncher
         private string minecraftDirectory = string.Empty;
         private MinecraftService _minecraftService = default!;
         private Services.JavaManager _javaManager = new();
+        private Services.FabricService _fabricService = new();
         public string AppVersionText => AppVersion.Version;
 
         public PlayPage() : this("Player") { }
@@ -61,6 +62,9 @@ namespace JustLauncher
 
             var manageBtn = this.FindControl<Button>("ManageProfilesButton");
             if (manageBtn != null) manageBtn.Click += ManageProfilesButton_Click;
+
+            var addBtn = this.FindControl<Button>("AddProfileButton");
+            if (addBtn != null) addBtn.Click += AddProfileButton_Click;
         }
 
         private void LoadInstallations()
@@ -117,6 +121,27 @@ namespace JustLauncher
             }
         }
 
+        private async void AddProfileButton_Click(object? sender, RoutedEventArgs e)
+        {
+            var dialog = new InstallationDialog();
+            var result = await Services.OverlayService.ShowDialog<InstallationDialog>(dialog);
+            
+            if (result != null && result.Result != null)
+            {
+                installationsConfig.Installations.Add(result.Result);
+                ConfigManager.SaveInstallations(installationsConfig);
+                RefreshInstallations();
+                
+                var combo = this.FindControl<ComboBox>("ProfileComboBox");
+                if (combo != null)
+                {
+                    // Find the newly added installation by ID to select it
+                    var newInst = installationsConfig.Installations.FirstOrDefault(i => i.Id == result.Result.Id);
+                    if (newInst != null) combo.SelectedItem = newInst;
+                }
+            }
+        }
+
         private async void PlayButton_Click(object? sender, RoutedEventArgs e)
         {
             var combo = this.FindControl<ComboBox>("ProfileComboBox");
@@ -145,13 +170,33 @@ namespace JustLauncher
                     if (progressBar != null) { progressBar.IsVisible = true; progressBar.IsIndeterminate = true; }
                 });
 
-                Log("Fetching version manifest...");
-                var manifest = await _minecraftService.GetVersionManifestAsync();
-                var ver = manifest.Versions.FirstOrDefault(v => v.Id == installation.Version);
-                if (ver == null) throw new Exception("Version not found in manifest");
-
-                Log($"Fetching version details for {ver.Id}...");
-                var info = await _minecraftService.GetVersionInfoAsync(ver.Url);
+                VersionInfo info;
+                
+                if (installation.LoaderType == ModLoaderType.Fabric && !string.IsNullOrEmpty(installation.ModLoaderVersion))
+                {
+                    string fabricVersionId = $"fabric-loader-{installation.ModLoaderVersion}-{installation.Version}";
+                    Log($"Verifying Fabric version: {fabricVersionId}...");
+                    
+                    var jsonPath = Path.Combine(minecraftDirectory, "versions", fabricVersionId, $"{fabricVersionId}.json");
+                    if (!File.Exists(jsonPath))
+                    {
+                         Log("Fabric profile not found, installing...");
+                         await _fabricService.InstallFabricAsync(installation.Version, installation.ModLoaderVersion);
+                    }
+                    
+                    Log($"Loading version info for {fabricVersionId}...");
+                    info = await _minecraftService.GetVersionInfoFromLocalAsync(fabricVersionId);
+                }
+                else
+                {
+                    Log("Fetching version manifest...");
+                    var manifest = await _minecraftService.GetVersionManifestAsync();
+                    var ver = manifest.Versions.FirstOrDefault(v => v.Id == installation.Version);
+                    if (ver == null) throw new Exception("Version not found in manifest");
+    
+                    Log($"Fetching version details for {ver.Id}...");
+                    info = await _minecraftService.GetVersionInfoAsync(ver.Url);
+                }
 
                 int requiredJava = info.JavaVersion?.MajorVersion ?? 8;
                 if (requiredJava == 0) requiredJava = 8;

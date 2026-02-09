@@ -95,7 +95,7 @@
                         <!-- Profile Selection -->
                         <StackPanel Grid.Column="0" Spacing="8" Margin="0,0,40,0">
                             <TextBlock Text="{loc:Localize Key=Play_SelectedInstallation}" FontSize="11" Foreground="{DynamicResource SecondaryText}" FontWeight="Bold" LetterSpacing="2"/>
-                            <Grid ColumnDefinitions="*,Auto">
+                            <Grid ColumnDefinitions="*,Auto,Auto">
                                 <ComboBox x:Name="ProfileComboBox" Classes="ProfileSelector" HorizontalAlignment="Stretch" VerticalContentAlignment="Center">
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
@@ -109,7 +109,10 @@
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
-                                <Button x:Name="ManageProfilesButton" Grid.Column="1" Margin="12,0,0,0" Width="56" Height="56" Classes="Secondary">
+                                <Button x:Name="AddProfileButton" Grid.Column="1" Margin="12,0,0,0" Width="56" Height="56" Classes="Secondary">
+                                    <i:Icon Value="fa-solid fa-plus" FontSize="20"/>
+                                </Button>
+                                <Button x:Name="ManageProfilesButton" Grid.Column="2" Margin="12,0,0,0" Width="56" Height="56" Classes="Secondary">
                                     <i:Icon Value="fa-solid fa-gear" FontSize="20"/>
                                 </Button>
                             </Grid>

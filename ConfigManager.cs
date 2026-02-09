@@ -77,4 +77,6 @@ public class LauncherSettings
     public bool UseSeparateGameDir { get; set; } = false;
     public string Theme { get; set; } = "System";
     public bool DarkMode { get; set; } = true;
+    public bool IsSakiEnabled { get; set; } = false;
+    public string SakiSkin { get; set; } = "Steve";
 }

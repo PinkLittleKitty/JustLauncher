@@ -1,17 +1,22 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using System;
 using System.Linq;
 
 namespace JustLauncher;
 
 public partial class MainWindow : Window
 {
+    public static MainWindow? Instance { get; private set; }
+
     public MainWindow()
     {
+        Instance = this;
         InitializeComponent();
-        
+
         var accountsConfig = ConfigManager.LoadAccounts();
         var activeAccount = accountsConfig.Accounts.FirstOrDefault(a => a.IsActive) 
                           ?? accountsConfig.Accounts.FirstOrDefault(a => a.Id == accountsConfig.SelectedAccountId)
@@ -28,6 +33,28 @@ public partial class MainWindow : Window
             {
                 content.Content = new HomePage();
             }
+        }
+        
+        UpdateSakiVisibility();
+    }
+
+    public static void NotifySakiSettingsChanged()
+    {
+        if (Instance != null)
+        {
+            Instance.UpdateSakiVisibility();
+            var stickman = Instance.FindControl<Controls.SakiStickman>("SakiStickman");
+            if (stickman != null) stickman.UpdateSkin();
+        }
+    }
+
+    public void UpdateSakiVisibility()
+    {
+        var settings = ConfigManager.LoadSettings();
+        var stickman = this.FindControl<Control>("SakiStickman");
+        if (stickman != null)
+        {
+            stickman.IsVisible = settings.IsSakiEnabled;
         }
     }
 

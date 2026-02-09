@@ -16,6 +16,25 @@ public partial class FaceTracker : UserControl
     private TranslateTransform? _faceTranslate;
     private AsyncImage? _faceImage;
 
+    public static readonly StyledProperty<string?> UsernameProperty =
+        AvaloniaProperty.Register<FaceTracker, string?>(nameof(Username));
+
+    public string? Username
+    {
+        get => GetValue(UsernameProperty);
+        set => SetValue(UsernameProperty, value);
+    }
+
+    static FaceTracker()
+    {
+        UsernameProperty.Changed.AddClassHandler<FaceTracker>((x, e) => x.OnUsernameChanged(e));
+    }
+
+    private void OnUsernameChanged(AvaloniaPropertyChangedEventArgs e)
+    {
+        UpdateActiveUserFace();
+    }
+
     public static event Action? ActiveAccountChanged;
 
     public static void NotifyAccountChanged() => ActiveAccountChanged?.Invoke();
@@ -46,12 +65,17 @@ public partial class FaceTracker : UserControl
 
     private void UpdateActiveUserFace()
     {
-        var accounts = ConfigManager.LoadAccounts();
-        var active = accounts.Accounts.FirstOrDefault(a => a.IsActive) ?? 
-                     accounts.Accounts.FirstOrDefault(a => a.Id == accounts.SelectedAccountId) ?? 
-                     accounts.Accounts.FirstOrDefault();
+        string username = Username;
         
-        string username = active?.Username ?? "Steve";
+        if (string.IsNullOrEmpty(username))
+        {
+            var accounts = ConfigManager.LoadAccounts();
+            var active = accounts.Accounts.FirstOrDefault(a => a.IsActive) ?? 
+                         accounts.Accounts.FirstOrDefault(a => a.Id == accounts.SelectedAccountId) ?? 
+                         accounts.Accounts.FirstOrDefault();
+            
+            username = active?.Username ?? "Steve";
+        }
         
         if (_faceImage != null)
         {

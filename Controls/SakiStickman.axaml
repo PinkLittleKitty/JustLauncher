@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:JustLauncher.Controls"
+             x:Class="JustLauncher.Controls.SakiStickman"
+             Width="100" Height="150"
+             IsHitTestVisible="True" Background="Transparent"
+             RenderTransformOrigin="50%,50%">
+    <UserControl.RenderTransform>
+        <ScaleTransform ScaleX="1"/>
+    </UserControl.RenderTransform>
+    <Canvas Width="100" Height="150" Background="Transparent" IsHitTestVisible="True">
+        <!-- Body (Stickman) -->
+        <Canvas.Styles>
+            <Style Selector="Line">
+                <Setter Property="Stroke" Value="{DynamicResource PrimaryText}"/>
+                <Setter Property="StrokeThickness" Value="3"/>
+                <Setter Property="StrokeLineCap" Value="Round"/>
+            </Style>
+        </Canvas.Styles>
+
+        <Line StartPoint="50,60" EndPoint="50,110" /> <!-- Spine -->
+        <Line StartPoint="50,75" EndPoint="25,95" /> <!-- Left Arm -->
+        <Line StartPoint="50,75" EndPoint="75,95" /> <!-- Right Arm -->
+        <Line StartPoint="50,110" EndPoint="35,145" /> <!-- Left Leg -->
+        <Line StartPoint="50,110" EndPoint="65,145" /> <!-- Right Leg -->
+
+        <!-- Head (FaceTracker) -->
+        <controls:FaceTracker x:Name="SakiHead" Width="50" Height="50" Canvas.Left="25" Canvas.Top="10"/>
+    </Canvas>
+</UserControl>

@@ -131,5 +131,10 @@
                 <ContentControl x:Name="MainContent" Grid.Column="1" Margin="0"/>
             </Grid>
         </Grid>
+
+        <!-- Saki Stickman Overlay -->
+        <Canvas x:Name="SakiCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsHitTestVisible="True">
+            <controls:SakiStickman x:Name="SakiStickman" IsVisible="False" Canvas.Left="600" Canvas.Top="400"/>
+        </Canvas>
     </Panel>
 </Window>

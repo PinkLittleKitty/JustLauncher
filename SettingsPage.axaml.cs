@@ -67,6 +67,12 @@ public partial class SettingsPage : UserControl
 
         var closeToggle = this.FindControl<ToggleSwitch>("CloseOnLaunchToggle");
         if (closeToggle != null) closeToggle.IsChecked = _settings.CloseOnLaunch;
+
+        var sakiToggle = this.FindControl<ToggleSwitch>("SakiToggle");
+        if (sakiToggle != null) sakiToggle.IsChecked = _settings.IsSakiEnabled;
+
+        var sakiBox = this.FindControl<TextBox>("SakiSkinTextBox");
+        if (sakiBox != null) sakiBox.Text = _settings.SakiSkin;
         
         var themeCombo = this.FindControl<ComboBox>("ThemeComboBox");
         if (themeCombo != null)
@@ -86,12 +92,16 @@ public partial class SettingsPage : UserControl
         var slider = this.FindControl<Slider>("MemorySlider");
         var closeToggle = this.FindControl<ToggleSwitch>("CloseOnLaunchToggle");
         var separateDirToggle = this.FindControl<ToggleSwitch>("UseSeparateGameDirToggle");
+        var sakiToggle = this.FindControl<ToggleSwitch>("SakiToggle");
+        var sakiBox = this.FindControl<TextBox>("SakiSkinTextBox");
         var themeCombo = this.FindControl<ComboBox>("ThemeComboBox");
 
         _settings.JavaPath = pathBox?.Text ?? "";
         _settings.MemoryAllocationGb = slider?.Value ?? 2.0;
         _settings.CloseOnLaunch = closeToggle?.IsChecked ?? false;
         _settings.UseSeparateGameDir = separateDirToggle?.IsChecked ?? false;
+        _settings.IsSakiEnabled = sakiToggle?.IsChecked ?? false;
+        _settings.SakiSkin = sakiBox?.Text ?? "Steve";
         
         if (themeCombo != null)
         {
@@ -104,6 +114,7 @@ public partial class SettingsPage : UserControl
         }
 
         ConfigManager.SaveSettings(_settings);
+        MainWindow.NotifySakiSettingsChanged();
         
         if (Avalonia.Application.Current != null)
         {

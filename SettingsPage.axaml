@@ -60,6 +60,20 @@
                             </StackPanel>
                             <ToggleSwitch Grid.Column="1" x:Name="CloseOnLaunchToggle" OnContent="On" OffContent="Off"/>
                         </Grid>
+
+                        <Separator Height="1" Background="{DynamicResource BorderBrush}"/>
+                        
+                        <!-- Saki Toggle -->
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Saki (Stickman Mode)" Classes="OptionTitle"/>
+                                <TextBlock Text="Summon a little friend that watches you" Classes="OptionDescription"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+                                <TextBox x:Name="SakiSkinTextBox" Width="120" Watermark="Skin Name" VerticalAlignment="Center"/>
+                                <ToggleSwitch x:Name="SakiToggle" OnContent="On" OffContent="Off" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Grid>
                     </StackPanel>
                 </Border>
             </StackPanel>

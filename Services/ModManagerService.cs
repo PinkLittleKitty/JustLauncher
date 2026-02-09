@@ -69,7 +69,6 @@ public class ModManagerService
     {
         if (mod.IsEnabled)
         {
-            // Disable: rename .jar -> .jar.disabled
             var newPath = mod.Path + ".disabled";
             if (File.Exists(newPath)) File.Delete(newPath);
             File.Move(mod.Path, newPath);
@@ -79,7 +78,6 @@ public class ModManagerService
         }
         else
         {
-            // Enable: rename .disabled -> .jar (remove .disabled)
             if (mod.Path.EndsWith(".disabled"))
             {
                 var newPath = mod.Path.Substring(0, mod.Path.Length - ".disabled".Length);

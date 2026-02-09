@@ -23,6 +23,7 @@ namespace JustLauncher
         private MinecraftService _minecraftService = default!;
         private Services.JavaManager _javaManager = new();
         private Services.FabricService _fabricService = new();
+        private Services.ForgeService _forgeService = new();
         public string AppVersionText => AppVersion.Version;
 
         public PlayPage() : this("Player") { }
@@ -78,12 +79,27 @@ namespace JustLauncher
             var combo = this.FindControl<ComboBox>("ProfileComboBox");
             if (combo != null)
             {
+                combo.SelectionChanged += ProfileComboBox_SelectionChanged;
                 combo.ItemsSource = null;
                 combo.ItemsSource = installationsConfig.Installations.ToList();
                 if (installationsConfig.Installations.Count > 0)
                 {
                     combo.SelectedIndex = 0;
+                    UpdateMainWindowState(installationsConfig.Installations[0]);
                 }
+            }
+        }
+
+        private void UpdateMainWindowState(Installation installation)
+        {
+            if (MainWindow.Instance != null)
+            {
+                bool isModded = installation.LoaderType != ModLoaderType.Vanilla;
+                string gameDir = !string.IsNullOrEmpty(installation.GameDirectory) 
+                               ? installation.GameDirectory 
+                               : PlatformManager.GetMinecraftDirectory();
+                
+                MainWindow.Instance.SetModdedState(isModded, gameDir);
             }
         }
 
@@ -121,6 +137,14 @@ namespace JustLauncher
             }
         }
 
+        private void ProfileComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox combo && combo.SelectedItem is Installation installation)
+            {
+                UpdateMainWindowState(installation);
+            }
+        }
+
         private async void AddProfileButton_Click(object? sender, RoutedEventArgs e)
         {
             var dialog = new InstallationDialog();
@@ -135,7 +159,6 @@ namespace JustLauncher
                 var combo = this.FindControl<ComboBox>("ProfileComboBox");
                 if (combo != null)
                 {
-                    // Find the newly added installation by ID to select it
                     var newInst = installationsConfig.Installations.FirstOrDefault(i => i.Id == result.Result.Id);
                     if (newInst != null) combo.SelectedItem = newInst;
                 }
@@ -186,6 +209,41 @@ namespace JustLauncher
                     
                     Log($"Loading version info for {fabricVersionId}...");
                     info = await _minecraftService.GetVersionInfoFromLocalAsync(fabricVersionId);
+                }
+                else if (installation.LoaderType == ModLoaderType.Forge && !string.IsNullOrEmpty(installation.ModLoaderVersion))
+                {
+                     string forgeId = $"{installation.Version}-forge-{installation.ModLoaderVersion}";
+                     var jsonPath = Path.Combine(minecraftDirectory, "versions", forgeId, $"{forgeId}.json");
+                     
+                     if (!File.Exists(jsonPath))
+                     {
+
+                          var potentialDirs = Directory.GetDirectories(Path.Combine(minecraftDirectory, "versions"))
+                                              .Select(Path.GetFileName)
+                                              .Where(n => n.Contains("forge") && n.Contains(installation.ModLoaderVersion))
+                                              .ToList();
+                          
+                          if (potentialDirs.Any())
+                          {
+                              forgeId = potentialDirs.First();
+                              jsonPath = Path.Combine(minecraftDirectory, "versions", forgeId, $"{forgeId}.json");
+                          }
+                     }
+
+                     if (!File.Exists(jsonPath) || !Directory.Exists(Path.Combine(minecraftDirectory, "versions", forgeId)))
+                     {
+                          Log("Forge profile not found, installing...");
+                          if (!string.IsNullOrEmpty(installation.GameDirectory) && !Directory.Exists(installation.GameDirectory))
+                          {
+                               Directory.CreateDirectory(installation.GameDirectory);
+                          }
+                          
+                          var installedId = await _forgeService.InstallForgeAsync(installation.Version, installation.ModLoaderVersion, installation.GameDirectory);
+                          if (!string.IsNullOrEmpty(installedId)) forgeId = installedId;
+                     }
+                     
+                     Log($"Loading version info for {forgeId}...");
+                     info = await _minecraftService.GetVersionInfoFromLocalAsync(forgeId);
                 }
                 else
                 {

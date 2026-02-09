@@ -118,6 +118,12 @@
                                 <TextBlock Text="{loc:Localize Key=Nav_Console}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
+                        <Button x:Name="ModsButton" Classes="SidebarBtn" IsVisible="False">
+                            <StackPanel Orientation="Horizontal" Spacing="15">
+                                <i:Icon Value="fa-solid fa-puzzle-piece" />
+                                <TextBlock Text="Mods" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
                     
                     <!-- Bottom Actions -->

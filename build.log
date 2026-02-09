@@ -1,0 +1,23 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+/mnt/DiscoLocal2/GithubProjects/JustLauncher/Controls/ModsControl.axaml.cs(48,9): warning CS4014: Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call. [/mnt/DiscoLocal2/GithubProjects/JustLauncher/JustLauncher.csproj]
+/mnt/DiscoLocal2/GithubProjects/JustLauncher/Controls/ModsControl.axaml.cs(119,25): error CS1501: No overload for method 'ToggleMod' takes 3 arguments [/mnt/DiscoLocal2/GithubProjects/JustLauncher/JustLauncher.csproj]
+/mnt/DiscoLocal2/GithubProjects/JustLauncher/Controls/ModsControl.axaml.cs(120,13): warning CS4014: Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call. [/mnt/DiscoLocal2/GithubProjects/JustLauncher/JustLauncher.csproj]
+/mnt/DiscoLocal2/GithubProjects/JustLauncher/InstallationDialog.axaml.cs(112,78): warning CS4014: Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call. [/mnt/DiscoLocal2/GithubProjects/JustLauncher/JustLauncher.csproj]
+/mnt/DiscoLocal2/GithubProjects/JustLauncher/PlayPage.axaml.cs(223,59): warning CS8602: Dereference of a possibly null reference. [/mnt/DiscoLocal2/GithubProjects/JustLauncher/JustLauncher.csproj]
+/mnt/DiscoLocal2/GithubProjects/JustLauncher/PlayPage.axaml.cs(228,41): warning CS8600: Converting null literal or possible null value to non-nullable type. [/mnt/DiscoLocal2/GithubProjects/JustLauncher/JustLauncher.csproj]
+/mnt/DiscoLocal2/GithubProjects/JustLauncher/PlayPage.axaml.cs(229,87): warning CS8604: Possible null reference argument for parameter 'path3' in 'string Path.Combine(string path1, string path2, string path3, string path4)'. [/mnt/DiscoLocal2/GithubProjects/JustLauncher/JustLauncher.csproj]
+
+Build FAILED.
+
+/mnt/DiscoLocal2/GithubProjects/JustLauncher/Controls/ModsControl.axaml.cs(48,9): warning CS4014: Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call. [/mnt/DiscoLocal2/GithubProjects/JustLauncher/JustLauncher.csproj]
+/mnt/DiscoLocal2/GithubProjects/JustLauncher/Controls/ModsControl.axaml.cs(120,13): warning CS4014: Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call. [/mnt/DiscoLocal2/GithubProjects/JustLauncher/JustLauncher.csproj]
+/mnt/DiscoLocal2/GithubProjects/JustLauncher/InstallationDialog.axaml.cs(112,78): warning CS4014: Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call. [/mnt/DiscoLocal2/GithubProjects/JustLauncher/JustLauncher.csproj]
+/mnt/DiscoLocal2/GithubProjects/JustLauncher/PlayPage.axaml.cs(223,59): warning CS8602: Dereference of a possibly null reference. [/mnt/DiscoLocal2/GithubProjects/JustLauncher/JustLauncher.csproj]
+/mnt/DiscoLocal2/GithubProjects/JustLauncher/PlayPage.axaml.cs(228,41): warning CS8600: Converting null literal or possible null value to non-nullable type. [/mnt/DiscoLocal2/GithubProjects/JustLauncher/JustLauncher.csproj]
+/mnt/DiscoLocal2/GithubProjects/JustLauncher/PlayPage.axaml.cs(229,87): warning CS8604: Possible null reference argument for parameter 'path3' in 'string Path.Combine(string path1, string path2, string path3, string path4)'. [/mnt/DiscoLocal2/GithubProjects/JustLauncher/JustLauncher.csproj]
+/mnt/DiscoLocal2/GithubProjects/JustLauncher/Controls/ModsControl.axaml.cs(119,25): error CS1501: No overload for method 'ToggleMod' takes 3 arguments [/mnt/DiscoLocal2/GithubProjects/JustLauncher/JustLauncher.csproj]
+    6 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:02.43

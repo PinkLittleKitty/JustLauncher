@@ -19,6 +19,7 @@ public partial class InstallationDialog : UserControl
     private readonly MinecraftService _minecraftService = new();
     private Installation? _existingInstallation;
     private readonly FabricService _fabricService = new();
+    private readonly ForgeService _forgeService = new();
     private readonly ModManagerService _modManager = new();
 
     public InstallationDialog()
@@ -110,14 +111,7 @@ public partial class InstallationDialog : UserControl
         var versionCombo = this.FindControl<ComboBox>("VersionComboBox");
         if (versionCombo != null) versionCombo.SelectionChanged += (s, e) => UpdateLoaderVersions();
 
-        var openModsBtn = this.FindControl<Button>("OpenModsFolderButton");
-        if (openModsBtn != null) openModsBtn.Click += OpenModsFolderButton_Click;
-
-        var refreshModsBtn = this.FindControl<Button>("RefreshModsButton");
-        if (refreshModsBtn != null) refreshModsBtn.Click += async (s, e) => await LoadModsAsync();
         
-        // Add handler for checkbox clicks in the listbox
-        this.AddHandler(global::Avalonia.Controls.Primitives.ToggleButton.ClickEvent, ModCheckBox_Click, RoutingStrategies.Bubble);
     }
 
     private void SetMemory(double gb)
@@ -166,63 +160,9 @@ public partial class InstallationDialog : UserControl
     {
         await LoadVersionsAsync();
         await LoadJavaVersionsAsync();
-        await UpdateLoaderVersions(); // To set initial visibility
-        await LoadModsAsync();
+        await UpdateLoaderVersions();
     }
 
-    private void ModCheckBox_Click(object? sender, RoutedEventArgs e)
-    {
-        if (e.Source is CheckBox checkBox && checkBox.DataContext is ModInfo mod)
-        {
-             _modManager.ToggleMod(mod);
-             // Reflect change immediately in UI if needed, binding might do it
-             // But ToggleMod renames file, so Path changes.
-        }
-    }
-
-    private async Task LoadModsAsync()
-    {
-        var modsTab = this.FindControl<TabItem>("ModsTab");
-        var modsList = this.FindControl<ListBox>("ModsListBox");
-        
-        if (modsTab == null || modsList == null) return;
-
-        var loaderType = GetSelectedLoaderType();
-        modsTab.IsEnabled = loaderType != ModLoaderType.Vanilla;
-
-        if (modsTab.IsEnabled)
-        {
-            var dirBox = this.FindControl<TextBox>("GameDirectoryTextBox");
-            string gameDir = dirBox?.Text ?? PlatformManager.GetMinecraftDirectory();
-            if (_existingInstallation != null && !string.IsNullOrEmpty(_existingInstallation.GameDirectory))
-            {
-                gameDir = _existingInstallation.GameDirectory;
-            }
-
-            if (Directory.Exists(gameDir))
-            {
-                var mods = await _modManager.GetModsAsync(gameDir);
-                modsList.ItemsSource = mods;
-            }
-            else
-            {
-                modsList.ItemsSource = new List<ModInfo>();
-            }
-        }
-    }
-    
-    private void OpenModsFolderButton_Click(object? sender, RoutedEventArgs e)
-    {
-        var dirBox = this.FindControl<TextBox>("GameDirectoryTextBox");
-        string gameDir = dirBox?.Text ?? PlatformManager.GetMinecraftDirectory();
-        string modsDir = Path.Combine(gameDir, "mods");
-        
-        if (!Directory.Exists(modsDir)) Directory.CreateDirectory(modsDir);
-        
-        if (PlatformManager.IsWindows()) Process.Start("explorer", modsDir);
-        else if (PlatformManager.IsLinux()) Process.Start("xdg-open", modsDir);
-        else if (PlatformManager.IsMac()) Process.Start("open", modsDir);
-    }
 
     private async Task LoadJavaVersionsAsync()
     {
@@ -334,7 +274,7 @@ public partial class InstallationDialog : UserControl
         OverlayService.Close(this);
     }
 
-    private void CreateButton_Click(object? sender, RoutedEventArgs e)
+    private async void CreateButton_Click(object? sender, RoutedEventArgs e)
     {
         var nameBox = this.FindControl<TextBox>("NameTextBox");
         var versionCombo = this.FindControl<ComboBox>("VersionComboBox");
@@ -355,6 +295,29 @@ public partial class InstallationDialog : UserControl
             LoaderType = GetSelectedLoaderType(),
             ModLoaderVersion = GetSelectedLoaderVersion()
         };
+        
+        if (Result.LoaderType == ModLoaderType.Forge && !string.IsNullOrEmpty(Result.ModLoaderVersion))
+        {
+             var btn = this.FindControl<Button>("CreateButton");
+             if (btn != null)
+             {
+                 btn.IsEnabled = false;
+                 btn.Content = "Installing Forge...";
+             }
+             
+             if (!Directory.Exists(Result.GameDirectory)) Directory.CreateDirectory(Result.GameDirectory);
+             
+             var versionStr = Result.ModLoaderVersion;
+             if (versionStr.Contains("(") && versionStr.Contains(")"))
+             {
+                 var start = versionStr.IndexOf('(') + 1;
+                 var end = versionStr.IndexOf(')');
+                 Result.ModLoaderVersion = versionStr.Substring(start, end - start);
+             }
+             
+             await _forgeService.InstallForgeAsync(Result.Version, Result.ModLoaderVersion, Result.GameDirectory);
+        }
+
         OverlayService.Close(this);
     }
     
@@ -424,7 +387,7 @@ public partial class InstallationDialog : UserControl
                 {
                     var existing = items.FirstOrDefault(v => v == _existingInstallation.ModLoaderVersion);
                     if (existing != null) loaderVersionCombo.SelectedItem = existing;
-                    else loaderVersionCombo.SelectedIndex = 0;
+                    else if (items.Any()) loaderVersionCombo.SelectedIndex = 0;
                 }
                 else if (items.Any())
                 {
@@ -436,12 +399,56 @@ public partial class InstallationDialog : UserControl
                 loaderVersionCombo.ItemsSource = new[] { "Error loading versions" };
             }
         }
+        else if (type == ModLoaderType.Forge)
+        {
+            var gameVersion = versionCombo.SelectedItem?.ToString();
+            if (string.IsNullOrEmpty(gameVersion)) return;
+
+            loaderVersionCombo.ItemsSource = new[] { "Loading..." };
+            loaderVersionCombo.SelectedIndex = 0;
+            loaderVersionCombo.IsEnabled = false;
+
+            try
+            {
+                var versions = await _forgeService.GetForgeVersionsAsync(gameVersion);
+                loaderVersionCombo.ItemsSource = versions;
+                loaderVersionCombo.IsEnabled = true;
+
+                if (_existingInstallation != null && _existingInstallation.LoaderType == ModLoaderType.Forge && !string.IsNullOrEmpty(_existingInstallation.ModLoaderVersion))
+                {
+                    var existing = versions.FirstOrDefault(v => v.ForgeVersionStr == _existingInstallation.ModLoaderVersion);
+                    if (existing != null) loaderVersionCombo.SelectedItem = existing;
+                    else if (versions.Any()) loaderVersionCombo.SelectedIndex = 0;
+                }
+                else if (versions.Any())
+                {
+                     loaderVersionCombo.SelectedIndex = 0;
+                }
+            }
+            catch
+            {
+                loaderVersionCombo.ItemsSource = new[] { "Error loading versions" };
+            }
+        }
         
-        // Also update Mods tab enable state
         var modsTab = this.FindControl<TabItem>("ModsTab");
         if (modsTab != null)
         {
-            modsTab.IsEnabled = type != ModLoaderType.Vanilla;
+             modsTab.IsEnabled = type != ModLoaderType.Vanilla;
+             if (modsTab.IsEnabled)
+             {
+                 var modsControl = this.FindControl<Controls.ModsControl>("ModsControl");
+                 if (modsControl != null)
+                 {
+                      var dirBox = this.FindControl<TextBox>("GameDirectoryTextBox");
+                      string gameDir = dirBox?.Text ?? PlatformManager.GetMinecraftDirectory();
+                      if (_existingInstallation != null && !string.IsNullOrEmpty(_existingInstallation.GameDirectory))
+                      {
+                          gameDir = _existingInstallation.GameDirectory;
+                      }
+                      modsControl.Initialize(gameDir);
+                 }
+             }
         }
     }
 }

@@ -291,7 +291,6 @@ public partial class SettingsPage : UserControl
         }
         catch (Exception ex)
         {
-             // Log error but don't crash
              Console.WriteLine($"[SettingsPage] Error loading Java versions: {ex}");
         }
     }

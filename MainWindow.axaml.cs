@@ -13,6 +13,7 @@ namespace JustLauncher;
 public partial class MainWindow : Window
 {
     public static MainWindow? Instance { get; private set; }
+    private string? _currentModGameDir;
 
     public MainWindow()
     {
@@ -66,6 +67,16 @@ public partial class MainWindow : Window
         }
     }
 
+    public void SetModdedState(bool isModded, string? gameDir)
+    {
+        var modsBtn = this.FindControl<Button>("ModsButton");
+        if (modsBtn != null)
+        {
+             modsBtn.IsVisible = isModded;
+             _currentModGameDir = gameDir;
+        }
+    }
+
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);
@@ -81,6 +92,9 @@ public partial class MainWindow : Window
 
         var setBtn = this.FindControl<Button>("SettingsButton");
         if (setBtn != null) setBtn.Click += SettingsButton_Click;
+
+        var modsBtn = this.FindControl<Button>("ModsButton");
+        if (modsBtn != null) modsBtn.Click += ModsButton_Click;
 
         var infoBtn = this.FindControl<Button>("InfoButton");
         if (infoBtn != null)
@@ -132,6 +146,12 @@ public partial class MainWindow : Window
     {
         var content = this.FindControl<ContentControl>("MainContent");
         if (content != null) content.Content = new SettingsPage();
+    }
+
+    private void ModsButton_Click(object? sender, RoutedEventArgs e)
+    {
+        var content = this.FindControl<ContentControl>("MainContent");
+        if (content != null) content.Content = new ModsPage(_currentModGameDir);
     }
 
     private void TitleBar_PointerPressed(object? sender, PointerPressedEventArgs e)

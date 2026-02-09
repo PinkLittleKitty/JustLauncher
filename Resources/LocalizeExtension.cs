@@ -15,7 +15,6 @@ public class LocalizeExtension : MarkupExtension
 
     public override object ProvideValue(IServiceProvider serviceProvider)
     {
-        // Create a binding to LocalizationService.Instance[Key]
         var binding = new Avalonia.Data.Binding($"[{Key}]")
         {
             Source = LocalizationService.Instance,

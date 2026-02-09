@@ -1,0 +1,31 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="JustLauncher.Controls.ModsControl">
+    <Grid RowDefinitions="Auto,*">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,20,0,10">
+            <Button x:Name="AddModButton" Classes="Primary" Content="Add Mod..."/>
+            <Button x:Name="OpenModsFolderButton" Classes="Secondary" Content="Open Folder"/>
+            <Button x:Name="RefreshModsButton" Classes="Secondary" Content="Refresh"/>
+        </StackPanel>
+        <ListBox Grid.Row="1" x:Name="ModsListBox" Background="Transparent" BorderThickness="0">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border Background="{DynamicResource WindowBackground}" CornerRadius="8" Padding="10" Margin="0,0,0,5">
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+                            <CheckBox IsChecked="{Binding IsEnabled}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                <TextBlock Text="{Binding Description}" FontSize="11" Foreground="{DynamicResource SecondaryText}" TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                            <TextBlock Grid.Column="2" Text="{Binding Version}" VerticalAlignment="Center" Foreground="{DynamicResource SecondaryText}" FontSize="12" Margin="10,0,0,0"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>

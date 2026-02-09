@@ -149,6 +149,19 @@ public static class ConfigManager
             return new LauncherSettings();
         }
     }
+
+    public static void SaveSettings(LauncherSettings settings)
+    {
+        try
+        {
+            string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(SettingsPath, json);
+        }
+        catch (Exception ex)
+        {
+            ConsoleService.Instance.Log($"[Config] Error saving settings: {ex.Message}");
+        }
+    }
 }
 
 public class LauncherSettings

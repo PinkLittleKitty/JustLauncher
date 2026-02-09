@@ -91,6 +91,24 @@ public class LocalizationService : INotifyPropertyChanged
     {
         return AvailableLanguages.FirstOrDefault(l => l.Code == cultureName)?.DisplayName ?? cultureName;
     }
+
+    /// <summary>
+    /// Gets the best matching supported language based on the system's current culture.
+    /// </summary>
+    /// <returns>ISO language code (e.g., "en", "es")</returns>
+    public string GetBestMatchLanguage()
+    {
+        var systemLanguage = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+        
+        // Check if we support the system language
+        if (AvailableLanguages.Any(l => l.Code == systemLanguage))
+        {
+            return systemLanguage;
+        }
+
+        // Fallback to English
+        return "en";
+    }
 }
 
 /// <summary>

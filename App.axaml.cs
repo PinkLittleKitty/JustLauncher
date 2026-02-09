@@ -40,6 +40,13 @@ public partial class App : Application
                 var settings = ConfigManager.LoadSettings();
                 Console.WriteLine($"[APP] Settings loaded: {settings.Language}, {settings.Theme}");
                 
+                if (settings.IsFirstRun)
+                {
+                    settings.Language = Services.LocalizationService.Instance.GetBestMatchLanguage();
+                    ConfigManager.SaveSettings(settings);
+                    Console.WriteLine($"[APP] First run detected. Auto-selected language: {settings.Language}");
+                }
+                
                 Services.LocalizationService.Instance.ChangeLanguage(settings.Language);
                 Console.WriteLine("[APP] Language changed");
                 

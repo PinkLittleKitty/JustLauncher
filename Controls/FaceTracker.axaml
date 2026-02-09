@@ -3,21 +3,53 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:JustLauncher.Controls"
              x:Class="JustLauncher.Controls.FaceTracker">
-    <Panel x:Name="HeadCutter" Width="64" Height="64">
-        <Border x:Name="HeadContainer" Width="64" Height="64" 
-                BorderBrush="#1E1E1E" BorderThickness="4" 
-                Background="#2C2F33" 
-                RenderTransformOrigin="50%,50%">
-            <Border.RenderTransform>
-                <TransformGroup>
-                    <SkewTransform />
-                    <TranslateTransform />
-                </TransformGroup>
-            </Border.RenderTransform>
-            <Panel>
+    <Viewbox Width="80" Height="80">
+        <Canvas Width="100" Height="100" x:Name="CubeCanvas" Background="Transparent">
+            <!-- Back face -->
+            <Border x:Name="BackFace" Width="64" Height="64" Canvas.Left="18" Canvas.Top="18"
+                    BorderBrush="#1A1A1A" BorderThickness="2" Background="#2C2F33">
+                <controls:AsyncImage x:Name="BackImage" Stretch="UniformToFill" 
+                                    RenderOptions.BitmapInterpolationMode="None"/>
+            </Border>
+            
+            <!-- Left face -->
+            <Border x:Name="LeftFace" Width="16" Height="64" Canvas.Left="2" Canvas.Top="18"
+                    BorderBrush="#1A1A1A" BorderThickness="2" Background="#252525">
+                <controls:AsyncImage x:Name="LeftImage" Stretch="UniformToFill" 
+                                    RenderOptions.BitmapInterpolationMode="None"/>
+            </Border>
+            
+            <!-- Right face -->
+            <Border x:Name="RightFace" Width="16" Height="64" Canvas.Left="82" Canvas.Top="18"
+                    BorderBrush="#1A1A1A" BorderThickness="2" Background="#252525">
+                <controls:AsyncImage x:Name="RightImage" Stretch="UniformToFill" 
+                                    RenderOptions.BitmapInterpolationMode="None"/>
+            </Border>
+            
+            <!-- Top face -->
+            <Border x:Name="TopFace" Width="64" Height="16" Canvas.Left="18" Canvas.Top="2"
+                    BorderBrush="#1A1A1A" BorderThickness="2" Background="#303030">
+                <controls:AsyncImage x:Name="TopImage" Stretch="UniformToFill" 
+                                    RenderOptions.BitmapInterpolationMode="None"/>
+            </Border>
+            
+            <!-- Bottom face -->
+            <Border x:Name="BottomFace" Width="64" Height="16" Canvas.Left="18" Canvas.Top="82"
+                    BorderBrush="#1A1A1A" BorderThickness="2" Background="#202020">
+                <controls:AsyncImage x:Name="BottomImage" Stretch="UniformToFill" 
+                                    RenderOptions.BitmapInterpolationMode="None"/>
+            </Border>
+            
+            <!-- Front face (main) -->
+            <Border x:Name="FrontFace" Width="64" Height="64" Canvas.Left="18" Canvas.Top="18"
+                    BorderBrush="#2A2A2A" BorderThickness="3" Background="#2C2F33"
+                    RenderTransformOrigin="0.5,0.5">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="8" OffsetX="0" OffsetY="2" Opacity="0.5"/>
+                </Border.Effect>
                 <controls:AsyncImage x:Name="FaceImage" Stretch="UniformToFill" 
-                                    RenderOptions.BitmapInterpolationMode="None" />
-            </Panel>
-        </Border>
-    </Panel>
+                                    RenderOptions.BitmapInterpolationMode="None"/>
+            </Border>
+        </Canvas>
+    </Viewbox>
 </UserControl>

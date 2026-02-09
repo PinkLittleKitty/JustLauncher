@@ -106,7 +106,7 @@ public class MinecraftService
             {
                 foreach (var classifier in lib.Downloads.Classifiers)
                 {
-                    if (classifier.Key.Contains($"natives-{currentOs}"))
+                    if (classifier.Key.Contains($"natives-{currentOs}") && PlatformManager.IsArchitectureMatch(classifier.Key, currentOs))
                     {
                         string path = Path.Combine(_baseDir, "libraries", classifier.Value.Path);
                         if (!File.Exists(path))
@@ -166,7 +166,7 @@ public class MinecraftService
             {
                 foreach (var entry in lib.Downloads.Classifiers)
                 {
-                    if (entry.Key.Contains($"natives-{currentOs}"))
+                    if (entry.Key.Contains($"natives-{currentOs}") && PlatformManager.IsArchitectureMatch(entry.Key, currentOs))
                     {
                         candidates.Add(entry.Value);
                         if (isLwjgl) ConsoleService.Instance.Log($"  Added classifier candidate: {entry.Key}");
@@ -175,7 +175,7 @@ public class MinecraftService
             }
 
             // 3. Modern style: the whole library IS the native (e.g., name contains natives-linux)
-            if (lib.Name.Contains($"natives-{currentOs}"))
+            if (lib.Name.Contains($"natives-{currentOs}") && PlatformManager.IsArchitectureMatch(lib.Name, currentOs))
             {
                 if (lib.Downloads.Artifact != null)
                 {
@@ -268,9 +268,6 @@ public class MinecraftService
 
     private string GetCurrentOsName()
     {
-        if (OperatingSystem.IsWindows()) return "windows";
-        if (OperatingSystem.IsLinux()) return "linux";
-        if (OperatingSystem.IsMacOS()) return "osx";
-        return "windows";
+        return PlatformManager.GetCurrentOsName();
     }
 }

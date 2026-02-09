@@ -7,6 +7,43 @@ namespace JustLauncher;
 
 public static class PlatformManager
 {
+    public static string GetCurrentOsName()
+    {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return "windows";
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) return "osx";
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return "linux";
+        return "windows";
+    }
+
+    public static bool IsArchitectureMatch(string classifier, string currentOs)
+    {
+        var arch = RuntimeInformation.OSArchitecture;
+        bool is64 = arch == Architecture.X64;
+        bool isX86 = arch == Architecture.X86;
+        bool isArm64 = arch == Architecture.Arm64;
+
+        // If classifier doesn't contain a specific arch suffix, assume x64 for Windows/Linux
+        // Modern MC uses natives-windows (x64), natives-windows-x86, natives-windows-arm64
+        
+        string baseNatives = $"natives-{currentOs}";
+        if (classifier == baseNatives) 
+        {
+            // Special case: for macOS, the generic one is often universal
+            if (currentOs == "osx") return true;
+            return is64;
+        }
+
+        // Exact matches/suffixes for various architectures
+        if (classifier.EndsWith("-x86") || classifier.EndsWith("-i386")) return isX86;
+        if (classifier.EndsWith("-x64") || classifier.EndsWith("-x86_64") || classifier.EndsWith("-amd64")) return is64;
+        if (classifier.EndsWith("-arm64") || classifier.EndsWith("-aarch64")) return isArm64;
+
+        // Contains check for some edge cases
+        if (currentOs == "osx" && (classifier.Contains("arm64") || classifier.Contains("aarch64"))) return isArm64;
+
+        return true; // Fallback for unknown patterns (e.g. jtracy-natives-linux)
+    }
+
     public static string GetMinecraftDirectory()
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

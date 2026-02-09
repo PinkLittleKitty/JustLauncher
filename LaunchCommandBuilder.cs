@@ -21,13 +21,16 @@ public static class LaunchCommandBuilder
         args.Add("-Djava.library.path=" + EscapePath(nativesDir));
         
         args.Add("-Dminecraft.launcher.brand=JustLauncher");
-        args.Add("-Dminecraft.launcher.version=1.0");
+        args.Add("-Dminecraft.launcher.version=0.0.2");
+        
+        // Modern Java flags (suppress native access warnings)
+        args.Add("--enable-native-access=ALL-UNNAMED");
+        args.Add("-Dsun.stdout.encoding=UTF-8");
+        args.Add("-Dsun.stderr.encoding=UTF-8");
 
         // Classpath
         var classpath = new List<string>();
-        string currentOs = "linux";
-        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)) currentOs = "windows";
-        else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX)) currentOs = "osx";
+        string currentOs = PlatformManager.GetCurrentOsName();
 
         foreach (var lib in versionInfo.Libraries)
         {
@@ -53,7 +56,7 @@ public static class LaunchCommandBuilder
             {
                 foreach (var entry in lib.Downloads.Classifiers)
                 {
-                    if (entry.Key.Contains($"natives-{currentOs}"))
+                    if (entry.Key.Contains($"natives-{currentOs}") && PlatformManager.IsArchitectureMatch(entry.Key, currentOs))
                     {
                         classpath.Add(Path.Combine(mcDir, "libraries", entry.Value.Path));
                     }

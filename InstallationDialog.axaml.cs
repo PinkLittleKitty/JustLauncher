@@ -3,15 +3,14 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using Avalonia;
+using JustLauncher.Services;
 
 namespace JustLauncher;
 
-public partial class InstallationDialog : Window
+public partial class InstallationDialog : UserControl
 {
     public Installation? Result { get; private set; }
     public bool DeleteRequested { get; private set; }
@@ -51,6 +50,25 @@ public partial class InstallationDialog : Window
             };
         }
 
+        var memorySlider = this.FindControl<Slider>("MemorySlider");
+        if (memorySlider != null)
+        {
+            memorySlider.PropertyChanged += (s, e) => {
+                if (e.Property == Avalonia.Controls.Primitives.RangeBase.ValueProperty)
+                {
+                    var memoryLabel = this.FindControl<TextBlock>("MemoryLabel");
+                    if (memoryLabel != null) memoryLabel.Text = $"{(int)memorySlider.Value} GB";
+                    
+                    var argsBox = this.FindControl<TextBox>("JavaArgsTextBox");
+                    if (argsBox != null)
+                    {
+                        int memoryGb = (int)memorySlider.Value;
+                        argsBox.Text = $"-Xmx{memoryGb}G -Xms{memoryGb}G";
+                    }
+                }
+            };
+        }
+
         _ = LoadVersionsAsync();
     }
 
@@ -59,41 +77,16 @@ public partial class InstallationDialog : Window
         AvaloniaXamlLoader.Load(this);
 
         var closeBtn = this.FindControl<Button>("CloseButton");
-        if (closeBtn != null) closeBtn.Click += CloseButton_Click;
-
-        var browseBtn = this.FindControl<Button>("BrowseGameDirectoryButton");
-        if (browseBtn != null) browseBtn.Click += BrowseGameDirectory_Click;
+        if (closeBtn != null) closeBtn.Click += (s, e) => OverlayService.Close(null);
 
         var cancelBtn = this.FindControl<Button>("CancelButton");
-        if (cancelBtn != null) cancelBtn.Click += CancelButton_Click;
+        if (cancelBtn != null) cancelBtn.Click += (s, e) => OverlayService.Close(null);
 
         var createBtn = this.FindControl<Button>("CreateButton");
         if (createBtn != null) createBtn.Click += CreateButton_Click;
 
         var removeBtn = this.FindControl<Button>("RemoveButton");
         if (removeBtn != null) removeBtn.Click += RemoveButton_Click;
-
-        var header = this.FindControl<Control>("DialogHeader");
-        if (header != null) header.PointerPressed += (s, e) => BeginMoveDrag(e);
-    }
-
-    private void MemorySlider_PropertyChanged(object? sender, Avalonia.AvaloniaPropertyChangedEventArgs e)
-    {
-        if (e.Property == Avalonia.Controls.Primitives.RangeBase.ValueProperty && sender is Slider slider)
-        {
-            var memoryLabel = this.FindControl<TextBlock>("MemoryLabel");
-            if (memoryLabel != null)
-            {
-                memoryLabel.Text = $"{(int)slider.Value} GB";
-            }
-            
-            var argsBox = this.FindControl<TextBox>("JavaArgsTextBox");
-            if (argsBox != null)
-            {
-                int memoryGb = (int)slider.Value;
-                argsBox.Text = $"-Xmx{memoryGb}G -Xms{memoryGb}G";
-            }
-        }
     }
 
     private async Task LoadVersionsAsync()
@@ -138,21 +131,10 @@ public partial class InstallationDialog : Window
         if (dirBox != null) dirBox.Text = existing.GameDirectory;
         if (argsBox != null) argsBox.Text = existing.JavaArgs;
         if (title != null) title.Text = "Edit Installation";
-        if (button != null) button.Content = "Save Changes";
+        if (button != null) button.Content = "SAVE CHANGES";
         
-        Dispatcher.UIThread.Post(() =>
-        {
-            var memorySlider = this.FindControl<Slider>("MemorySlider");
-            var memoryLabel = this.FindControl<TextBlock>("MemoryLabel");
-            if (memorySlider != null)
-            {
-                memorySlider.Value = existing.MemoryAllocationGb;
-                if (memoryLabel != null)
-                {
-                    memoryLabel.Text = $"{(int)existing.MemoryAllocationGb} GB";
-                }
-            }
-        });
+        var memorySlider = this.FindControl<Slider>("MemorySlider");
+        if (memorySlider != null) memorySlider.Value = existing.MemoryAllocationGb;
         
         var removeBtn = this.FindControl<Button>("RemoveButton");
         if (removeBtn != null) removeBtn.IsVisible = true;
@@ -161,7 +143,7 @@ public partial class InstallationDialog : Window
     private void RemoveButton_Click(object? sender, RoutedEventArgs e)
     {
         DeleteRequested = true;
-        Close(true);
+        OverlayService.Close(this);
     }
 
     private void CreateButton_Click(object? sender, RoutedEventArgs e)
@@ -172,66 +154,16 @@ public partial class InstallationDialog : Window
         var argsBox = this.FindControl<TextBox>("JavaArgsTextBox");
         var memorySlider = this.FindControl<Slider>("MemorySlider");
 
-        var gameDir = dirBox?.Text;
-        if (string.IsNullOrWhiteSpace(gameDir))
-        {
-             var settings = ConfigManager.LoadSettings();
-             var name = nameBox?.Text ?? "New Installation";
-             if (settings.UseSeparateGameDir)
-             {
-                 var safeName = string.Join("_", name.Split(System.IO.Path.GetInvalidFileNameChars()));
-                 gameDir = System.IO.Path.Combine(PlatformManager.GetMinecraftDirectory(), "instances", safeName);
-             }
-             else
-             {
-                 gameDir = PlatformManager.GetMinecraftDirectory();
-             }
-        }
-
         Result = new Installation
         {
             Id = _existingInstallation?.Id ?? Guid.NewGuid().ToString(),
             Name = string.IsNullOrWhiteSpace(nameBox?.Text) ? "New Installation" : nameBox.Text,
             Version = versionCombo?.SelectedItem?.ToString() ?? "1.21.1",
-            GameDirectory = gameDir,
+            GameDirectory = dirBox?.Text ?? PlatformManager.GetMinecraftDirectory(),
             JavaArgs = argsBox?.Text ?? "-Xmx2G",
             MemoryAllocationGb = memorySlider?.Value ?? 4.0,
             Icon = "grass_block"
         };
-        Close(true);
+        OverlayService.Close(this);
     }
-
-    private async void BrowseGameDirectory_Click(object? sender, RoutedEventArgs e)
-    {
-        var dirBox = this.FindControl<TextBox>("GameDirectoryTextBox");
-        var startPath = dirBox?.Text ?? PlatformManager.GetMinecraftDirectory();
-        
-        Uri folderUri;
-        try 
-        { 
-            if (Path.IsPathRooted(startPath))
-            {
-                folderUri = new Uri("file://" + startPath.Replace("\\", "/"));
-            }
-            else
-            {
-                folderUri = new Uri(startPath, UriKind.RelativeOrAbsolute);
-            }
-        } 
-        catch { folderUri = new Uri("file:///"); }
-
-        var result = await this.StorageProvider.OpenFolderPickerAsync(new Avalonia.Platform.Storage.FolderPickerOpenOptions
-        {
-            Title = "Select Game Directory",
-            SuggestedStartLocation = await this.StorageProvider.TryGetFolderFromPathAsync(folderUri)
-        });
-
-        if (result != null && result.Count > 0)
-        {
-            if (dirBox != null) dirBox.Text = result[0].Path.LocalPath;
-        }
-    }
-
-    private void CancelButton_Click(object? sender, RoutedEventArgs e) => Close(false);
-    private void CloseButton_Click(object? sender, RoutedEventArgs e) => Close(false);
 }

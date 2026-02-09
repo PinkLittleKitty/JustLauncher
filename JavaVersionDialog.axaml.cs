@@ -1,60 +1,39 @@
 using Avalonia.Controls;
-using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using JustLauncher.Services;
 
 namespace JustLauncher;
 
-public partial class JavaVersionDialog : Window
+public partial class JavaVersionDialog : UserControl
 {
-    public bool ShouldLaunch { get; private set; } = false;
-
     public JavaVersionDialog()
     {
         InitializeComponent();
     }
 
-    public JavaVersionDialog(string requiredVersion, string detectedVersion) : this()
+    public JavaVersionDialog(string required, string detected) : this()
     {
-        var messageText = this.FindControl<TextBlock>("MessageText");
-        var requiredText = this.FindControl<TextBlock>("RequiredVersionText");
-        var detectedText = this.FindControl<TextBlock>("DetectedVersionText");
+        var reqText = this.FindControl<TextBlock>("RequiredVersionText");
+        var detText = this.FindControl<TextBlock>("DetectedVersionText");
+        var msgText = this.FindControl<TextBlock>("MessageText");
 
-        if (messageText != null)
-        {
-            messageText.Text = $"The selected Minecraft version requires Java {requiredVersion}, but your system has Java {detectedVersion} installed.";
-        }
-
-        if (requiredText != null)
-        {
-            requiredText.Text = $"Java {requiredVersion}";
-        }
-
-        if (detectedText != null)
-        {
-            detectedText.Text = $"Java {detectedVersion}";
-        }
+        if (reqText != null) reqText.Text = required;
+        if (detText != null) detText.Text = detected;
+        if (msgText != null) msgText.Text = $"The current Minecraft profile requires Java {required}, but we detected {detected} on your system.";
     }
 
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);
 
-        var downloadBtn = this.FindControl<Button>("DownloadButton");
-        if (downloadBtn != null) downloadBtn.Click += DownloadButton_Click;
+        var dlBtn = this.FindControl<Button>("DownloadButton");
+        var goBtn = this.FindControl<Button>("LaunchAnywayButton");
 
-        var launchBtn = this.FindControl<Button>("LaunchAnywayButton");
-        if (launchBtn != null) launchBtn.Click += LaunchAnywayButton_Click;
-    }
+        if (dlBtn != null) dlBtn.Click += (s, e) => {
+            PlatformManager.OpenBrowser("https://www.oracle.com/java/technologies/downloads/");
+            OverlayService.Close(false);
+        };
 
-    private void DownloadButton_Click(object? sender, RoutedEventArgs e)
-    {
-        PlatformManager.OpenBrowser("https://adoptium.net/temurin/releases/");
-        Close();
-    }
-
-    private void LaunchAnywayButton_Click(object? sender, RoutedEventArgs e)
-    {
-        ShouldLaunch = true;
-        Close();
+        if (goBtn != null) goBtn.Click += (s, e) => OverlayService.Close(true);
     }
 }

@@ -31,13 +31,13 @@
     </UserControl.Styles>
 
     <ScrollViewer VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-        <StackPanel Spacing="20" MaxWidth="800" HorizontalAlignment="Left" Margin="30,30,30,80">
-            <TextBlock Text="Settings" FontSize="28" Foreground="{DynamicResource PrimaryText}" FontWeight="Bold" Margin="0,0,0,10"/>
+        <StackPanel Spacing="32" MaxWidth="900" HorizontalAlignment="Left" Margin="40,40,40,80">
+            <TextBlock Text="SETTINGS" Classes="PageHeader"/>
 
             <!-- General Settings -->
             <StackPanel>
                 <TextBlock Text="General" Classes="SettingsHeader"/>
-                <Border Classes="SettingsGroup">
+                <Border Classes="Card" Padding="24">
                     <StackPanel Spacing="20">
                         <!-- Theme -->
                         <Grid ColumnDefinitions="*,Auto">
@@ -81,7 +81,7 @@
             <!-- Java Settings -->
             <StackPanel>
                 <TextBlock Text="Java &amp; Memory" Classes="SettingsHeader"/>
-                <Border Classes="SettingsGroup">
+                <Border Classes="Card" Padding="24">
                     <StackPanel Spacing="20">
                         <!-- Java Path -->
                         <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto">
@@ -113,7 +113,7 @@
             <!-- Game Settings -->
             <StackPanel>
                 <TextBlock Text="Game Configuration" Classes="SettingsHeader"/>
-                <Border Classes="SettingsGroup">
+                <Border Classes="Card" Padding="24">
                     <StackPanel Spacing="20">
                         <!-- Separate Directory -->
                         <Grid ColumnDefinitions="*,Auto">
@@ -129,7 +129,7 @@
 
             <!-- Actions -->
             <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" Margin="0,10,0,0">
-                <Button x:Name="SaveButton" Content="Save Changes" Classes="Primary" Padding="20,10"/>
+                <Button x:Name="SaveButton" Content="SAVE CHANGES" Classes="Primary" Padding="32,12"/>
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

@@ -2,31 +2,59 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="JustLauncher.ConsolePage">
-    <Grid RowDefinitions="Auto,*,Auto" Margin="20">
+    <Grid RowDefinitions="Auto,*,Auto" Margin="32">
         <!-- Header -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
-            <TextBlock Text="🖥️" FontSize="24" Margin="0,0,10,0"/>
-            <TextBlock Text="System Console" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource PrimaryText}" VerticalAlignment="Center"/>
-        </StackPanel>
+        <Grid Grid.Row="0" Margin="0,0,0,32" ColumnDefinitions="Auto,*,Auto">
+            <StackPanel Orientation="Horizontal" Spacing="16">
+                <Border Background="{DynamicResource SuccessBrush}" CornerRadius="12" Width="48" Height="48">
+                    <i:Icon Value="fa-solid fa-terminal" Foreground="White" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="SYSTEM CONSOLE" Classes="PageHeader" FontSize="24"/>
+                    <TextBlock Text="View live logs and game output" Classes="PageDescription" FontSize="13"/>
+                </StackPanel>
+            </StackPanel>
+            
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="12">
+                <Button x:Name="CopyConsoleButton" Classes="Secondary" ToolTip.Tip="Copy to Clipboard">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <i:Icon Value="fa-solid fa-copy"/>
+                        <TextBlock Text="COPY LOG"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="ClearConsoleButton" Classes="Danger" ToolTip.Tip="Clear Console">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <i:Icon Value="fa-solid fa-trash-alt"/>
+                        <TextBlock Text="CLEAR"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
 
-        <!-- Log Output -->
-        <Border Grid.Row="1" Background="{DynamicResource ContentBackground}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="5">
-            <ScrollViewer x:Name="ConsoleScrollViewer">
+        <!-- Log Output Container -->
+        <Border Grid.Row="1" 
+                Background="{DynamicResource InputBackground}" 
+                BorderBrush="{DynamicResource BorderBrush}" 
+                BorderThickness="1" 
+                CornerRadius="16"
+                ClipToBounds="True"
+                BoxShadow="inset 0 2 10 0 #20000000">
+            <ScrollViewer x:Name="ConsoleScrollViewer" Padding="16">
                 <SelectableTextBlock x:Name="ConsoleOutput" 
-                                   Margin="10" 
-                                   FontFamily="Consolas,Monospace" 
+                                   FontFamily="Cascadia Code,Consolas,Monospace" 
                                    FontSize="13" 
                                    Foreground="{DynamicResource SecondaryText}" 
-                                   TextWrapping="Wrap"/>
+                                   TextWrapping="Wrap"
+                                   LineHeight="20"/>
             </ScrollViewer>
         </Border>
 
-        <!-- Footer Actions -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
-            <Button x:Name="CopyConsoleButton" Content="Copy Log" Padding="15,8" Margin="0,0,10,0"/>
-            <Button x:Name="ClearConsoleButton" Content="Clear Console" Padding="15,8" Background="#ED4245" Foreground="White"/>
-        </StackPanel>
+        <!-- Status Info -->
+        <Border Grid.Row="2" Margin="0,16,0,0">
+            <TextBlock Text="CONSOLE ACTIVE" Foreground="{DynamicResource SuccessBrush}" FontSize="10" FontWeight="Bold" LetterSpacing="1"/>
+        </Border>
     </Grid>
 </UserControl>

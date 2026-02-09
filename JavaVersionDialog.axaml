@@ -1,64 +1,73 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Class="JustLauncher.JavaVersionDialog"
-        Title="Java Version Mismatch"
-        Width="500"
-        SizeToContent="Height"
-        WindowStartupLocation="CenterOwner"
-        CanResize="False"
-        Background="{DynamicResource WindowBackground}"
-    Margin="0,0,0,20">
-    <Border Padding="30">
-        <StackPanel Spacing="20">
-            <!-- Warning Icon and Title -->
-            <StackPanel Orientation="Horizontal" Spacing="15">
-                <TextBlock Text="⚠️" FontSize="32"/>
-                <TextBlock Text="Java Version Mismatch" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource PrimaryText}" VerticalAlignment="Center"/>
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="400"
+             x:Class="JustLauncher.JavaVersionDialog"
+             Width="500">
+    <Border Background="{DynamicResource ContentBackground}" 
+            CornerRadius="16" 
+            BorderBrush="{DynamicResource BorderBrush}" 
+            BorderThickness="1"
+            BoxShadow="0 8 24 0 #40000000"
+            Margin="20">
+        <StackPanel Spacing="24" Margin="32">
+            <!-- Header -->
+            <StackPanel Orientation="Horizontal" Spacing="16">
+                <i:Icon Value="fa-solid fa-exclamation-triangle" FontSize="32" Foreground="{DynamicResource WarningBrush}"/>
+                <TextBlock Text="Java Version Warning" Classes="PageHeader" FontSize="24" VerticalAlignment="Center"/>
             </StackPanel>
 
             <!-- Message -->
             <TextBlock x:Name="MessageText" 
                        TextWrapping="Wrap" 
                        Foreground="{DynamicResource SecondaryText}" 
-                       FontSize="14"
-                       LineHeight="22"/>
+                       FontSize="13"
+                       LineHeight="20"
+                       Opacity="0.8"/>
 
-            <!-- Version Info -->
-            <Border Background="{DynamicResource ContentBackground}" CornerRadius="8" Padding="15">
-                <StackPanel Spacing="10">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <TextBlock Text="Required:" Foreground="{DynamicResource SecondaryText}" Width="100"/>
-                        <TextBlock x:Name="RequiredVersionText" Foreground="{DynamicResource SuccessBrush}" FontWeight="Bold"/>
+            <!-- Version Info Cards -->
+            <Grid ColumnDefinitions="*,12,*">
+                <Border Grid.Column="0" Background="{DynamicResource WindowBackground}" CornerRadius="12" Padding="16" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="REQUIRED" FontSize="10" FontWeight="Black" Foreground="{DynamicResource SecondaryText}" LetterSpacing="1"/>
+                        <TextBlock x:Name="RequiredVersionText" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource SuccessBrush}"/>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <TextBlock Text="Detected:" Foreground="{DynamicResource SecondaryText}" Width="100"/>
-                        <TextBlock x:Name="DetectedVersionText" Foreground="#FF6B6B" FontWeight="Bold"/>
+                </Border>
+                <Border Grid.Column="2" Background="{DynamicResource WindowBackground}" CornerRadius="12" Padding="16" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="DETECTED" FontSize="10" FontWeight="Black" Foreground="{DynamicResource SecondaryText}" LetterSpacing="1"/>
+                        <TextBlock x:Name="DetectedVersionText" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource DangerBrush}"/>
                     </StackPanel>
-                </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Advice -->
+            <Border Background="{DynamicResource WarningBrush}" Opacity="0.1" CornerRadius="8" Padding="12">
+                <TextBlock Text="The game might not start correctly with the current Java version."
+                           Foreground="{DynamicResource WarningBrush}"
+                           FontSize="12"
+                           FontWeight="Medium"
+                           TextWrapping="Wrap"
+                           HorizontalAlignment="Center"/>
             </Border>
 
-            <!-- Warning -->
-            <TextBlock Text="⚠️ The game will likely fail to start with the current Java version."
-                       Foreground="#FFA500"
-                       FontSize="13"
-                       TextWrapping="Wrap"/>
-
             <!-- Buttons -->
-            <Grid ColumnDefinitions="*,10,*" Margin="0,10,0,0">
+            <Grid ColumnDefinitions="*,12,*" Margin="0,8,0,0">
                 <Button x:Name="DownloadButton" 
                         Grid.Column="0"
-                        Content="Download Java"
-                        Classes="Primary"
-                        Height="40"
-                        FontSize="14"/>
+                        Content="DOWNLOAD JAVA"
+                        Classes="Secondary"
+                        HorizontalAlignment="Stretch"
+                        Height="48"/>
                 <Button x:Name="LaunchAnywayButton" 
                         Grid.Column="2"
-                        Content="Launch Anyway"
-                        Height="40"
-                        FontSize="14"
-                        Background="#5865F2"
-                        Foreground="White"/>
+                        Content="LAUNCH ANYWAY"
+                        Classes="Primary"
+                        HorizontalAlignment="Stretch"
+                        Height="48"/>
             </Grid>
         </StackPanel>
     </Border>
-</Window>
+</UserControl>

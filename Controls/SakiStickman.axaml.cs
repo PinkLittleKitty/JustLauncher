@@ -81,11 +81,10 @@ public partial class SakiStickman : UserControl
                 Canvas.SetLeft(this, newX);
                 Canvas.SetTop(this, newY);
                 
-                // Track velocity while dragging
                 double dt = _dragStopwatch.Elapsed.TotalSeconds;
                 if (dt > 0)
                 {
-                    _vx = (currentPos.X - _lastPos.X) / (dt * 60); // Normalized to tick
+                    _vx = (currentPos.X - _lastPos.X) / (dt * 60);
                     _vy = (currentPos.Y - _lastPos.Y) / (dt * 60);
                 }
                 _lastPos = currentPos;
@@ -111,14 +110,11 @@ public partial class SakiStickman : UserControl
         double x = Canvas.GetLeft(this);
         double y = Canvas.GetTop(this);
 
-        // Apply Gravity
         _vy += _gravity;
 
-        // Apply Friction
         _vx *= _friction;
         _vy *= _friction;
 
-        // AI Wandering (Simple horizontal impulses)
         if (!_isWalking)
         {
             if (_random.NextDouble() < 0.005)
@@ -137,16 +133,13 @@ public partial class SakiStickman : UserControl
             else
             {
                 _vx += (dx > 0 ? 0.3 : -0.3);
-                // Clamp horizontal speed for walking
                 _vx = Math.Clamp(_vx, -_walkSpeed, _walkSpeed);
             }
         }
 
-        // Apply Velocity
         double nextX = x + _vx;
         double nextY = y + _vy;
 
-        // Collision Bounds
         if (nextX < 0) { nextX = 0; _vx *= _bounce; }
         if (nextX > parent.Bounds.Width - Bounds.Width) { nextX = parent.Bounds.Width - Bounds.Width; _vx *= _bounce; }
         
@@ -155,7 +148,6 @@ public partial class SakiStickman : UserControl
         { 
             nextY = parent.Bounds.Height - Bounds.Height; 
             _vy *= _bounce; 
-            // Stick to ground if very slow
             if (Math.Abs(_vy) < 1) _vy = 0;
             if (Math.Abs(_vx) < 0.1) _vx = 0;
         }
@@ -163,7 +155,6 @@ public partial class SakiStickman : UserControl
         Canvas.SetLeft(this, nextX);
         Canvas.SetTop(this, nextY);
 
-        // Flip character based on vx
         if (Math.Abs(_vx) > 0.5)
         {
             if (RenderTransform is ScaleTransform scale)

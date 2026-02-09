@@ -12,72 +12,22 @@
         <converters:SkinToBitmapConverter x:Key="SkinToBitmapConverter"/>
     </UserControl.Resources>
 
-    <UserControl.Styles>
-        <Style Selector="Button.CardAction">
-            <Setter Property="Background" Value="#4A4A4A"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="BorderBrush" Value="#222222"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="Padding" Value="5"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="CornerRadius" Value="0"/>
-        </Style>
-        <Style Selector="Button.CardAction:hover">
-            <Setter Property="Background" Value="#5A5A5A"/>
-            <Setter Property="BorderBrush" Value="#8E9297"/>
-        </Style>
-        
-        <Style Selector="Button.MCPrimary">
-            <Setter Property="Background" Value="#3C8527"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="BorderBrush" Value="#1E4314"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="CornerRadius" Value="0"/>
-        </Style>
-        <Style Selector="Button.MCPrimary:hover">
-            <Setter Property="Background" Value="#47A02E"/>
-            <Setter Property="BorderBrush" Value="#FFFFFF"/>
-        </Style>
-
-        <Style Selector="Border.AccountCard">
-            <Setter Property="Background" Value="#313131"/>
-            <Setter Property="CornerRadius" Value="0"/>
-            <Setter Property="Padding" Value="15"/>
-            <Setter Property="Margin" Value="0,0,20,20"/>
-            <Setter Property="Width" Value="240"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="BorderBrush" Value="#1E1E1E"/>
-            <Setter Property="Transitions">
-                <Transitions>
-                    <BrushTransition Property="BorderBrush" Duration="0:0:0.1"/>
-                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
-                </Transitions>
-            </Setter>
-        </Style>
-        <Style Selector="Border.AccountCard:pointerover">
-            <Setter Property="BorderBrush" Value="#FFFFFF"/>
-            <Setter Property="RenderTransform" Value="translateY(-2px)"/>
-        </Style>
-    </UserControl.Styles>
-
-    <Grid Margin="30" RowDefinitions="Auto,*,Auto">
+    <Grid Margin="40" RowDefinitions="Auto,*,Auto">
         <!-- Header -->
-        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,30">
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,40">
             <StackPanel Grid.Column="0">
-                <TextBlock Text="ACCOUNTS" FontSize="32" Foreground="White" FontWeight="Black" Margin="0,0,0,5"/>
-                <TextBlock Text="Manage your player profiles" FontSize="14" Foreground="#8E9297"/>
+                <TextBlock Text="ACCOUNTS" Classes="PageHeader"/>
+                <TextBlock Text="Manage your player profiles" Classes="PageDescription"/>
             </StackPanel>
             
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <Button x:Name="RefreshButton" ToolTip.Tip="Refresh" Padding="12" Background="#4A4A4A" CornerRadius="0">
-                    <i:Icon Value="fa-solid fa-sync" Foreground="White"/>
+                <Button x:Name="RefreshButton" ToolTip.Tip="Refresh" Padding="12" Classes="Secondary">
+                    <i:Icon Value="fa-solid fa-sync"/>
                 </Button>
-                <Button x:Name="AddAccountButton" Classes="MCPrimary" Padding="15,10">
+                <Button x:Name="AddAccountButton" Classes="Primary" Padding="20,12">
                     <StackPanel Orientation="Horizontal" Spacing="10">
                         <i:Icon Value="fa-solid fa-plus"/>
-                        <TextBlock Text="ADD ACCOUNT" FontWeight="Bold"/>
+                        <TextBlock Text="ADD ACCOUNT"/>
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -93,56 +43,55 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Classes="AccountCard">
-                            <StackPanel Spacing="15">
+                        <Border Classes="Card" Margin="0,0,24,24" Padding="20" Width="260">
+                            <StackPanel Spacing="20">
                                 <!-- Avatar & Status -->
                                 <Grid HorizontalAlignment="Center">
-                                    <Border Width="96" Height="96" BorderBrush="#1E1E1E" BorderThickness="4">
+                                    <Border Width="96" Height="96" CornerRadius="0" ClipToBounds="True" 
+                                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="3">
                                         <Panel>
                                             <controls:AsyncImage SourceUrl="{Binding Username, StringFormat='https://minotar.net/avatar/{0}/64'}"
                                                    Stretch="UniformToFill"
                                                    RenderOptions.BitmapInterpolationMode="None"/>
                                             <!-- Overlay for active status -->
                                             <Border IsVisible="{Binding IsActive}" 
-                                                    BorderBrush="#3C8527" BorderThickness="4" 
-                                                    Margin="-4"/>
+                                                    Background="{DynamicResource SuccessBrush}" Opacity="0.1"/>
                                         </Panel>
                                     </Border>
                                     
                                     <Border IsVisible="{Binding IsActive}"
-                                            Background="#3C8527" Padding="8,4"
+                                            Background="{DynamicResource SuccessBrush}" CornerRadius="10" Padding="8,4"
                                             VerticalAlignment="Top" HorizontalAlignment="Right"
-                                            Margin="0,-10,-10,0">
+                                            Margin="0,-5,-5,0" Effect="drop-shadow(0 2 4 #40000000)">
                                         <TextBlock Text="ACTIVE" FontSize="10" FontWeight="Black" Foreground="White"/>
                                     </Border>
                                 </Grid>
 
                                 <!-- Info -->
-                                <StackPanel Spacing="2">
-                                    <TextBlock Text="{Binding Username}" FontSize="18" FontWeight="Bold" Foreground="White" 
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="{Binding Username}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource PrimaryText}" 
                                                HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>
-                                    <TextBlock Text="{Binding AccountType}" FontSize="11" Foreground="#8E9297" 
-                                               HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding AccountType}" FontSize="12" Foreground="{DynamicResource SecondaryText}" 
+                                               HorizontalAlignment="Center" FontWeight="SemiBold" Opacity="0.8"/>
                                 </StackPanel>
 
-                                <!-- Divider -->
-                                <Border Height="2" Background="#1E1E1E" Margin="0,5"/>
-
                                 <!-- Actions -->
-                                <StackPanel Spacing="10">
-                                    <Button x:Name="UseAccountButton" Tag="{Binding}" Classes="MCPrimary" 
-                                            HorizontalAlignment="Stretch" Padding="0,8">
+                                <StackPanel Spacing="12">
+                                    <Button x:Name="UseAccountButton" Tag="{Binding}" 
+                                            Classes="Primary"
+                                            IsVisible="{Binding !IsActive}"
+                                            HorizontalAlignment="Stretch" Padding="0,10">
                                          <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
-                                            <i:Icon Value="{Binding IsActive, Converter={StaticResource AccountTypeToIconConverter}, ConverterParameter='active_icon'}"/>
-                                            <TextBlock Text="{Binding IsActive, Converter={StaticResource AccountTypeToIconConverter}, ConverterParameter='active_text'}" FontWeight="Bold"/>
+                                            <i:Icon Value="fa-solid fa-check"/>
+                                            <TextBlock Text="USE ACCOUNT"/>
                                         </StackPanel>   
                                     </Button>
                                     
-                                    <Grid ColumnDefinitions="*,10,*">
-                                        <Button Grid.Column="0" x:Name="EditAccountButton" Tag="{Binding}" Classes="CardAction">
+                                    <Grid ColumnDefinitions="*,12,*">
+                                        <Button Grid.Column="0" x:Name="EditAccountButton" Tag="{Binding}" Classes="Secondary" HorizontalAlignment="Stretch">
                                             <i:Icon Value="fa-solid fa-pen"/>
                                         </Button>
-                                        <Button Grid.Column="2" x:Name="DeleteAccountButton" Tag="{Binding}" Classes="CardAction" Foreground="#ED4245">
+                                        <Button Grid.Column="2" x:Name="DeleteAccountButton" Tag="{Binding}" Classes="Danger" HorizontalAlignment="Stretch">
                                             <i:Icon Value="fa-solid fa-trash"/>
                                         </Button>
                                     </Grid>
@@ -154,8 +103,8 @@
             </ItemsControl>
         </ScrollViewer>
 
-        <Border Grid.Row="2" Padding="0,20,0,0" BorderBrush="#2C2F33" BorderThickness="0,1,0,0">
-            <TextBlock x:Name="AccountCountText" Text="0 Accounts Connected" Foreground="#8E9297" FontSize="12"/>
+        <Border Grid.Row="2" Padding="0,20,0,0" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0">
+            <TextBlock x:Name="AccountCountText" Text="0 Accounts Connected" Foreground="{DynamicResource SecondaryText}" FontSize="12"/>
         </Border>
     </Grid>
 </UserControl>

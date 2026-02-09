@@ -1,6 +1,70 @@
 <Application xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="JustLauncher.App">
     <Application.Styles>
         <FluentTheme />
+
+        <!-- Global UI Styles -->
+        <Style Selector="TextBlock.PageHeader">
+            <Setter Property="FontSize" Value="32"/>
+            <Setter Property="FontWeight" Value="Black"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+        </Style>
+        <Style Selector="TextBlock.PageDescription">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryText}"/>
+        </Style>
+
+        <!-- Modern Buttons -->
+        <Style Selector="Button.Primary">
+            <Setter Property="Background" Value="{DynamicResource SuccessBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="15,10"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.Primary:hover">
+            <Setter Property="RenderTransform" Value="scale(1.02)"/>
+        </Style>
+        <Style Selector="Button.Primary:pressed">
+            <Setter Property="RenderTransform" Value="scale(0.98)"/>
+        </Style>
+
+        <Style Selector="Button.Secondary">
+            <Setter Property="Background" Value="{DynamicResource HoverBackground}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
+            <Setter Property="Padding" Value="15,10"/>
+            <Setter Property="CornerRadius" Value="8"/>
+        </Style>
+
+        <Style Selector="Button.Danger">
+            <Setter Property="Background" Value="{DynamicResource DangerBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="15,10"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <!-- Unified Card Style -->
+        <Style Selector="Border.Card">
+            <Setter Property="Background" Value="{DynamicResource ContentBackground}"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Border.Card:pointerover">
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+        </Style>
     </Application.Styles>
     <Application.Resources>
         <ResourceDictionary>
@@ -14,8 +78,8 @@
                     <SolidColorBrush x:Key="TitleBarBackground" Color="#E3E5E8"/>
                     <SolidColorBrush x:Key="HoverBackground" Color="#D8D9DA"/>
                     <SolidColorBrush x:Key="InputBackground" Color="#FFFFFF"/>
-                    <SolidColorBrush x:Key="SuccessBrush" Color="#008035"/>
-                    <SolidColorBrush x:Key="AccentBrush" Color="#0060DF"/>
+                    <SolidColorBrush x:Key="SuccessBrush" Color="#404EED"/>
+                    <SolidColorBrush x:Key="AccentBrush" Color="#4752C4"/>
                     <SolidColorBrush x:Key="DangerBrush" Color="#D32F2F"/>
                     <SolidColorBrush x:Key="WarningBrush" Color="#E65100"/>
                 </ResourceDictionary>
@@ -28,8 +92,8 @@
                     <SolidColorBrush x:Key="TitleBarBackground" Color="#1E2124"/>
                     <SolidColorBrush x:Key="HoverBackground" Color="#40444B"/>
                     <SolidColorBrush x:Key="InputBackground" Color="#1E2124"/>
-                    <SolidColorBrush x:Key="SuccessBrush" Color="#00C851"/>
-                    <SolidColorBrush x:Key="AccentBrush" Color="#58A6FF"/>
+                    <SolidColorBrush x:Key="SuccessBrush" Color="#5865F2"/>
+                    <SolidColorBrush x:Key="AccentBrush" Color="#7289DA"/>
                     <SolidColorBrush x:Key="DangerBrush" Color="#ED4245"/>
                     <SolidColorBrush x:Key="WarningBrush" Color="#FFA500"/>
                 </ResourceDictionary>

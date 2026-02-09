@@ -136,5 +136,29 @@
         <Canvas x:Name="SakiCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsHitTestVisible="True">
             <controls:SakiStickman x:Name="SakiStickman" IsVisible="False" Canvas.Left="600" Canvas.Top="400"/>
         </Canvas>
+
+        <!-- Global Overlay System -->
+        <Grid x:Name="OverlayLayer" IsVisible="False">
+            <!-- Dimmer -->
+            <Border x:Name="OverlayDimmer" Background="Black" Opacity="0">
+                <Border.Transitions>
+                    <Transitions>
+                        <DoubleTransition Property="Opacity" Duration="0:0:0.25"/>
+                    </Transitions>
+                </Border.Transitions>
+            </Border>
+            
+            <!-- Content Host -->
+            <ContentControl x:Name="OverlayContentHost" 
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            RenderTransform="scale(0.9)" Opacity="0">
+                <ContentControl.Transitions>
+                    <Transitions>
+                        <DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="CubicEaseOut"/>
+                        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.3" Easing="BackEaseOut"/>
+                    </Transitions>
+                </ContentControl.Transitions>
+            </ContentControl>
+        </Grid>
     </Panel>
 </Window>

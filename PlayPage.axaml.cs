@@ -83,24 +83,29 @@ namespace JustLauncher
             var selected = combo?.SelectedItem as Installation;
 
             var dialog = selected != null ? new InstallationDialog(selected) : new InstallationDialog();
-            var parent = VisualRoot as Window;
-            var result = await dialog.ShowDialog<bool>(parent!);
+            var result = await Services.OverlayService.ShowDialog<InstallationDialog>(dialog);
             
-            if (result && dialog.Result != null)
+            if (result != null && result.Result != null)
             {
                 if (selected != null)
                 {
                     var index = installationsConfig.Installations.FindIndex(i => i.Id == selected.Id);
                     if (index >= 0)
                     {
-                        installationsConfig.Installations[index] = dialog.Result;
+                        installationsConfig.Installations[index] = result.Result;
                     }
                 }
                 else
                 {
-                    installationsConfig.Installations.Add(dialog.Result);
+                    installationsConfig.Installations.Add(result.Result);
                 }
 
+                ConfigManager.SaveInstallations(installationsConfig);
+                RefreshInstallations();
+            }
+            else if (result != null && result.DeleteRequested && selected != null)
+            {
+                installationsConfig.Installations.RemoveAll(i => i.Id == selected.Id);
                 ConfigManager.SaveInstallations(installationsConfig);
                 RefreshInstallations();
             }
@@ -147,10 +152,7 @@ namespace JustLauncher
                     int foundMajor = PlatformManager.ExtractMajorVersion(foundVersion);
                     if (foundMajor < requiredJava)
                     {
-                        var dialog = new JavaVersionDialog(requiredJava.ToString(), foundMajor.ToString());
-                        var owner = VisualRoot as Window;
-                        if (owner == null) return;
-                        if (!await dialog.ShowDialog<bool>(owner)) return;
+                        if (!await Services.OverlayService.ShowDialog<bool>(new JavaVersionDialog(requiredJava.ToString(), foundMajor.ToString()))) return;
                     }
                     else if (foundPath != PlatformManager.GetJavaExecutableName())
                     {
@@ -161,10 +163,7 @@ namespace JustLauncher
                 }
                 else
                 {
-                    var dialog = new JavaVersionDialog(requiredJava.ToString(), "Not Found");
-                    var owner = VisualRoot as Window;
-                    if (owner == null) return;
-                    if (!await dialog.ShowDialog<bool>(owner)) return;
+                    if (!await Services.OverlayService.ShowDialog<bool>(new JavaVersionDialog(requiredJava.ToString(), "Not Found"))) return;
                 }
 
                 if (statusText != null) statusText.Text = "Downloading libraries...";

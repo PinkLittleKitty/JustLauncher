@@ -1,79 +1,46 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
+using JustLauncher.Services;
+using System;
 
 namespace JustLauncher;
 
-public partial class AccountDialog : Window
+public partial class AccountDialog : UserControl
 {
-    public Account? Result { get; private set; }
-
     public AccountDialog()
     {
         InitializeComponent();
-#if DEBUG
-        this.AttachDevTools();
-#endif
     }
 
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);
         
-        var closeBtn = this.FindControl<Button>("CloseButton");
-        if (closeBtn != null) closeBtn.Click += CloseButton_Click;
-
-        var cancelBtn = this.FindControl<Button>("CancelButton");
-        if (cancelBtn != null) cancelBtn.Click += CancelButton_Click;
-
+        var uTxt = this.FindControl<TextBox>("UsernameTextBox");
+        var tCmb = this.FindControl<ComboBox>("AccountTypeComboBox");
         var saveBtn = this.FindControl<Button>("SaveButton");
-        if (saveBtn != null) saveBtn.Click += SaveButton_Click;
+        var cancelBtn = this.FindControl<Button>("CancelButton");
+        var closeBtn = this.FindControl<Button>("CloseButton");
 
-        var combo = this.FindControl<ComboBox>("AccountTypeComboBox");
-        if (combo != null) combo.SelectionChanged += AccountTypeComboBox_SelectionChanged;
+        if (saveBtn != null) saveBtn.Click += (s, e) => {
+            var username = uTxt?.Text;
+            if (string.IsNullOrWhiteSpace(username)) return;
 
-        var header = this.FindControl<Control>("DialogHeader");
-        if (header != null) header.PointerPressed += (s, e) => BeginMoveDrag(e);
-    }
-
-    private void AccountTypeComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
-    {
-        var combo = this.FindControl<ComboBox>("AccountTypeComboBox");
-        var title = this.FindControl<TextBlock>("InfoTitle");
-        var text = this.FindControl<TextBlock>("InfoText");
-
-        if (combo == null || title == null || text == null) return;
-
-        var selectedItem = combo.SelectedItem as ComboBoxItem;
-        string tag = selectedItem?.Tag?.ToString() ?? "Offline";
-
-        if (tag == "Offline")
-        {
-            title.Text = "Offline Account";
-            title.Foreground = Avalonia.Media.Brushes.Green;
-            text.Text = "Offline accounts allow you to play Minecraft without authentication. You can use any username you want.";
-        }
-    }
-
-    private void SaveButton_Click(object? sender, RoutedEventArgs e)
-    {
-        string username = this.FindControl<TextBox>("UsernameTextBox")?.Text ?? "Player";
-        var selectedItem = this.FindControl<ComboBox>("AccountTypeComboBox")?.SelectedItem as ComboBoxItem;
-        string type = selectedItem?.Tag?.ToString() ?? "Offline";
-
-        Result = new Account
-        {
-            Username = username,
-            AccountType = type,
-            IsActive = true
+            var type = (tCmb?.SelectedItem as ComboBoxItem)?.Tag as string ?? "Offline";
+            
+            var account = new Account 
+            { 
+                Id = Guid.NewGuid().ToString(),
+                Username = username, 
+                AccountType = type,
+                IsActive = false
+            };
+            
+            OverlayService.Close(account);
         };
-        
-        Close(Result);
-    }
 
-    private void CancelButton_Click(object? sender, RoutedEventArgs e) => Close();
-    private void CloseButton_Click(object? sender, RoutedEventArgs e) => Close();
+        if (cancelBtn != null) cancelBtn.Click += (s, e) => OverlayService.Close();
+        if (closeBtn != null) closeBtn.Click += (s, e) => OverlayService.Close();
+    }
 }

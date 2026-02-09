@@ -48,7 +48,6 @@ public partial class AccountsPage : UserControl
 
         _config = ConfigManager.LoadAccounts();
 
-        // Sync IsActive with SelectedAccountId to ensure single source of truth
         foreach (var acc in _config.Accounts)
         {
             acc.IsActive = acc.Id == _config.SelectedAccountId;
@@ -63,9 +62,7 @@ public partial class AccountsPage : UserControl
 
     private async void AddAccountButton_Click(object? sender, RoutedEventArgs e)
     {
-        var dialog = new AccountDialog();
-        var parent = VisualRoot as Window;
-        var result = await dialog.ShowDialog<Account>(parent!);
+        var result = await Services.OverlayService.ShowDialog<Account>(new AccountDialog());
         
         if (result != null)
         {
@@ -95,9 +92,7 @@ public partial class AccountsPage : UserControl
     private async void EditAccount(Account? account)
     {
         if (account == null) return;
-        var dialog = new AccountDialog(); 
-        var parent = VisualRoot as Window;
-        var result = await dialog.ShowDialog<Account>(parent!);
+        var result = await Services.OverlayService.ShowDialog<Account>(new AccountDialog());
         
         if (result != null)
         {

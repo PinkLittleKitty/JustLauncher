@@ -1,80 +1,93 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Class="JustLauncher.InstallationDialog"
-        Title="New Installation" Height="650" Width="700"
-        WindowStartupLocation="CenterOwner"
-        SystemDecorations="None"
-        ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaTitleBarHeightHint="-1"
-        Background="{DynamicResource WindowBackground}">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="JustLauncher.InstallationDialog"
+             Width="800">
     
-    <Grid Margin="30" RowDefinitions="Auto,*,Auto">
-        <!-- Header -->
-        <Grid Grid.Row="0" x:Name="DialogHeader" Margin="0,0,0,30" ColumnDefinitions="*,Auto" Background="Transparent">
-            <StackPanel>
-                <TextBlock x:Name="DialogTitle" Text="Create New Installation" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource PrimaryText}"/>
-                <TextBlock Text="Configure your Minecraft installation settings" FontSize="14" Foreground="{DynamicResource SecondaryText}" Margin="0,5,0,0"/>
-            </StackPanel>
-            <Button x:Name="CloseButton" Grid.Column="1" Content="✕" Background="Transparent" Foreground="{DynamicResource SecondaryText}" Padding="10"/>
-        </Grid>
-
-        <!-- Form -->
-        <ScrollViewer Grid.Row="1" Margin="0,0,0,20">
-            <Grid ColumnDefinitions="*,20,*">
-                <!-- Left Column -->
-                <StackPanel Grid.Column="0" Spacing="20">
-                    <StackPanel Spacing="8">
-                        <TextBlock Text="Installation Name" Foreground="{DynamicResource PrimaryText}" FontWeight="SemiBold"/>
-                        <TextBox x:Name="NameTextBox"/>
-                    </StackPanel>
-
-                    <StackPanel Spacing="8">
-                        <TextBlock Text="Minecraft Version" Foreground="{DynamicResource PrimaryText}" FontWeight="SemiBold"/>
-                        <ComboBox x:Name="VersionComboBox" HorizontalAlignment="Stretch"/>
-                    </StackPanel>
-
-                    <StackPanel Spacing="8">
-                        <TextBlock Text="Mod Loader" Foreground="{DynamicResource PrimaryText}" FontWeight="SemiBold"/>
-                        <ComboBox x:Name="ModLoaderComboBox" HorizontalAlignment="Stretch">
-                            <ComboBoxItem Content="None" Tag="none" IsSelected="True"/>
-                            <ComboBoxItem Content="Fabric" Tag="fabric"/>
-                            <ComboBoxItem Content="Forge" Tag="forge"/>
-                        </ComboBox>
-                    </StackPanel>
+    <Border Background="{DynamicResource ContentBackground}" 
+            CornerRadius="16" 
+            BorderBrush="{DynamicResource BorderBrush}" 
+            BorderThickness="1"
+            BoxShadow="0 8 24 0 #40000000"
+            Margin="20">
+        <Grid Margin="32" RowDefinitions="Auto,*,Auto">
+            <!-- Header -->
+            <Grid Grid.Row="0" Margin="0,0,0,32" ColumnDefinitions="*,Auto">
+                <StackPanel>
+                    <TextBlock x:Name="DialogTitle" Text="Installation Settings" Classes="PageHeader" FontSize="24"/>
+                    <TextBlock Text="Configure your Minecraft installation settings" Classes="PageDescription" FontSize="13"/>
                 </StackPanel>
+                <Button x:Name="CloseButton" Grid.Column="1" Classes="Secondary" Padding="8" VerticalAlignment="Top">
+                    <i:Icon Value="fa-solid fa-times"/>
+                </Button>
+            </Grid>
 
-                <!-- Right Column -->
-                <StackPanel Grid.Column="2" Spacing="20">
-                    <StackPanel Spacing="8">
-                        <TextBlock Text="Game Directory" Foreground="{DynamicResource PrimaryText}" FontWeight="SemiBold"/>
-                        <Grid ColumnDefinitions="*,Auto">
-                            <TextBox x:Name="GameDirectoryTextBox"/>
-                            <Button x:Name="BrowseGameDirectoryButton" Grid.Column="1" Content="📁" Margin="5,0,0,0"/>
-                        </Grid>
+            <!-- Form -->
+            <ScrollViewer Grid.Row="1" Margin="0,0,0,32">
+                <Grid ColumnDefinitions="*,32,*">
+                    <!-- Left Column -->
+                    <StackPanel Grid.Column="0" Spacing="24">
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="INSTALLATION NAME" Classes="PageDescription" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
+                            <TextBox x:Name="NameTextBox" Watermark="e.g. Latest Release" Padding="12"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="MINECRAFT VERSION" Classes="PageDescription" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
+                            <ComboBox x:Name="VersionComboBox" HorizontalAlignment="Stretch"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="MOD LOADER" Classes="PageDescription" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
+                            <ComboBox x:Name="ModLoaderComboBox" HorizontalAlignment="Stretch">
+                                <ComboBoxItem Content="None" Tag="none" IsSelected="True"/>
+                                <ComboBoxItem Content="Fabric" Tag="fabric"/>
+                                <ComboBoxItem Content="Forge" Tag="forge"/>
+                            </ComboBox>
+                        </StackPanel>
                     </StackPanel>
 
-                    <StackPanel Spacing="8">
-                        <TextBlock Text="JVM Arguments" Foreground="{DynamicResource PrimaryText}" FontWeight="SemiBold"/>
-                        <TextBox x:Name="JavaArgsTextBox" Text="-Xmx2G -Xms1G"/>
-                    </StackPanel>
+                    <!-- Right Column -->
+                    <StackPanel Grid.Column="2" Spacing="24">
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="GAME DIRECTORY" Classes="PageDescription" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
+                            <Grid ColumnDefinitions="*,8">
+                                <TextBox x:Name="GameDirectoryTextBox" Watermark="Default Directory" Padding="12"/>
+                                <Button x:Name="BrowseGameDirectoryButton" Grid.Column="1" Classes="Secondary" Padding="8" IsVisible="False">
+                                    <i:Icon Value="fa-solid fa-folder-open"/>
+                                </Button>
+                            </Grid>
+                        </StackPanel>
 
-                    <StackPanel Spacing="8">
-                        <TextBlock Text="Memory Allocation" Foreground="{DynamicResource PrimaryText}" FontWeight="SemiBold"/>
-                        <Slider x:Name="MemorySlider" Minimum="1" Maximum="32" Value="4" SmallChange="1" LargeChange="2" 
-                                PropertyChanged="MemorySlider_PropertyChanged"/>
-                        <TextBlock x:Name="MemoryLabel" Text="2 GB" Foreground="{DynamicResource SuccessBrush}" HorizontalAlignment="Center"/>
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="JVM ARGUMENTS" Classes="PageDescription" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
+                            <TextBox x:Name="JavaArgsTextBox" Text="-Xmx2G -Xms1G" Padding="12"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="MEMORY ALLOCATION" Classes="PageDescription" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
+                            <Border Background="{DynamicResource WindowBackground}" CornerRadius="12" Padding="20" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                                <StackPanel Spacing="12">
+                                    <Slider x:Name="MemorySlider" Minimum="1" Maximum="32" Value="4" SmallChange="1" LargeChange="2"/>
+                                    <TextBlock x:Name="MemoryLabel" Text="2 GB" Foreground="{DynamicResource SuccessBrush}" HorizontalAlignment="Center" FontWeight="Bold" FontSize="16"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
                     </StackPanel>
+                </Grid>
+            </ScrollViewer>
+
+            <!-- Buttons -->
+            <Grid Grid.Row="2">
+                <Button x:Name="RemoveButton" Content="REMOVE" Classes="Danger" Padding="20,10" HorizontalAlignment="Left" IsVisible="False"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
+                    <Button x:Name="CancelButton" Content="CANCEL" Classes="Secondary" MinWidth="100"/>
+                    <Button x:Name="CreateButton" Content="SAVE INSTALLATION" Classes="Primary" MinWidth="180"/>
                 </StackPanel>
             </Grid>
-        </ScrollViewer>
-
-        <!-- Buttons -->
-        <Grid Grid.Row="2">
-            <Button x:Name="RemoveButton" Content="Remove" Classes="Danger" Padding="25,10" HorizontalAlignment="Left" IsVisible="False"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
-                <Button x:Name="CancelButton" Content="Cancel" Padding="25,10"/>
-                <Button x:Name="CreateButton" Content="Create Installation" Classes="Primary" Padding="25,10"/>
-            </StackPanel>
         </Grid>
-    </Grid>
-</Window>
+    </Border>
+</UserControl>

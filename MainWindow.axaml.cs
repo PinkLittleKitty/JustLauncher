@@ -6,6 +6,8 @@ using Avalonia.Markup.Xaml;
 using System;
 using System.Linq;
 
+using JustLauncher.Services;
+
 namespace JustLauncher;
 
 public partial class MainWindow : Window
@@ -16,6 +18,12 @@ public partial class MainWindow : Window
     {
         Instance = this;
         InitializeComponent();
+
+        OverlayService.Initialize(
+            this.FindControl<Grid>("OverlayLayer")!,
+            this.FindControl<Border>("OverlayDimmer")!,
+            this.FindControl<ContentControl>("OverlayContentHost")!
+        );
 
         var accountsConfig = ConfigManager.LoadAccounts();
         var activeAccount = accountsConfig.Accounts.FirstOrDefault(a => a.IsActive) 
@@ -79,8 +87,7 @@ public partial class MainWindow : Window
         {
             infoBtn.Click += async (s, e) => 
             {
-                var dialog = new AboutDialog();
-                await dialog.ShowDialog(this);
+                await OverlayService.ShowDialog<object>(new AboutDialog());
             };
         }
 

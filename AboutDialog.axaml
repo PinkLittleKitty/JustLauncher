@@ -1,46 +1,49 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Class="JustLauncher.AboutDialog"
-        Title="About JustLauncher" Height="300" Width="400"
-        WindowStartupLocation="CenterOwner"
-        SystemDecorations="None"
-        ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaTitleBarHeightHint="-1"
-        Background="{DynamicResource WindowBackground}"
-        TransparencyLevelHint="AcrylicBlur">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="350"
+             x:Class="JustLauncher.AboutDialog"
+             Width="400">
     
-    <Panel>
-        <ExperimentalAcrylicBorder IsHitTestVisible="False">
-            <ExperimentalAcrylicBorder.Material>
-                <ExperimentalAcrylicMaterial
-                    BackgroundSource="Digger"
-                    TintColor="Black"
-                    TintOpacity="0.5"
-                    MaterialOpacity="0.65" />
-            </ExperimentalAcrylicBorder.Material>
-        </ExperimentalAcrylicBorder>
-
-        <Grid RowDefinitions="Auto,*,Auto" Margin="20">
+    <Border Background="{DynamicResource ContentBackground}" 
+            CornerRadius="16" 
+            BorderBrush="{DynamicResource BorderBrush}" 
+            BorderThickness="1"
+            BoxShadow="0 8 24 0 #40000000"
+            Margin="20">
+        <Grid RowDefinitions="Auto,*,Auto" Margin="32">
             <!-- Header -->
-            <Grid Grid.Row="0" Margin="0,0,0,20">
-                <Button x:Name="CloseButton" HorizontalAlignment="Right" Content="✕" 
-                        Background="Transparent" Foreground="{DynamicResource SecondaryText}" Padding="10"/>
-            </Grid>
+            <Button x:Name="CloseButton" HorizontalAlignment="Right" VerticalAlignment="Top" Classes="Secondary" Padding="8">
+                <i:Icon Value="fa-solid fa-times"/>
+            </Button>
 
             <!-- Content -->
-            <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
-                <TextBlock Text="JustLauncher" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource PrimaryText}" HorizontalAlignment="Center"/>
-                <TextBlock Text="Version 0.0.2" FontSize="14" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center"/>
-                <TextBlock Text="Just a minecraft launcher.." 
-                           FontSize="12" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Margin="0,10,0,0"/>
+            <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20">
+                <Grid HorizontalAlignment="Center">
+                    <Border Width="80" Height="80" CornerRadius="12" Background="{DynamicResource SuccessBrush}" Opacity="0.1"/>
+                    <i:Icon Value="fa-solid fa-gamepad" FontSize="40" Foreground="{DynamicResource SuccessBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Grid>
+
+                <StackPanel Spacing="4">
+                    <TextBlock Text="JustLauncher" FontSize="28" FontWeight="Black" Foreground="{DynamicResource PrimaryText}" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Version 0.0.2" FontSize="14" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" Opacity="0.8"/>
+                </StackPanel>
+
+                <TextBlock Text="A modern, high-performance Minecraft launcher built with Avalonia." 
+                           FontSize="13" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Opacity="0.7"/>
                 
-                <TextBlock Text="Created by JustNeki" FontSize="12" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" Margin="0,20,0,0"/>
+                <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
+                    <i:Icon Value="fa-solid fa-code" Foreground="{DynamicResource SuccessBrush}" VerticalAlignment="Center"/>
+                    <TextBlock Text="Created by JustNeki" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource PrimaryText}" VerticalAlignment="Center"/>
+                </StackPanel>
             </StackPanel>
 
             <!-- Footer -->
-            <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,20,0,0">
-                <TextBlock Text="© 2026 JustNeki" FontSize="10" Foreground="{DynamicResource SecondaryText}"/>
+            <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,32,0,0">
+                <TextBlock Text="© 2026 JustNeki • Open Source" FontSize="11" Foreground="{DynamicResource SecondaryText}" Opacity="0.5"/>
             </StackPanel>
         </Grid>
-    </Panel>
-</Window>
+    </Border>
+</UserControl>

@@ -134,6 +134,21 @@ public static class ConfigManager
             throw;
         }
     }
+
+    public static LauncherSettings LoadSettings()
+    {
+        if (!File.Exists(SettingsPath)) return new LauncherSettings();
+        try
+        {
+            string json = File.ReadAllText(SettingsPath);
+            return JsonSerializer.Deserialize<LauncherSettings>(json) ?? new LauncherSettings();
+        }
+        catch (Exception ex)
+        {
+            ConsoleService.Instance.Log($"[Config] Error loading settings: {ex.Message}");
+            return new LauncherSettings();
+        }
+    }
 }
 
 public class LauncherSettings

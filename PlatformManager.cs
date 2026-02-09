@@ -46,7 +46,9 @@ public static class PlatformManager
             return new[]
             {
                 "/usr/lib/jvm",
-                "/usr/java"
+                "/usr/java",
+                "/usr/lib/jvm/default",
+                "/usr/bin"
             };
         }
         
@@ -76,6 +78,12 @@ public static class PlatformManager
         }
     }
 
+    public static string GetJavaExecutable()
+    {
+        // For now, return what we find in PATH
+        return GetJavaExecutableName();
+    }
+
     public static async System.Threading.Tasks.Task<string?> GetJavaVersionAsync()
     {
         try
@@ -95,11 +103,19 @@ public static class PlatformManager
             string output = await process.StandardError.ReadToEndAsync();
             await process.WaitForExitAsync();
 
+            // Try different patterns for java version output
             var match = System.Text.RegularExpressions.Regex.Match(output, @"version ""([^""]+)""");
-            return match.Success ? match.Groups[1].Value : null;
+            if (match.Success) return match.Groups[1].Value;
+
+            // Fallback for some OpenJDK outputs that don't say "version"
+            match = System.Text.RegularExpressions.Regex.Match(output, @"openjdk (\d+\.\d+\.\d+)");
+            if (match.Success) return match.Groups[1].Value;
+
+            return null;
         }
-        catch
+        catch (Exception ex)
         {
+            Debug.WriteLine($"Java check error: {ex.Message}");
             return null;
         }
     }

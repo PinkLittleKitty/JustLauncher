@@ -2,10 +2,42 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="JustLauncher.SettingsPage"
              Background="#23272A">
-    <Grid Margin="20">
-        <StackPanel Spacing="10">
-            <TextBlock Text="Settings" FontSize="24" Foreground="White" FontWeight="Bold"/>
-            <TextBlock Text="Settings for JustLauncher will appear here." Foreground="White"/>
+    <ScrollViewer>
+        <StackPanel Margin="30" Spacing="25">
+            <TextBlock Text="Settings" FontSize="28" Foreground="White" FontWeight="Bold" Margin="0,0,0,10"/>
+
+            <!-- Java Settings -->
+            <StackPanel Spacing="10">
+                <TextBlock Text="Java Settings" FontSize="18" Foreground="White" FontWeight="Bold"/>
+                <Border Background="#2C2F33" CornerRadius="8" Padding="20">
+                    <Grid RowDefinitions="Auto,20,Auto" ColumnDefinitions="*,Auto">
+                        <StackPanel Grid.Row="0" Grid.Column="0">
+                            <TextBlock Text="Java Path" Foreground="Gray" Margin="0,0,0,5"/>
+                            <TextBox x:Name="JavaPathTextBox" Watermark="Auto-detected"/>
+                        </StackPanel>
+                        <Button x:Name="BrowseJavaButton" Grid.Row="0" Grid.Column="1" Content="Browse" VerticalAlignment="Bottom" Margin="10,0,0,0"/>
+
+                        <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+                            <TextBlock Text="Memory Allocation (GB)" Foreground="Gray" Margin="0,0,0,5"/>
+                            <Slider x:Name="MemorySlider" Minimum="1" Maximum="32" Value="2"/>
+                            <TextBlock Text="{Binding #MemorySlider.Value, StringFormat='\{0:0\} GB'}" HorizontalAlignment="Right" Foreground="#00C851"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </StackPanel>
+
+            <!-- Launcher Settings -->
+            <StackPanel Spacing="10">
+                <TextBlock Text="Launcher" FontSize="18" Foreground="White" FontWeight="Bold"/>
+                <Border Background="#2C2F33" CornerRadius="8" Padding="20">
+                    <StackPanel Spacing="15">
+                        <CheckBox x:Name="CloseOnLaunchCheckBox" Content="Close launcher when game starts" Foreground="White"/>
+                        <CheckBox x:Name="DarkModeCheckBox" Content="Use Dark Mode" IsChecked="True" IsEnabled="False" Foreground="White"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <Button x:Name="SaveButton" Content="Save Settings" Classes="Primary" HorizontalAlignment="Right" Width="150" Height="40"/>
         </StackPanel>
-    </Grid>
+    </ScrollViewer>
 </UserControl>

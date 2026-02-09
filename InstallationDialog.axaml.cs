@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -11,27 +12,17 @@ namespace JustLauncher;
 public partial class InstallationDialog : Window
 {
     public Installation? Result { get; private set; }
+    public bool DeleteRequested { get; private set; }
+    private readonly MinecraftService _minecraftService = new();
+    private Installation? _existingInstallation;
 
     public InstallationDialog()
     {
         InitializeComponent();
         var textBox = this.FindControl<TextBox>("GameDirectoryTextBox");
         if (textBox != null) textBox.Text = PlatformManager.GetMinecraftDirectory();
-    }
 
-    public InstallationDialog(Installation existing) : this()
-    {
-        var nameBox = this.FindControl<TextBox>("NameTextBox");
-        var dirBox = this.FindControl<TextBox>("GameDirectoryTextBox");
-        var argsBox = this.FindControl<TextBox>("JavaArgsTextBox");
-        var title = this.FindControl<TextBlock>("DialogTitle");
-        var button = this.FindControl<Button>("CreateButton");
-
-        if (nameBox != null) nameBox.Text = existing.Name;
-        if (dirBox != null) dirBox.Text = existing.GameDirectory;
-        if (argsBox != null) argsBox.Text = existing.JavaArgs;
-        if (title != null) title.Text = "Edit Installation";
-        if (button != null) button.Content = "Save Changes";
+        _ = LoadVersionsAsync();
     }
 
     private void InitializeComponent()
@@ -50,8 +41,55 @@ public partial class InstallationDialog : Window
         var createBtn = this.FindControl<Button>("CreateButton");
         if (createBtn != null) createBtn.Click += CreateButton_Click;
 
+        var removeBtn = this.FindControl<Button>("RemoveButton");
+        if (removeBtn != null) removeBtn.Click += RemoveButton_Click;
+
         var header = this.FindControl<Control>("DialogHeader");
         if (header != null) header.PointerPressed += (s, e) => BeginMoveDrag(e);
+    }
+
+    private async Task LoadVersionsAsync()
+    {
+        var versionCombo = this.FindControl<ComboBox>("VersionComboBox");
+        if (versionCombo == null) return;
+
+        try
+        {
+            var manifest = await _minecraftService.GetVersionManifestAsync();
+            versionCombo.ItemsSource = manifest.Versions.Select(v => v.Id).ToList();
+            versionCombo.SelectedIndex = 0;
+        }
+        catch
+        {
+            versionCombo.ItemsSource = new[] { "1.21.1", "1.20.1", "1.19.4" };
+            versionCombo.SelectedIndex = 0;
+        }
+    }
+
+    public InstallationDialog(Installation existing) : this()
+    {
+        _existingInstallation = existing;
+        
+        var nameBox = this.FindControl<TextBox>("NameTextBox");
+        var dirBox = this.FindControl<TextBox>("GameDirectoryTextBox");
+        var argsBox = this.FindControl<TextBox>("JavaArgsTextBox");
+        var title = this.FindControl<TextBlock>("DialogTitle");
+        var button = this.FindControl<Button>("CreateButton");
+
+        if (nameBox != null) nameBox.Text = existing.Name;
+        if (dirBox != null) dirBox.Text = existing.GameDirectory;
+        if (argsBox != null) argsBox.Text = existing.JavaArgs;
+        if (title != null) title.Text = "Edit Installation";
+        if (button != null) button.Content = "Save Changes";
+
+        var removeBtn = this.FindControl<Button>("RemoveButton");
+        if (removeBtn != null) removeBtn.IsVisible = true;
+    }
+
+    private void RemoveButton_Click(object? sender, RoutedEventArgs e)
+    {
+        DeleteRequested = true;
+        Close(true);
     }
 
     private void CreateButton_Click(object? sender, RoutedEventArgs e)
@@ -63,6 +101,7 @@ public partial class InstallationDialog : Window
 
         Result = new Installation
         {
+            Id = _existingInstallation?.Id ?? Guid.NewGuid().ToString(),
             Name = string.IsNullOrWhiteSpace(nameBox?.Text) ? "New Installation" : nameBox.Text,
             Version = versionCombo?.SelectedItem?.ToString() ?? "1.21.1",
             GameDirectory = dirBox?.Text ?? PlatformManager.GetMinecraftDirectory(),

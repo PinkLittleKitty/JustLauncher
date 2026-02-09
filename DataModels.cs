@@ -41,6 +41,16 @@ namespace JustLauncher
         public List<Library> Libraries { get; set; } = new();
         [JsonPropertyName("downloads")]
         public VersionDownloads Downloads { get; set; } = new();
+        [JsonPropertyName("javaVersion")]
+        public JavaVersion JavaVersion { get; set; } = new();
+    }
+
+    public class JavaVersion
+    {
+        [JsonPropertyName("component")]
+        public string Component { get; set; } = default!;
+        [JsonPropertyName("majorVersion")]
+        public int MajorVersion { get; set; }
     }
 
     public class Arguments
@@ -73,6 +83,8 @@ namespace JustLauncher
         public LibraryDownloads Downloads { get; set; } = new();
         [JsonPropertyName("rules")]
         public List<Rule> Rules { get; set; } = new();
+        [JsonPropertyName("natives")]
+        public Dictionary<string, string>? Natives { get; set; }
     }
 
     public class LibraryDownloads
@@ -83,31 +95,8 @@ namespace JustLauncher
         public Classifiers Classifiers { get; set; } = new();
     }
 
-    public class Classifiers
+    public class Classifiers : Dictionary<string, Artifact>
     {
-        [JsonPropertyName("natives-windows")]
-        public Artifact NativesWindows { get; set; } = new();
-        
-        [JsonPropertyName("natives-windows-x86_64")]
-        public Artifact NativesWindowsX64 { get; set; } = new();
-        
-        [JsonPropertyName("natives-windows-x86")]
-        public Artifact NativesWindowsX86 { get; set; } = new();
-        
-        [JsonPropertyName("natives-linux")]
-        public Artifact NativesLinux { get; set; } = new();
-        
-        [JsonPropertyName("natives-linux-x86_64")]
-        public Artifact NativesLinuxX64 { get; set; } = new();
-        
-        [JsonPropertyName("natives-macos")]
-        public Artifact NativesMacOS { get; set; } = new();
-        
-        [JsonPropertyName("natives-macos-arm64")]
-        public Artifact NativesMacOSArm64 { get; set; } = new();
-        
-        [JsonExtensionData]
-        public Dictionary<string, JsonElement> AdditionalClassifiers { get; set; } = new();
     }
 
     public class Artifact

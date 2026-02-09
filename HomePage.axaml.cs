@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using System.Linq;
 
 namespace JustLauncher;
 
@@ -24,6 +25,21 @@ public partial class HomePage : UserControl
     private void LoginButton_Click(object? sender, RoutedEventArgs e)
     {
         string username = this.FindControl<TextBox>("UsernameTextBox")?.Text ?? "Player";
+        if (string.IsNullOrWhiteSpace(username)) username = "Player";
+
+        // Persist this account so it's used on next startup
+        var config = ConfigManager.LoadAccounts();
+        var account = config.Accounts.FirstOrDefault(a => a.Username == username);
+        if (account == null)
+        {
+            account = new Account { Username = username, AccountType = "Offline", IsActive = true };
+            config.Accounts.Add(account);
+        }
+        
+        foreach (var acc in config.Accounts) acc.IsActive = (acc.Id == account.Id);
+        config.SelectedAccountId = account.Id;
+        ConfigManager.SaveAccounts(config);
+
         if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             if (desktop.MainWindow is MainWindow mainWindow)

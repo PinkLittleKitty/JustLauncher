@@ -13,6 +13,8 @@ public partial class AccountsPage : UserControl
         LoadAccounts();
     }
 
+    private AccountsConfig _config = new();
+
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);
@@ -22,6 +24,20 @@ public partial class AccountsPage : UserControl
 
         var refreshBtn = this.FindControl<Button>("RefreshButton");
         if (refreshBtn != null) refreshBtn.Click += RefreshButton_Click;
+
+        var panel = this.FindControl<ItemsControl>("AccountsPanel");
+        if (panel != null)
+        {
+            panel.AddHandler(Button.ClickEvent, (s, e) =>
+            {
+                if (e.Source is Button btn)
+                {
+                    if (btn.Name == "UseAccountButton") SetActiveAccount(btn.Tag as Account);
+                    else if (btn.Name == "EditAccountButton") EditAccount(btn.Tag as Account);
+                    else if (btn.Name == "DeleteAccountButton") DeleteAccount(btn.Tag as Account);
+                }
+            });
+        }
     }
 
     private void LoadAccounts()
@@ -29,34 +45,68 @@ public partial class AccountsPage : UserControl
         var panel = this.FindControl<ItemsControl>("AccountsPanel");
         var countText = this.FindControl<TextBlock>("AccountCountText");
 
-        var accounts = MockData.GetAccounts();
+        _config = ConfigManager.LoadAccounts();
 
-        if (panel != null) panel.ItemsSource = accounts;
-        if (countText != null) countText.Text = $"{accounts.Count} Accounts Connected";
+        if (panel != null)
+        {
+            panel.ItemsSource = _config.Accounts.ToList();
+        }
+        if (countText != null) countText.Text = $"{_config.Accounts.Count} Accounts Connected";
     }
 
-    private void AddAccountButton_Click(object? sender, RoutedEventArgs e)
+    private async void AddAccountButton_Click(object? sender, RoutedEventArgs e)
     {
-        // Add account logic
+        var dialog = new AccountDialog();
+        var parent = VisualRoot as Window;
+        var result = await dialog.ShowDialog<Account>(parent!);
+        
+        if (result != null)
+        {
+            _config.Accounts.Add(result);
+            if (string.IsNullOrEmpty(_config.SelectedAccountId)) _config.SelectedAccountId = result.Id;
+            ConfigManager.SaveAccounts(_config);
+            LoadAccounts();
+        }
     }
 
-    private void RefreshButton_Click(object? sender, RoutedEventArgs e)
+    private void RefreshButton_Click(object? sender, RoutedEventArgs e) => LoadAccounts();
+
+    private void SetActiveAccount(Account? account)
     {
+        if (account == null) return;
+        foreach (var acc in _config.Accounts) acc.IsActive = (acc.Id == account.Id);
+        _config.SelectedAccountId = account.Id;
+        ConfigManager.SaveAccounts(_config);
         LoadAccounts();
     }
 
-    private void SetActiveAccount_Click(object? sender, RoutedEventArgs e)
+    private async void EditAccount(Account? account)
     {
-        // Set active account logic
+        if (account == null) return;
+        // In a real app we'd pass the account to the dialog for editing
+        var dialog = new AccountDialog(); 
+        var parent = VisualRoot as Window;
+        var result = await dialog.ShowDialog<Account>(parent!);
+        
+        if (result != null)
+        {
+            var existing = _config.Accounts.FirstOrDefault(a => a.Id == account.Id);
+            if (existing != null)
+            {
+                existing.Username = result.Username;
+                existing.AccountType = result.AccountType;
+                ConfigManager.SaveAccounts(_config);
+                LoadAccounts();
+            }
+        }
     }
 
-    private void EditAccount_Click(object? sender, RoutedEventArgs e)
+    private void DeleteAccount(Account? account)
     {
-        // Edit account logic
-    }
-
-    private void DeleteAccount_Click(object? sender, RoutedEventArgs e)
-    {
-        // Delete account logic
+        if (account == null) return;
+        _config.Accounts.RemoveAll(a => a.Id == account.Id);
+        if (_config.SelectedAccountId == account.Id) _config.SelectedAccountId = _config.Accounts.FirstOrDefault()?.Id ?? "";
+        ConfigManager.SaveAccounts(_config);
+        LoadAccounts();
     }
 }

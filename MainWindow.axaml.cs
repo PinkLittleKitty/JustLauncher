@@ -2,7 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using System.Configuration;
+using System.Linq;
 
 namespace JustLauncher;
 
@@ -11,8 +11,24 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        
+        var accountsConfig = ConfigManager.LoadAccounts();
+        var activeAccount = accountsConfig.Accounts.FirstOrDefault(a => a.IsActive) 
+                          ?? accountsConfig.Accounts.FirstOrDefault(a => a.Id == accountsConfig.SelectedAccountId)
+                          ?? accountsConfig.Accounts.FirstOrDefault();
+
         var content = this.FindControl<ContentControl>("MainContent");
-        if (content != null) content.Content = new HomePage();
+        if (content != null)
+        {
+            if (activeAccount != null)
+            {
+                content.Content = new PlayPage(activeAccount.Username);
+            }
+            else
+            {
+                content.Content = new HomePage();
+            }
+        }
     }
 
     private void InitializeComponent()
@@ -24,6 +40,9 @@ public partial class MainWindow : Window
 
         var accBtn = this.FindControl<Button>("AccountsButton");
         if (accBtn != null) accBtn.Click += AccountsButton_Click;
+
+        var conBtn = this.FindControl<Button>("ConsoleButton");
+        if (conBtn != null) conBtn.Click += ConsoleButton_Click;
 
         var setBtn = this.FindControl<Button>("SettingsButton");
         if (setBtn != null) setBtn.Click += SettingsButton_Click;
@@ -43,7 +62,12 @@ public partial class MainWindow : Window
 
     private void PlayButton_Click(object? sender, RoutedEventArgs e)
     {
-        string username = ConfigurationManager.AppSettings["LastUsedUsername"] ?? "Player";
+        var accountsConfig = ConfigManager.LoadAccounts();
+        var activeAccount = accountsConfig.Accounts.FirstOrDefault(a => a.IsActive) 
+                          ?? accountsConfig.Accounts.FirstOrDefault(a => a.Id == accountsConfig.SelectedAccountId)
+                          ?? accountsConfig.Accounts.FirstOrDefault();
+        
+        string username = activeAccount?.Username ?? "Player";
         var content = this.FindControl<ContentControl>("MainContent");
         if (content != null) content.Content = new PlayPage(username);
     }
@@ -52,6 +76,12 @@ public partial class MainWindow : Window
     {
         var content = this.FindControl<ContentControl>("MainContent");
         if (content != null) content.Content = new AccountsPage();
+    }
+
+    private void ConsoleButton_Click(object? sender, RoutedEventArgs e)
+    {
+        var content = this.FindControl<ContentControl>("MainContent");
+        if (content != null) content.Content = new ConsolePage();
     }
 
     private void SettingsButton_Click(object? sender, RoutedEventArgs e)

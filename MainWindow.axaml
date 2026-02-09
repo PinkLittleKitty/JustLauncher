@@ -62,6 +62,7 @@
                 <StackPanel Grid.Column="0" Background="#2C2F33" VerticalAlignment="Stretch">
                     <TextBlock Text="JustLauncher" FontSize="24" Foreground="White" Margin="0,30,0,30" HorizontalAlignment="Center"/>
                     <Button x:Name="PlayButton" Content="Play" Classes="Nav" Margin="10,5" HorizontalAlignment="Stretch"/>
+                    <Button x:Name="ConsoleButton" Content="Console" Classes="Nav" Margin="10,5" HorizontalAlignment="Stretch"/>
                     <Button x:Name="AccountsButton" Content="Accounts" Classes="Nav" Margin="10,5" HorizontalAlignment="Stretch"/>
                     <Button x:Name="SettingsButton" Content="Settings" Classes="Nav" Margin="10,5" HorizontalAlignment="Stretch"/>
                 </StackPanel>

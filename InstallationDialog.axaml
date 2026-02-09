@@ -68,9 +68,12 @@
         </ScrollViewer>
 
         <!-- Buttons -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
-            <Button x:Name="CancelButton" Content="Cancel" Padding="25,10"/>
-            <Button x:Name="CreateButton" Content="Create Installation" Classes="Primary" Padding="25,10"/>
-        </StackPanel>
+        <Grid Grid.Row="2">
+            <Button x:Name="RemoveButton" Content="Remove" Classes="Danger" Padding="25,10" HorizontalAlignment="Left" IsVisible="False"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                <Button x:Name="CancelButton" Content="Cancel" Padding="25,10"/>
+                <Button x:Name="CreateButton" Content="Create Installation" Classes="Primary" Padding="25,10"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

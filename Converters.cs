@@ -1,7 +1,11 @@
 using System;
 using System.Globalization;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.IO;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
+using JustLauncher.Services;
 
 namespace JustLauncher
 {
@@ -72,19 +76,51 @@ namespace JustLauncher
 
     public class AsyncImageConverter : IValueConverter
     {
+        public static AsyncImageConverter Instance { get; } = new AsyncImageConverter();
+        
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Avalonia.Media.Imaging.Bitmap> _cache = new();
+        private static readonly HttpClient _httpClient = new HttpClient();
+
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value is string url && !string.IsNullOrEmpty(url))
             {
-                // Note: Simplified for build fix. Proper implementation would use a task-based bitmap loader.
-                return null; 
+                if (_cache.TryGetValue(url, out var cached)) return cached;
+
+                // Return a placeholder and start loading
+                _ = LoadBitmapAsync(url, parameter as ModInfo);
+                
+                try 
+                { 
+                    return new Avalonia.Media.Imaging.Bitmap(Avalonia.Platform.AssetLoader.Open(new Uri("avares://JustLauncher/Assets/grass_block.png"))); 
+                } 
+                catch { return null; }
             }
             return null;
         }
 
-        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        private async Task LoadBitmapAsync(string url, ModInfo? mod)
         {
-            throw new NotImplementedException();
+            if (_cache.ContainsKey(url)) return;
+
+            try
+            {
+                var response = await _httpClient.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    var stream = await response.Content.ReadAsStreamAsync();
+                    var bitmap = new Avalonia.Media.Imaging.Bitmap(stream);
+                    _cache[url] = bitmap;
+                    
+                    if (mod != null)
+                    {
+                        Avalonia.Threading.Dispatcher.UIThread.Post(() => mod.NotifyIconChanged());
+                    }
+                }
+            }
+            catch { }
         }
+
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => null;
     }
 }

@@ -21,16 +21,23 @@ public class ModrinthService
 
     public async Task<List<ModInfo>> SearchModsAsync(string query, string minecraftVersion, string loader)
     {
-        string facets = $"[[\"versions:{minecraftVersion}\"],[\"categories:{loader.ToLower()}\"],[\"project_type:mod\"]]";
+        string versionFacet = string.IsNullOrEmpty(minecraftVersion) ? "" : $"[\"versions:{minecraftVersion}\"],";
+        string facets = $"[{versionFacet}[\"categories:{loader.ToLower()}\"],[\"project_type:mod\"]]";
         string url = $"{BaseUrl}/search?query={Uri.EscapeDataString(query)}&facets={Uri.EscapeDataString(facets)}&limit=20";
 
         try
         {
+            ConsoleService.Instance.Log($"[Modrinth] Searching for '{query}' (Version: {minecraftVersion}, Loader: {loader})");
             string json = await _httpClient.GetStringAsync(url);
             var result = JsonSerializer.Deserialize<ModrinthSearchResult>(json);
             
-            if (result == null) return new List<ModInfo>();
+            if (result == null) 
+            {
+                ConsoleService.Instance.Log("[Modrinth] No results found (null response)");
+                return new List<ModInfo>();
+            }
 
+            ConsoleService.Instance.Log($"[Modrinth] Found {result.Hits.Count} hits");
             return result.Hits.Select(hit => new ModInfo
             {
                 ProjectId = hit.ProjectId,
@@ -54,12 +61,20 @@ public class ModrinthService
 
         try
         {
+            ConsoleService.Instance.Log($"[Modrinth] Fetching version for {projectId} (Version: {minecraftVersion}, Loader: {loader})");
             string json = await _httpClient.GetStringAsync(url);
             var versions = JsonSerializer.Deserialize<List<ModrinthVersion>>(json);
             
-            var latest = versions?.FirstOrDefault();
+            if (versions == null || versions.Count == 0)
+            {
+                ConsoleService.Instance.Log($"[Modrinth] No versions found for {projectId} on {minecraftVersion}");
+                return null;
+            }
+
+            var latest = versions.FirstOrDefault();
             var file = latest?.Files.FirstOrDefault(f => f.Primary) ?? latest?.Files.FirstOrDefault();
             
+            ConsoleService.Instance.Log($"[Modrinth] Found file: {file?.Url}");
             return file?.Url;
         }
         catch (Exception ex)

@@ -4,6 +4,7 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using JustLauncher.Services;
+using Avalonia.Threading;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -63,6 +64,15 @@ public partial class ModsControl : UserControl
 
     public void Initialize(Installation? installation)
     {
+        if (installation == null) return;
+
+        // Fallback for older installations or incomplete data
+        if (string.IsNullOrEmpty(installation.BaseVersion))
+        {
+            installation.BaseVersion = installation.Version;
+        }
+
+        ConsoleService.Instance.Log($"[Mods] Initializing for {installation.Name} (Version: {installation.BaseVersion}, Loader: {installation.LoaderType})");
         _installation = installation;
         _ = LoadModsAsync();
         _ = SearchModsAsync();
@@ -83,10 +93,15 @@ public partial class ModsControl : UserControl
 
     private async Task SearchModsAsync()
     {
-        if (_installation == null) return;
+        if (_installation == null) 
+        {
+            ConsoleService.Instance.Log("[Mods] Search skipped: No installation context");
+            return;
+        }
 
         var searchBox = this.FindControl<TextBox>("SearchBox");
         string query = searchBox?.Text ?? "";
+        ConsoleService.Instance.Log($"[Mods] Searching for '{query}'...");
         
         List<ModInfo> results;
         if (_installation.LoaderType == ModLoaderType.Fabric)
@@ -111,6 +126,7 @@ public partial class ModsControl : UserControl
         var browseList = this.FindControl<ListBox>("BrowseListBox");
         if (browseList != null)
         {
+            browseList.ItemsSource = null;
             browseList.ItemsSource = results;
         }
     }
@@ -138,11 +154,23 @@ public partial class ModsControl : UserControl
                 string fileName = Path.GetFileName(new Uri(downloadUrl).LocalPath);
                 string dest = Path.Combine(modsDir, fileName);
 
-                await MinecraftService.Instance.DownloadFileAsync(downloadUrl, dest);
+                mod.IsDownloading = true;
+                mod.DownloadProgress = 0;
+
+                await MinecraftService.Instance.DownloadFileAsync(downloadUrl, dest, (read, total) =>
+                {
+                    if (total > 0)
+                    {
+                        Avalonia.Threading.Dispatcher.UIThread.Post(() => 
+                            mod.DownloadProgress = (double)read / total * 100);
+                    }
+                });
                 
-                mod.IsInstalled = true;
-                btn.IsVisible = false;
-                await LoadModsAsync();
+                Avalonia.Threading.Dispatcher.UIThread.Post(async () => {
+                    mod.IsDownloading = false;
+                    mod.IsInstalled = true;
+                    await LoadModsAsync();
+                });
             }
         }
         catch (Exception ex)

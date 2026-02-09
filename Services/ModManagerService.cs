@@ -49,7 +49,23 @@ public class ModManagerService
                             mod.Name = meta.Name ?? fileName;
                             mod.Version = meta.Version ?? "";
                             mod.Description = meta.Description ?? "";
-                            if (meta.Authors != null) mod.Authors = string.Join(", ", meta.Authors);
+                            
+                            if (meta.Authors.ValueKind == JsonValueKind.Array)
+                            {
+                                var authors = new List<string>();
+                                foreach (var element in meta.Authors.EnumerateArray())
+                                {
+                                    if (element.ValueKind == JsonValueKind.String)
+                                        authors.Add(element.GetString() ?? "");
+                                    else if (element.ValueKind == JsonValueKind.Object && element.TryGetProperty("name", out var nameProp))
+                                        authors.Add(nameProp.GetString() ?? "");
+                                }
+                                mod.Authors = string.Join(", ", authors);
+                            }
+                            else if (meta.Authors.ValueKind == JsonValueKind.String)
+                            {
+                                mod.Authors = meta.Authors.GetString() ?? "";
+                            }
                         }
                     }
                 }
@@ -100,5 +116,5 @@ public class FabricModMetadata
     [JsonPropertyName("description")]
     public string? Description { get; set; }
     [JsonPropertyName("authors")]
-    public List<string>? Authors { get; set; }
+    public JsonElement Authors { get; set; }
 }

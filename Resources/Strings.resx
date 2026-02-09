@@ -590,7 +590,7 @@
   <data name="Mods_ByAuthor" xml:space="preserve">
     <value>by {0}</value>
   </data>
-  <data name="Mods_Download" xml:space="preserve">
-    <value>Download</value>
+  <data name="Mods_AlreadyInstalled" xml:space="preserve">
+    <value>Installed</value>
   </data>
 </root>

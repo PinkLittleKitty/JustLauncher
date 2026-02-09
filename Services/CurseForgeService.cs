@@ -24,15 +24,22 @@ public class CurseForgeService
     public async Task<List<ModInfo>> SearchModsAsync(string query, string minecraftVersion, string loader)
     {
         int modLoaderType = loader.Equals("Forge", StringComparison.OrdinalIgnoreCase) ? 1 : 4;
-        string url = $"{BaseUrl}/mods/search?gameId=432&gameVersion={minecraftVersion}&modLoaderType={modLoaderType}&searchFilter={Uri.EscapeDataString(query)}&classId=6";
+        string versionParam = string.IsNullOrEmpty(minecraftVersion) ? "" : $"&gameVersion={minecraftVersion}";
+        string url = $"{BaseUrl}/mods/search?gameId=432{versionParam}&modLoaderType={modLoaderType}&searchFilter={Uri.EscapeDataString(query)}&classId=6";
 
         try
         {
+            ConsoleService.Instance.Log($"[CurseForge] Searching for '{query}' (Version: {minecraftVersion}, Loader: {loader})");
             string json = await _httpClient.GetStringAsync(url);
             var result = JsonSerializer.Deserialize<CurseForgeSearchResult>(json);
             
-            if (result == null) return new List<ModInfo>();
+            if (result == null)
+            {
+                ConsoleService.Instance.Log("[CurseForge] No results found (null response)");
+                return new List<ModInfo>();
+            }
 
+            ConsoleService.Instance.Log($"[CurseForge] Found {result.Data.Count} hits");
             return result.Data.Select(mod => new ModInfo
             {
                 ProjectId = mod.Id.ToString(),
@@ -57,9 +64,18 @@ public class CurseForgeService
 
         try
         {
+            ConsoleService.Instance.Log($"[CurseForge] Fetching versions for {projectId} (Version: {minecraftVersion}, Loader: {loader})");
             string json = await _httpClient.GetStringAsync(url);
             var result = JsonSerializer.Deserialize<CurseForgeFilesResponse>(json);
-            var latest = result?.Data.FirstOrDefault();
+            
+            if (result == null || result.Data.Count == 0)
+            {
+                ConsoleService.Instance.Log($"[CurseForge] No versions found for {projectId} on {minecraftVersion}");
+                return null;
+            }
+
+            var latest = result.Data.FirstOrDefault();
+            ConsoleService.Instance.Log($"[CurseForge] Found file: {latest?.DownloadUrl}");
             return latest?.DownloadUrl;
         }
         catch (Exception ex)

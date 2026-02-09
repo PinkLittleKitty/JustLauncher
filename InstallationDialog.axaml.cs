@@ -287,6 +287,7 @@ public partial class InstallationDialog : UserControl
             Id = _existingInstallation?.Id ?? Guid.NewGuid().ToString(),
             Name = string.IsNullOrWhiteSpace(nameBox?.Text) ? "New Installation" : nameBox.Text,
             Version = versionCombo?.SelectedItem?.ToString() ?? "1.21.1",
+            BaseVersion = versionCombo?.SelectedItem?.ToString() ?? "1.21.1",
             GameDirectory = dirBox?.Text ?? PlatformManager.GetMinecraftDirectory(),
             JavaArgs = argsBox?.Text ?? "-Xmx2G",
             MemoryAllocationGb = memorySlider?.Value ?? 4.0,
@@ -447,12 +448,23 @@ public partial class InstallationDialog : UserControl
                           gameDir = _existingInstallation.GameDirectory;
                       }
 
+                      string selectedVersion = versionCombo?.SelectedItem?.ToString() ?? "";
+                      if (string.IsNullOrEmpty(selectedVersion) && versionCombo?.SelectedIndex >= 0)
+                      {
+                          var items = versionCombo.ItemsSource as System.Collections.IList;
+                          if (items != null && versionCombo.SelectedIndex < items.Count)
+                              selectedVersion = items[versionCombo.SelectedIndex]?.ToString() ?? "";
+                      }
+                      
                       var tempInstallation = _existingInstallation ?? new Installation 
                       { 
                           GameDirectory = gameDir,
                           LoaderType = type,
-                          BaseVersion = _existingInstallation?.BaseVersion ?? "" 
+                          BaseVersion = selectedVersion,
+                          Version = selectedVersion
                       };
+                      
+                      ConsoleService.Instance.Log($"[Mods] Passing Installation: {tempInstallation.Name} (Version: {tempInstallation.BaseVersion})");
                       modsControl.Initialize(tempInstallation);
                  }
              }

@@ -274,20 +274,64 @@ namespace JustLauncher
         public string SelectedAccountId { get; set; } = default!;
     }
 
-    public class ModInfo
+    public class ModInfo : System.ComponentModel.INotifyPropertyChanged
     {
+        private bool _isInstalled;
+        private bool _isEnabled;
+        private double _downloadProgress;
+        private bool _isDownloading;
+
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+        public void NotifyIconChanged()
+        {
+            OnPropertyChanged(nameof(IconPath));
+        }
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+
         public string FileName { get; set; } = default!;
         public string Name { get; set; } = default!;
         public string Version { get; set; } = default!;
         public string Description { get; set; } = default!;
         public string Authors { get; set; } = default!;
-        public bool IsEnabled { get; set; } = true;
         public string Path { get; set; } = default!;
-        public string? IconPath { get; set; }
-        
+        private string? _iconPath;
+        public string? IconPath 
+        { 
+            get => _iconPath; 
+            set { _iconPath = value; OnPropertyChanged(); } 
+        }
+
         public string? ProjectId { get; set; }
         public string? DownloadUrl { get; set; }
-        public bool IsInstalled { get; set; }
+
+        public bool IsEnabled 
+        { 
+            get => _isEnabled; 
+            set { _isEnabled = value; OnPropertyChanged(); } 
+        }
+
+        public bool IsInstalled 
+        { 
+            get => _isInstalled; 
+            set { _isInstalled = value; OnPropertyChanged(); } 
+        }
+
+        public double DownloadProgress
+        {
+            get => _downloadProgress;
+            set { _downloadProgress = value; OnPropertyChanged(); }
+        }
+
+        public bool IsDownloading
+        {
+            get => _isDownloading;
+            set { _isDownloading = value; OnPropertyChanged(); }
+        }
     }
 
     public class ModrinthSearchResult

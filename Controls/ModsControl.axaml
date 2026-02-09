@@ -3,14 +3,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:loc="clr-namespace:JustLauncher.Resources"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="JustLauncher.Controls.ModsControl">
     <Grid RowDefinitions="Auto,*">
         <TabControl Grid.RowSpan="2">
-            <TabItem Header="{DynamicResource Mods_Installed}">
+            <TabItem Header="{loc:Localize Key=Mods_Installed}">
                 <Grid RowDefinitions="Auto,*">
                     <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,10,0,10">
-                        <Button x:Name="AddModButton" Classes="Primary" Content="{DynamicResource Common_Add}"/>
+                        <Button x:Name="AddModButton" Classes="Primary" Content="{loc:Localize Key=Common_Add}"/>
                         <Button x:Name="OpenModsFolderButton" Classes="Secondary" Content="Open Folder"/>
                         <Button x:Name="RefreshModsButton" Classes="Secondary" Content="Refresh"/>
                     </StackPanel>
@@ -32,10 +33,10 @@
                     </ListBox>
                 </Grid>
             </TabItem>
-            <TabItem Header="{DynamicResource Mods_Browse}">
+            <TabItem Header="{loc:Localize Key=Mods_Browse}">
                 <Grid RowDefinitions="Auto,*">
                     <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,10,0,10">
-                        <TextBox x:Name="SearchBox" Watermark="{DynamicResource Mods_SearchPlaceholder}" Margin="0,0,10,0"/>
+                        <TextBox x:Name="SearchBox" Watermark="{loc:Localize Key=Mods_SearchPlaceholder}" Margin="0,0,10,0"/>
                         <Button Grid.Column="1" x:Name="SearchButton" Classes="Primary" Content="Search"/>
                     </Grid>
                     <ListBox Grid.Row="1" x:Name="BrowseListBox" Background="Transparent" BorderThickness="0">
@@ -44,16 +45,22 @@
                                 <Border Background="{DynamicResource WindowBackground}" CornerRadius="8" Padding="10" Margin="0,0,0,5">
                                     <Grid ColumnDefinitions="Auto,*,Auto">
                                         <Border Grid.Column="0" Width="40" Height="40" CornerRadius="4" ClipToBounds="True" Margin="0,0,10,0">
-                                            <Image Source="{Binding IconPath, Converter={StaticResource AsyncImageConverter}}"/>
+                                            <Image Source="{Binding IconPath, Converter={StaticResource AsyncImageConverter}, ConverterParameter={Binding}}"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
                                             <TextBlock Text="{Binding Authors}" FontSize="11" Foreground="{DynamicResource SecondaryText}"/>
                                         </StackPanel>
-                                        <Button Grid.Column="2" x:Name="DownloadButton" Content="{DynamicResource Mods_Download}" 
-                                                Classes="Primary" VerticalAlignment="Center" Tag="{Binding}" IsVisible="{Binding !IsInstalled}"/>
-                                        <TextBlock Grid.Column="2" Text="Installed" IsVisible="{Binding IsInstalled}" 
-                                                   VerticalAlignment="Center" Foreground="{DynamicResource SecondaryText}"/>
+                                        <Panel Grid.Column="2" VerticalAlignment="Center" MinWidth="100">
+                                            <Button x:Name="DownloadButton" Content="{loc:Localize Key=Mods_Download}" 
+                                                    Classes="Primary" HorizontalAlignment="Stretch" Tag="{Binding}" IsVisible="{Binding !IsInstalled}"/>
+                                            <StackPanel IsVisible="{Binding IsDownloading}" Spacing="5">
+                                                <TextBlock Text="{loc:Localize Key=Mods_Downloading}" FontSize="10" HorizontalAlignment="Center"/>
+                                                <ProgressBar Minimum="0" Maximum="100" Value="{Binding DownloadProgress}" Height="4"/>
+                                            </StackPanel>
+                                        </Panel>
+                                        <TextBlock Grid.Column="2" Text="{loc:Localize Key=Mods_AlreadyInstalled}" IsVisible="{Binding IsInstalled}" 
+                                                   VerticalAlignment="Center" Foreground="{DynamicResource SuccessBrush}" FontWeight="Bold"/>
                                     </Grid>
                                 </Border>
                             </DataTemplate>

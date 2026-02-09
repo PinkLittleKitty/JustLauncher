@@ -582,4 +582,24 @@
   <data name="Update_ViewChangelog" xml:space="preserve">
     <value>Ver Novedades</value>
   </data>
+  
+  <!-- Explorador de Mods -->
+  <data name="Mods_Installed" xml:space="preserve">
+    <value>Instalados</value>
+  </data>
+  <data name="Mods_Browse" xml:space="preserve">
+    <value>Explorar</value>
+  </data>
+  <data name="Mods_SearchPlaceholder" xml:space="preserve">
+    <value>Buscar mods...</value>
+  </data>
+  <data name="Mods_Download" xml:space="preserve">
+    <value>Descargar</value>
+  </data>
+  <data name="Mods_Downloading" xml:space="preserve">
+    <value>Descargando...</value>
+  </data>
+  <data name="Mods_AlreadyInstalled" xml:space="preserve">
+    <value>Instalado</value>
+  </data>
 </root>

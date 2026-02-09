@@ -12,6 +12,7 @@ public partial class ProfileDialog : Window
 {
     public string? ProfileName { get; private set; }
     public string? GameDirectory { get; private set; }
+    public double MemoryAllocationGb { get; private set; } = 4.0;
 
     public ProfileDialog()
     {
@@ -36,6 +37,27 @@ public partial class ProfileDialog : Window
 
         var header = this.FindControl<Control>("DialogHeader");
         if (header != null) header.PointerPressed += (s, e) => BeginMoveDrag(e);
+
+        // Initialize memory slider
+        var memorySlider = this.FindControl<Slider>("MemorySlider");
+        if (memorySlider != null)
+        {
+            memorySlider.Value = MemoryAllocationGb;
+        }
+    }
+
+    private void MemorySlider_PropertyChanged(object? sender, Avalonia.AvaloniaPropertyChangedEventArgs e)
+    {
+        if (e.Property == Avalonia.Controls.Primitives.RangeBase.ValueProperty && sender is Slider slider)
+        {
+            MemoryAllocationGb = slider.Value;
+            
+            var valueText = this.FindControl<TextBlock>("MemoryValueText");
+            if (valueText != null)
+            {
+                valueText.Text = $"{(int)slider.Value} GB";
+            }
+        }
     }
 
     private void CreateButton_Click(object? sender, RoutedEventArgs e)

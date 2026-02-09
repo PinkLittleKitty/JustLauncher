@@ -195,6 +195,7 @@ namespace JustLauncher
         public string GameDirectory { get; set; } = default!;
         public string JavaPath { get; set; } = default!;
         public string JavaArgs { get; set; } = "-Xmx2G -Xms1G";
+        public double MemoryAllocationGb { get; set; } = 4.0;
         public string Icon { get; set; } = "grass_block";
         public DateTime Created { get; set; } = DateTime.Now;
         public DateTime LastPlayed { get; set; }

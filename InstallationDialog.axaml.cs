@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 
 namespace JustLauncher;
 
@@ -48,6 +49,26 @@ public partial class InstallationDialog : Window
         if (header != null) header.PointerPressed += (s, e) => BeginMoveDrag(e);
     }
 
+    private void MemorySlider_PropertyChanged(object? sender, Avalonia.AvaloniaPropertyChangedEventArgs e)
+    {
+        if (e.Property == Avalonia.Controls.Primitives.RangeBase.ValueProperty && sender is Slider slider)
+        {
+            var memoryLabel = this.FindControl<TextBlock>("MemoryLabel");
+            if (memoryLabel != null)
+            {
+                memoryLabel.Text = $"{(int)slider.Value} GB";
+            }
+            
+            // Update JavaArgs to reflect memory allocation
+            var argsBox = this.FindControl<TextBox>("JavaArgsTextBox");
+            if (argsBox != null)
+            {
+                int memoryGb = (int)slider.Value;
+                argsBox.Text = $"-Xmx{memoryGb}G -Xms{memoryGb}G";
+            }
+        }
+    }
+
     private async Task LoadVersionsAsync()
     {
         var versionCombo = this.FindControl<ComboBox>("VersionComboBox");
@@ -56,8 +77,19 @@ public partial class InstallationDialog : Window
         try
         {
             var manifest = await _minecraftService.GetVersionManifestAsync();
-            versionCombo.ItemsSource = manifest.Versions.Select(v => v.Id).ToList();
-            versionCombo.SelectedIndex = 0;
+            var versions = manifest.Versions.Select(v => v.Id).ToList();
+            versionCombo.ItemsSource = versions;
+            
+            // Pre-select existing version if editing
+            if (_existingInstallation != null && !string.IsNullOrEmpty(_existingInstallation.Version))
+            {
+                int index = versions.IndexOf(_existingInstallation.Version);
+                versionCombo.SelectedIndex = index >= 0 ? index : 0;
+            }
+            else
+            {
+                versionCombo.SelectedIndex = 0;
+            }
         }
         catch
         {
@@ -81,6 +113,25 @@ public partial class InstallationDialog : Window
         if (argsBox != null) argsBox.Text = existing.JavaArgs;
         if (title != null) title.Text = "Edit Installation";
         if (button != null) button.Content = "Save Changes";
+        
+        // Set memory slider value from existing installation
+        // Use Dispatcher to ensure UI is fully loaded
+        Dispatcher.UIThread.Post(() =>
+        {
+            var memorySlider = this.FindControl<Slider>("MemorySlider");
+            var memoryLabel = this.FindControl<TextBlock>("MemoryLabel");
+            if (memorySlider != null)
+            {
+                memorySlider.Value = existing.MemoryAllocationGb;
+                if (memoryLabel != null)
+                {
+                    memoryLabel.Text = $"{(int)existing.MemoryAllocationGb} GB";
+                }
+            }
+        });
+        
+        // Note: Version combo will be pre-selected in LoadVersionsAsync
+        // Mod loader combo will be handled similarly if it exists
 
         var removeBtn = this.FindControl<Button>("RemoveButton");
         if (removeBtn != null) removeBtn.IsVisible = true;
@@ -98,6 +149,7 @@ public partial class InstallationDialog : Window
         var versionCombo = this.FindControl<ComboBox>("VersionComboBox");
         var dirBox = this.FindControl<TextBox>("GameDirectoryTextBox");
         var argsBox = this.FindControl<TextBox>("JavaArgsTextBox");
+        var memorySlider = this.FindControl<Slider>("MemorySlider");
 
         Result = new Installation
         {
@@ -106,6 +158,7 @@ public partial class InstallationDialog : Window
             Version = versionCombo?.SelectedItem?.ToString() ?? "1.21.1",
             GameDirectory = dirBox?.Text ?? PlatformManager.GetMinecraftDirectory(),
             JavaArgs = argsBox?.Text ?? "-Xmx2G",
+            MemoryAllocationGb = memorySlider?.Value ?? 4.0,
             Icon = "grass_block"
         };
         Close(true);

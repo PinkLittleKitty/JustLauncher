@@ -60,7 +60,8 @@
 
                     <StackPanel Spacing="8">
                         <TextBlock Text="Memory Allocation" Foreground="White" FontWeight="SemiBold"/>
-                        <Slider x:Name="MemorySlider" Minimum="1" Maximum="16" Value="2" SmallChange="1" LargeChange="2"/>
+                        <Slider x:Name="MemorySlider" Minimum="1" Maximum="32" Value="4" SmallChange="1" LargeChange="2" 
+                                PropertyChanged="MemorySlider_PropertyChanged"/>
                         <TextBlock x:Name="MemoryLabel" Text="2 GB" Foreground="#00C851" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </StackPanel>

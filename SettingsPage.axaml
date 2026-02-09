@@ -19,8 +19,10 @@
 
                         <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
                             <TextBlock Text="Memory Allocation (GB)" Foreground="Gray" Margin="0,0,0,5"/>
-                            <Slider x:Name="MemorySlider" Minimum="1" Maximum="32" Value="2"/>
-                            <TextBlock Text="{Binding #MemorySlider.Value, StringFormat='\{0:0\} GB'}" HorizontalAlignment="Right" Foreground="#00C851"/>
+                            <Slider x:Name="MemorySlider" Minimum="1" Maximum="32" 
+                                    PropertyChanged="MemorySlider_PropertyChanged"
+                                    PointerReleased="MemorySlider_ValueChanged"/>
+                            <TextBlock x:Name="MemoryValueText" Text="2 GB" HorizontalAlignment="Right" Foreground="#00C851"/>
                         </StackPanel>
                     </Grid>
                 </Border>

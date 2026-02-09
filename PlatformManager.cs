@@ -121,13 +121,78 @@ public static class PlatformManager
         return GetJavaExecutableName();
     }
 
-    public static async System.Threading.Tasks.Task<string?> GetJavaVersionAsync()
+    public static async System.Threading.Tasks.Task<(string? version, string? path)> FindJavaInstallationAsync(int requiredMajorVersion)
+    {
+        // First, try the PATH
+        var pathVersion = await GetJavaVersionFromPathAsync(GetJavaExecutableName());
+        if (pathVersion != null)
+        {
+            int major = ExtractMajorVersion(pathVersion);
+            if (major >= requiredMajorVersion)
+            {
+                return (pathVersion, GetJavaExecutableName());
+            }
+        }
+
+        // Search common installation directories
+        var searchPaths = GetCommonJavaSearchPaths();
+        foreach (var basePath in searchPaths)
+        {
+            if (!Directory.Exists(basePath)) continue;
+
+            try
+            {
+                // Look for Java installations in subdirectories
+                var dirs = Directory.GetDirectories(basePath);
+                foreach (var dir in dirs)
+                {
+                    var javaExe = Path.Combine(dir, "bin", GetJavaExecutableName());
+                    if (File.Exists(javaExe))
+                    {
+                        var version = await GetJavaVersionFromPathAsync(javaExe);
+                        if (version != null)
+                        {
+                            int major = ExtractMajorVersion(version);
+                            if (major >= requiredMajorVersion)
+                            {
+                                return (version, javaExe);
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // Ignore errors when searching directories
+            }
+        }
+
+        // Return the PATH version even if it doesn't meet requirements
+        return (pathVersion, pathVersion != null ? GetJavaExecutableName() : null);
+    }
+
+    public static int ExtractMajorVersion(string versionString)
+    {
+        var parts = versionString.Split('.');
+        if (parts.Length > 0 && int.TryParse(parts[0], out int major))
+        {
+            // Handle old version formats like 1.8.x
+            if (major == 1 && parts.Length > 1 && int.TryParse(parts[1], out int second))
+            {
+                return second;
+            }
+            return major;
+        }
+        return 0;
+    }
+
+    private static async System.Threading.Tasks.Task<string?> GetJavaVersionFromPathAsync(string javaPath)
     {
         try
         {
             var startInfo = new ProcessStartInfo
             {
-                FileName = GetJavaExecutableName(),
+                FileName = javaPath,
                 Arguments = "-version",
                 RedirectStandardError = true,
                 UseShellExecute = false,
@@ -155,5 +220,11 @@ public static class PlatformManager
             Debug.WriteLine($"Java check error: {ex.Message}");
             return null;
         }
+    }
+
+    public static async System.Threading.Tasks.Task<string?> GetJavaVersionAsync()
+    {
+        var result = await GetJavaVersionFromPathAsync(GetJavaExecutableName());
+        return result;
     }
 }

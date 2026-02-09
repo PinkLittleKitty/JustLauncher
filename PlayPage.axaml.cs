@@ -200,23 +200,69 @@ namespace JustLauncher
                 Log($"Fetching version details for {ver.Id}...");
                 var info = await _minecraftService.GetVersionInfoAsync(ver.Url);
 
-                // Java Version Validation
+                // Java Version Validation - Search for compatible Java installation
                 int requiredJava = info.JavaVersion?.MajorVersion ?? 17; // Default to 17 for modern MC if not specified
-                string? currentJavaStr = await PlatformManager.GetJavaVersionAsync();
-                int currentMajor = 0;
-                if (currentJavaStr != null)
+                
+                Log($"Searching for Java {requiredJava} or higher...");
+                var (foundVersion, foundPath) = await PlatformManager.FindJavaInstallationAsync(requiredJava);
+                
+                if (foundVersion != null && foundPath != null)
                 {
-                    var parts = currentJavaStr.Split('.');
-                    if (parts.Length > 0 && int.TryParse(parts[0], out int major)) currentMajor = major;
-                    // Handle old version formats like 1.8.x
-                    if (currentMajor == 1 && parts.Length > 1 && int.TryParse(parts[1], out int second)) currentMajor = second;
+                    int foundMajor = PlatformManager.ExtractMajorVersion(foundVersion);
+                    if (foundMajor >= requiredJava)
+                    {
+                        Log($"Found compatible Java {foundMajor} at: {foundPath}");
+                        // Update settings to use this Java path if it's not the default
+                        if (foundPath != PlatformManager.GetJavaExecutableName())
+                        {
+                            var javaSettings = ConfigManager.LoadSettings();
+                            javaSettings.JavaPath = foundPath;
+                            ConfigManager.SaveSettings(javaSettings);
+                            Log($"Updated Java path in settings to: {foundPath}");
+                        }
+                    }
+                    else
+                    {
+                        // Found Java but version is too old
+                        Log($"[WARNING] Java Version Mismatch!");
+                        Log($"[WARNING] Required: Java {requiredJava}, Detected: Java {foundMajor}");
+                        Log($"[WARNING] The game might fail to start. Please update your Java Runtime.");
+                        
+                        // Show dialog and wait for user decision
+                        var dialog = new JavaVersionDialog(requiredJava.ToString(), foundMajor.ToString());
+                        var owner = VisualRoot as Window;
+                        if (owner == null) return;
+                        
+                        bool shouldContinue = await dialog.ShowDialog<bool>(owner);
+                        
+                        if (!shouldContinue)
+                        {
+                            // User chose to download Java and closed the dialog
+                            if (statusText != null) statusText.Text = "Launch cancelled";
+                            if (progressBar != null) progressBar.IsIndeterminate = false;
+                            return;
+                        }
+                        
+                        // User chose "Launch Anyway" - continue with launch
+                        Log("User chose to launch despite Java version mismatch.");
+                    }
                 }
-
-                if (currentMajor < requiredJava)
+                else
                 {
-                    Log($"[WARNING] Java Version Mismatch!");
-                    Log($"[WARNING] Required: Java {requiredJava}, Detected: Java {currentMajor}");
-                    Log($"[WARNING] The game might fail to start. Please update your Java Runtime.");
+                    // No Java found at all
+                    Log("[ERROR] No Java installation found!");
+                    var dialog = new JavaVersionDialog(requiredJava.ToString(), "Not Found");
+                    var owner = VisualRoot as Window;
+                    if (owner == null) return;
+                    
+                    bool shouldContinue = await dialog.ShowDialog<bool>(owner);
+                    
+                    if (!shouldContinue)
+                    {
+                        if (statusText != null) statusText.Text = "Launch cancelled - No Java found";
+                        if (progressBar != null) progressBar.IsIndeterminate = false;
+                        return;
+                    }
                 }
 
                 // Download Libraries

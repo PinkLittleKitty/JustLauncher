@@ -22,11 +22,6 @@ public static class LaunchCommandBuilder
         
         args.Add("-Dminecraft.launcher.brand=JustLauncher");
         args.Add("-Dminecraft.launcher.version=0.0.2");
-        
-        // Modern Java flags (suppress native access warnings)
-        args.Add("--enable-native-access=ALL-UNNAMED");
-        args.Add("-Dsun.stdout.encoding=UTF-8");
-        args.Add("-Dsun.stderr.encoding=UTF-8");
 
         // Classpath
         var classpath = new List<string>();

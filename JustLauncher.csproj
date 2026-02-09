@@ -8,6 +8,8 @@
     <Authors>JustNeki</Authors>
     <Description>A fast and lightweight cross-platform Minecraft launcher.</Description>
     <Title>JustLauncher</Title>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
 

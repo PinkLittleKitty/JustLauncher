@@ -1,0 +1,72 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
+        x:Class="JustLauncher.MainWindow"
+        Title="JustLauncher"
+        Width="900" Height="600"
+        WindowStartupLocation="CenterScreen"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        Background="#23272A"
+        TransparencyLevelHint="AcrylicBlur">
+
+    <Window.Styles>
+        <Style Selector="Button.TitleBar">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Width" Value="45"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style Selector="Button.TitleBar:hover">
+            <Setter Property="Background" Value="#40444B"/>
+        </Style>
+        <Style Selector="Button.TitleBar.Close:hover">
+            <Setter Property="Background" Value="#ED4245"/>
+        </Style>
+        <Style Selector="Button.Nav">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#8E9297"/>
+            <Setter Property="Padding" Value="20,10"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+        <Style Selector="Button.Nav:hover">
+            <Setter Property="Background" Value="#393C43"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </Window.Styles>
+
+    <Border x:Name="MainBorder" Background="#23272A" CornerRadius="10">
+        <Grid RowDefinitions="32,*">
+            <!-- Custom Title Bar -->
+            <Grid Grid.Row="0" x:Name="TitleBar" Background="#1E2124" ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="15,0">
+                    <TextBlock Text="🚀" FontSize="16" Foreground="White" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock Text="JustLauncher" FontSize="14" Foreground="White" VerticalAlignment="Center" FontWeight="Medium"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button x:Name="MinimizeButton" Content="—" Classes="TitleBar"/>
+                    <Button x:Name="MaximizeButton" Content="▢" Classes="TitleBar"/>
+                    <Button x:Name="CloseButton" Content="✕" Classes="TitleBar Close"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Main Content Area -->
+            <Grid Grid.Row="1" ColumnDefinitions="180,*">
+                <StackPanel Grid.Column="0" Background="#2C2F33" VerticalAlignment="Stretch">
+                    <TextBlock Text="JustLauncher" FontSize="24" Foreground="White" Margin="0,30,0,30" HorizontalAlignment="Center"/>
+                    <Button x:Name="PlayButton" Content="Play" Classes="Nav" Margin="10,5" HorizontalAlignment="Stretch"/>
+                    <Button x:Name="AccountsButton" Content="Accounts" Classes="Nav" Margin="10,5" HorizontalAlignment="Stretch"/>
+                    <Button x:Name="SettingsButton" Content="Settings" Classes="Nav" Margin="10,5" HorizontalAlignment="Stretch"/>
+                </StackPanel>
+
+                <ContentControl x:Name="MainContent" Grid.Column="1"/>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

@@ -1,0 +1,69 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="400"
+        x:Class="JustLauncher.AccountDialog"
+        Title="Account Manager" Height="400" Width="500"
+        WindowStartupLocation="CenterOwner"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        Background="#23272A"
+        TransparencyLevelHint="AcrylicBlur">
+    
+    <Panel>
+        <ExperimentalAcrylicBorder IsHitTestVisible="False">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="0.6"
+                    MaterialOpacity="0.85" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
+
+        <Grid Margin="30" RowDefinitions="Auto,*,Auto">
+            <!-- Header -->
+            <Grid Grid.Row="0" Margin="0,0,0,30" ColumnDefinitions="*,Auto">
+                <StackPanel>
+                    <TextBlock x:Name="DialogTitle" Text="Add New Account" FontSize="24" FontWeight="Bold" Foreground="White"/>
+                    <TextBlock Text="Configure your Minecraft account settings" FontSize="14" Foreground="Gray" Margin="0,5,0,0"/>
+                </StackPanel>
+                <Button x:Name="CloseButton" Grid.Column="1" Content="✕" 
+                        Background="Transparent" Foreground="#999" Padding="10"/>
+            </Grid>
+
+            <!-- Form -->
+            <StackPanel Grid.Row="1" Spacing="20">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Username" Foreground="White" FontWeight="SemiBold"/>
+                    <TextBox x:Name="UsernameTextBox"/>
+                </StackPanel>
+
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Account Type" Foreground="White" FontWeight="SemiBold"/>
+                    <ComboBox x:Name="AccountTypeComboBox" HorizontalAlignment="Stretch" SelectedIndex="0">
+                        <ComboBoxItem Content="Offline Account" Tag="Offline"/>
+                        <ComboBoxItem Content="Microsoft Account" Tag="Microsoft" IsEnabled="False"/>
+                        <ComboBoxItem Content="Mojang Account" Tag="Mojang" IsEnabled="False"/>
+                    </ComboBox>
+                </StackPanel>
+
+                <!-- Info Panel -->
+                <Border Background="#1e2124" CornerRadius="6" Padding="15">
+                    <StackPanel Spacing="5">
+                        <TextBlock x:Name="InfoTitle" Text="Offline Account" FontSize="14" FontWeight="Bold" Foreground="#00C851"/>
+                        <TextBlock x:Name="InfoText" Text="Offline accounts allow you to play Minecraft without authentication. You can use any username you want." 
+                                   FontSize="12" Foreground="Gray" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- Buttons -->
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                <Button x:Name="CancelButton" Content="Cancel" MinWidth="80"/>
+                <Button x:Name="SaveButton" Content="Save Account" MinWidth="120"/>
+            </StackPanel>
+        </Grid>
+    </Panel>
+</Window>

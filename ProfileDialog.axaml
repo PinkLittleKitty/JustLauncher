@@ -1,0 +1,44 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="JustLauncher.ProfileDialog"
+        Title="Profile Settings" Height="400" Width="500"
+        WindowStartupLocation="CenterOwner"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        Background="#1A1A1A">
+    
+    <Grid RowDefinitions="50,*,60">
+        <!-- Title Bar -->
+        <Border Grid.Row="0" Background="#0D1117">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Text="Profile Settings" FontSize="16" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" Margin="20,0"/>
+                <Button x:Name="CloseButton" Grid.Column="1" Content="✕" Width="30" Height="30" 
+                        Background="Transparent" Foreground="White" Margin="0,0,10,0"/>
+            </Grid>
+        </Border>
+
+        <!-- Content -->
+        <StackPanel Grid.Row="1" Margin="30,20" Spacing="15">
+            <StackPanel Spacing="5">
+                <TextBlock Text="Profile Name" Foreground="#8B949E" FontSize="12"/>
+                <TextBox x:Name="ProfileNameTextBox"/>
+            </StackPanel>
+            
+            <StackPanel Spacing="5">
+                <TextBlock Text="Game Directory" Foreground="#8B949E" FontSize="12"/>
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBox x:Name="GameDirectoryTextBox" IsReadOnly="True"/>
+                    <Button x:Name="BrowseDirectoryButton" Content="📁" Margin="5,0,0,0"/>
+                </Grid>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Buttons -->
+        <Border Grid.Row="2" Background="#21262D">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="20,0" Spacing="10">
+                <Button x:Name="CancelButton" Content="Cancel" Width="80"/>
+                <Button x:Name="CreateButton" Content="Create" Classes="Primary" Width="80"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

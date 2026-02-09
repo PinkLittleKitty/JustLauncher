@@ -1,0 +1,11 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="JustLauncher.SettingsPage"
+             Background="#23272A">
+    <Grid Margin="20">
+        <StackPanel Spacing="10">
+            <TextBlock Text="Settings" FontSize="24" Foreground="White" FontWeight="Bold"/>
+            <TextBlock Text="Settings for JustLauncher will appear here." Foreground="White"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

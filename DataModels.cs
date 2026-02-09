@@ -8,17 +8,17 @@ namespace JustLauncher
     public class VersionManifest
     {
         [JsonPropertyName("versions")]
-        public List<MinecraftVersion> Versions { get; set; }
+        public List<MinecraftVersion> Versions { get; set; } = new();
     }
 
     public class MinecraftVersion
     {
         [JsonPropertyName("id")]
-        public string Id { get; set; }
+        public string Id { get; set; } = default!;
         [JsonPropertyName("type")]
-        public string Type { get; set; }
+        public string Type { get; set; } = default!;
         [JsonPropertyName("url")]
-        public string Url { get; set; }
+        public string Url { get; set; } = default!;
         [JsonPropertyName("releaseTime")]
         public DateTime ReleaseTime { get; set; }
     }
@@ -26,188 +26,203 @@ namespace JustLauncher
     public class VersionInfo
     {
         [JsonPropertyName("mainClass")]
-        public string MainClass { get; set; }
+        public string MainClass { get; set; } = default!;
         [JsonPropertyName("type")]
-        public string Type { get; set; }
+        public string Type { get; set; } = default!;
         [JsonPropertyName("inheritsFrom")]
-        public string InheritsFrom { get; set; }
+        public string InheritsFrom { get; set; } = default!;
         [JsonPropertyName("minecraftArguments")]
-        public string MinecraftArguments { get; set; }
+        public string MinecraftArguments { get; set; } = default!;
         [JsonPropertyName("arguments")]
-        public Arguments Arguments { get; set; }
+        public Arguments Arguments { get; set; } = new();
         [JsonPropertyName("assetIndex")]
-        public AssetIndex AssetIndex { get; set; }
+        public AssetIndex AssetIndex { get; set; } = new();
         [JsonPropertyName("libraries")]
-        public List<Library> Libraries { get; set; }
+        public List<Library> Libraries { get; set; } = new();
         [JsonPropertyName("downloads")]
-        public Downloads Downloads { get; set; }
+        public VersionDownloads Downloads { get; set; } = new();
     }
 
     public class Arguments
     {
         [JsonPropertyName("game")]
-        public List<object> Game { get; set; }
+        public List<object> Game { get; set; } = new();
         [JsonPropertyName("jvm")]
-        public List<object> Jvm { get; set; }
+        public List<object> Jvm { get; set; } = new();
     }
 
     public class ConditionalArgument
     {
-        public List<Rule> Rules { get; set; }
-        public object Value { get; set; }
+        public List<Rule> Rules { get; set; } = new();
+        public object Value { get; set; } = default!;
     }
 
     public class AssetIndex
     {
         [JsonPropertyName("id")]
-        public string Id { get; set; }
+        public string Id { get; set; } = default!;
         [JsonPropertyName("url")]
-        public string Url { get; set; }
+        public string Url { get; set; } = default!;
     }
 
     public class Library
     {
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
         [JsonPropertyName("downloads")]
-        public LibraryDownloads Downloads { get; set; }
+        public LibraryDownloads Downloads { get; set; } = new();
         [JsonPropertyName("rules")]
-        public List<Rule> Rules { get; set; }
+        public List<Rule> Rules { get; set; } = new();
     }
 
     public class LibraryDownloads
     {
         [JsonPropertyName("artifact")]
-        public Artifact Artifact { get; set; }
+        public Artifact Artifact { get; set; } = new();
         [JsonPropertyName("classifiers")]
-        public Classifiers Classifiers { get; set; }
+        public Classifiers Classifiers { get; set; } = new();
     }
 
     public class Classifiers
     {
         [JsonPropertyName("natives-windows")]
-        public Artifact NativesWindows { get; set; }
+        public Artifact NativesWindows { get; set; } = new();
         
         [JsonPropertyName("natives-windows-x86_64")]
-        public Artifact NativesWindowsX64 { get; set; }
+        public Artifact NativesWindowsX64 { get; set; } = new();
         
         [JsonPropertyName("natives-windows-x86")]
-        public Artifact NativesWindowsX86 { get; set; }
+        public Artifact NativesWindowsX86 { get; set; } = new();
         
         [JsonPropertyName("natives-linux")]
-        public Artifact NativesLinux { get; set; }
+        public Artifact NativesLinux { get; set; } = new();
         
         [JsonPropertyName("natives-linux-x86_64")]
-        public Artifact NativesLinuxX64 { get; set; }
+        public Artifact NativesLinuxX64 { get; set; } = new();
         
         [JsonPropertyName("natives-macos")]
-        public Artifact NativesMacOS { get; set; }
+        public Artifact NativesMacOS { get; set; } = new();
         
         [JsonPropertyName("natives-macos-arm64")]
-        public Artifact NativesMacOSArm64 { get; set; }
+        public Artifact NativesMacOSArm64 { get; set; } = new();
         
         [JsonExtensionData]
-        public Dictionary<string, JsonElement> AdditionalClassifiers { get; set; }
+        public Dictionary<string, JsonElement> AdditionalClassifiers { get; set; } = new();
     }
 
     public class Artifact
     {
         [JsonPropertyName("path")]
-        public string Path { get; set; }
+        public string Path { get; set; } = default!;
         [JsonPropertyName("url")]
-        public string Url { get; set; }
+        public string Url { get; set; } = default!;
     }
 
     public class Rule
     {
-        public string Action { get; set; }
-        public Os Os { get; set; }
+        public string Action { get; set; } = default!;
+        public Os Os { get; set; } = new();
     }
 
     public class Os
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
     }
 
-    public class Downloads
+    public class VersionDownloads
     {
         [JsonPropertyName("client")]
-        public ClientDownload Client { get; set; }
+        public ClientDownload Client { get; set; } = new();
     }
 
     public class ClientDownload
     {
         [JsonPropertyName("url")]
-        public string Url { get; set; }
+        public string Url { get; set; } = default!;
     }
 
     public class AssetIndexInfo
     {
-        public Dictionary<string, AssetObject> Objects { get; set; }
+        public Dictionary<string, AssetObject> Objects { get; set; } = new();
     }
 
     public class AssetObject
     {
         [JsonPropertyName("hash")]
-        public string Hash { get; set; }
+        public string Hash { get; set; } = default!;
         [JsonPropertyName("size")]
         public int Size { get; set; }
     }
 
     public class VersionListItem
     {
-        public MinecraftVersion Version { get; set; }
-        public string DisplayText { get; set; }
+        public MinecraftVersion Version { get; set; } = new();
+        public string DisplayText { get; set; } = default!;
         public bool IsInstalled { get; set; }
 
-        public override string ToString()
-        {
-            return DisplayText;
-        }
+        public override string ToString() => DisplayText;
     }
 
     public class ProfilesConfig
     {
-        public List<GameProfile> Profiles { get; set; }
+        public List<GameProfile> Profiles { get; set; } = new();
     }
 
     public class GameProfile
     {
-        public string Name { get; set; }
-        public string Directory { get; set; }
-        public string GameDirectory { get; set; }
-        public string LastUsedUsername { get; set; }
-        public string JavaArgs { get; set; }
+        public string Name { get; set; } = default!;
+        public string Directory { get; set; } = default!;
+        public string GameDirectory { get; set; } = default!;
+        public string LastUsedUsername { get; set; } = default!;
+        public string JavaArgs { get; set; } = default!;
     }
 
     public class Installation
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
-        public string Name { get; set; }
-        public string Version { get; set; }
-        public string GameDirectory { get; set; }
-        public string JavaPath { get; set; }
+        public string Name { get; set; } = default!;
+        public string Version { get; set; } = default!;
+        public string GameDirectory { get; set; } = default!;
+        public string JavaPath { get; set; } = default!;
         public string JavaArgs { get; set; } = "-Xmx2G -Xms1G";
         public string Icon { get; set; } = "grass_block";
         public DateTime Created { get; set; } = DateTime.Now;
         public DateTime LastPlayed { get; set; }
         public bool IsModded { get; set; }
-        public string ModLoader { get; set; }
-        public string ModLoaderVersion { get; set; }
-        public string BaseVersion { get; set; }
+        public string ModLoader { get; set; } = default!;
+        public string ModLoaderVersion { get; set; } = default!;
+        public string BaseVersion { get; set; } = default!;
         public int PlayTime { get; set; }
         public bool IsInstalled { get; set; }
     }
 
     public class InstallationsConfig
     {
-        public List<Installation> Installations { get; set; } = new List<Installation>();
-        public string SelectedInstallationId { get; set; }
+        public List<Installation> Installations { get; set; } = new();
+        public string SelectedInstallationId { get; set; } = default!;
     }
 
     public class AssetManifest
     {
         [JsonPropertyName("objects")]
-        public Dictionary<string, AssetObject> Objects { get; set; }
+        public Dictionary<string, AssetObject> Objects { get; set; } = new();
+    }
+
+    public class Account
+    {
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public string Username { get; set; } = default!;
+        public string AccountType { get; set; } = "Offline";
+        public string Email { get; set; } = default!;
+        public DateTime LastUsed { get; set; } = DateTime.Now;
+        public bool IsActive { get; set; }
+        public string SkinUrl { get; set; } = default!;
+        public DateTime Created { get; set; } = DateTime.Now;
+    }
+
+    public class AccountsConfig
+    {
+        public List<Account> Accounts { get; set; } = new();
+        public string SelectedAccountId { get; set; } = default!;
     }
 }

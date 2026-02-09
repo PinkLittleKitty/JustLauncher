@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <Authors>JustNeki</Authors>
     <Description>A fast and lightweight cross-platform Minecraft launcher.</Description>
     <Title>JustLauncher</Title>

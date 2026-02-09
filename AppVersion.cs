@@ -2,7 +2,7 @@ namespace JustLauncher;
 
 public static class AppVersion
 {
-    public const string Version = "1.0.3";
+    public const string Version = "1.0.4";
 
     public const string Name = "JustLauncher";
 

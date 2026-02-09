@@ -27,7 +27,7 @@
 
                 <StackPanel Spacing="4">
                     <TextBlock Text="JustLauncher" FontSize="28" FontWeight="Black" Foreground="{DynamicResource PrimaryText}" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Version 1.0.0" FontSize="14" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" Opacity="0.8"/>
+                    <TextBlock Text="{Binding Version, StringFormat='Version {0}'}" FontSize="14" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" Opacity="0.8"/>
                 </StackPanel>
 
                 <TextBlock Text="A modern, high-performance Minecraft launcher built with Avalonia." 
@@ -37,11 +37,27 @@
                     <i:Icon Value="fa-solid fa-code" Foreground="{DynamicResource SuccessBrush}" VerticalAlignment="Center"/>
                     <TextBlock Text="Created by JustNeki" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource PrimaryText}" VerticalAlignment="Center"/>
                 </StackPanel>
+
+                <!-- Social Links -->
+                <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center" Margin="0,8,0,0">
+                    <Button x:Name="GitHubButton" Classes="Secondary" Padding="10,8" CornerRadius="8" ToolTip.Tip="View on GitHub">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <i:Icon Value="fa-brands fa-github" FontSize="16"/>
+                            <TextBlock Text="GitHub" FontSize="12" FontWeight="Medium"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="WebsiteButton" Classes="Secondary" Padding="10,8" CornerRadius="8" ToolTip.Tip="Visit Website">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <i:Icon Value="fa-solid fa-globe" FontSize="16"/>
+                            <TextBlock Text="Website" FontSize="12" FontWeight="Medium"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
             </StackPanel>
 
             <!-- Footer -->
-            <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,32,0,0">
-                <TextBlock Text="© 2026 JustNeki • Open Source" FontSize="11" Foreground="{DynamicResource SecondaryText}" Opacity="0.5"/>
+            <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,24,0,0">
+                <TextBlock Text="{Binding Copyright}" FontSize="11" Foreground="{DynamicResource SecondaryText}" Opacity="0.5"/>
             </StackPanel>
         </Grid>
     </Border>

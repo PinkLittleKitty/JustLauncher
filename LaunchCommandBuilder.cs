@@ -47,7 +47,7 @@ public static class LaunchCommandBuilder
         args.Add("-Djava.library.path=" + EscapePath(nativesDir));
         
         args.Add("-Dminecraft.launcher.brand=JustLauncher");
-        args.Add("-Dminecraft.launcher.version=1.0.0");
+        args.Add("-Dminecraft.launcher.version=" + AppVersion.Version);
         
         if (account.AccountType == "ElyBy")
         {

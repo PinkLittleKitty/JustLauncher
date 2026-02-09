@@ -21,6 +21,7 @@ namespace JustLauncher
         private InstallationsConfig installationsConfig = new();
         private string minecraftDirectory = string.Empty;
         private MinecraftService _minecraftService = default!;
+        public string AppVersionText => AppVersion.FullName;
 
         public PlayPage() : this("Player") { }
 

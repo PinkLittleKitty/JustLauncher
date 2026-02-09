@@ -47,7 +47,7 @@ public static class LaunchCommandBuilder
         args.Add("-Djava.library.path=" + EscapePath(nativesDir));
         
         args.Add("-Dminecraft.launcher.brand=JustLauncher");
-        args.Add("-Dminecraft.launcher.version=0.0.2");
+        args.Add("-Dminecraft.launcher.version=1.0.0");
 
         var classpath = new List<string>();
         string currentOs = PlatformManager.GetCurrentOsName();

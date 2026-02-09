@@ -84,7 +84,7 @@
                                 <i:Icon Value="fa-solid fa-bolt" FontSize="14" Foreground="{DynamicResource SuccessBrush}" VerticalAlignment="Center"/>
                                 <TextBlock x:Name="StatusText" Text="Ready to Play" FontSize="14" Foreground="{DynamicResource PrimaryText}" VerticalAlignment="Center" FontWeight="Bold"/>
                             </StackPanel>
-                            <TextBlock Grid.Column="1" Text="JustLauncher 0.0.2" FontSize="12" Foreground="{DynamicResource SecondaryText}" VerticalAlignment="Center" Opacity="0.5"/>
+                            <TextBlock Grid.Column="1" Text="JustLauncher 1.0.0" FontSize="12" Foreground="{DynamicResource SecondaryText}" VerticalAlignment="Center" Opacity="0.5"/>
                         </Grid>
                         <ProgressBar x:Name="ProgressBar" Height="4" IsVisible="False" IsIndeterminate="True" Foreground="{DynamicResource SuccessBrush}" Background="{DynamicResource ContentBackground}" CornerRadius="2"/>
                     </StackPanel>

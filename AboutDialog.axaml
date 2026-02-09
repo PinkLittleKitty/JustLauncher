@@ -28,7 +28,7 @@
 
                 <StackPanel Spacing="4">
                     <TextBlock Text="JustLauncher" FontSize="28" FontWeight="Black" Foreground="{DynamicResource PrimaryText}" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Version 0.0.2" FontSize="14" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" Opacity="0.8"/>
+                    <TextBlock Text="Version 1.0.0" FontSize="14" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" Opacity="0.8"/>
                 </StackPanel>
 
                 <TextBlock Text="A modern, high-performance Minecraft launcher built with Avalonia." 

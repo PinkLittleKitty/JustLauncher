@@ -118,7 +118,12 @@ public class JavaManager
             }
         }
 
-        return runtimes.OrderByDescending(r => r.MajorVersion).ThenByDescending(r => r.Version).ToList();
+        return runtimes
+            .GroupBy(r => $"{r.MajorVersion}-{r.Version}-{r.Architecture}")
+            .Select(g => g.OrderBy(r => r.Path.Length).First())
+            .OrderByDescending(r => r.MajorVersion)
+            .ThenByDescending(r => r.Version)
+            .ToList();
     }
 
     public async Task<string?> DownloadJavaAsync(int majorVersion, IProgress<double>? progress = null)
@@ -176,9 +181,11 @@ public class JavaManager
     {
         try
         {
+            string normalizedPath = Path.GetFullPath(path);
+            
             var startInfo = new ProcessStartInfo
             {
-                FileName = path,
+                FileName = normalizedPath,
                 Arguments = "-version",
                 RedirectStandardError = true,
                 UseShellExecute = false,
@@ -216,10 +223,10 @@ public class JavaManager
 
             return new JavaInfo
             {
-                Path = path,
+                Path = normalizedPath,
                 Version = versionStr,
                 MajorVersion = majorVer,
-                IsJre = !path.Contains("javac"),
+                IsJre = !normalizedPath.Contains("javac"),
                 Architecture = output.Contains("64-Bit") ? "x64" : "x86"
             };
         }

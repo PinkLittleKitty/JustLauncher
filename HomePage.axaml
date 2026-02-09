@@ -10,8 +10,8 @@
         <!-- Step 1: Selection Cards -->
         <StackPanel x:Name="Step1Container" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="40">
             <StackPanel Spacing="12" HorizontalAlignment="Center">
-                <Border Background="{DynamicResource SuccessBrush}" Width="80" Height="80" CornerRadius="20" HorizontalAlignment="Center" BoxShadow="0 8 24 0 #40000000">
-                    <i:Icon Value="fa-solid fa-rocket" Foreground="White" FontSize="32" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Border Background="Transparent" Width="100" Height="100" HorizontalAlignment="Center">
+                    <Image Source="/Assets/JustLogo.png" />
                 </Border>
                 <TextBlock Text="SET UP YOUR ACCOUNT" Classes="PageHeader" FontSize="36" LetterSpacing="2" HorizontalAlignment="Center"/>
                 <TextBlock Text="Choose an authentication method to start your journey." Classes="PageDescription" FontSize="16" HorizontalAlignment="Center" Opacity="0.7"/>

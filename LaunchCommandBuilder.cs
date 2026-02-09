@@ -48,6 +48,20 @@ public static class LaunchCommandBuilder
         
         args.Add("-Dminecraft.launcher.brand=JustLauncher");
         args.Add("-Dminecraft.launcher.version=1.0.0");
+        
+        if (account.AccountType == "ElyBy")
+        {
+            string toolsDir = Path.Combine(mcDir, "tools");
+            string injectorPath = Path.Combine(toolsDir, "authlib-injector.jar");
+            if (File.Exists(injectorPath))
+            {
+                string agentArg = $"-javaagent:{EscapePath(injectorPath)}=https://authserver.ely.by";
+                args.Add(agentArg);
+            }
+            else
+            {
+            }
+        }
 
         var classpath = new List<string>();
         string currentOs = PlatformManager.GetCurrentOsName();

@@ -65,7 +65,7 @@ public partial class FaceTracker : UserControl
 
     private void UpdateActiveUserFace()
     {
-        string username = Username;
+        string username = Username ?? "Steve";
         
         if (string.IsNullOrEmpty(username))
         {
@@ -79,8 +79,29 @@ public partial class FaceTracker : UserControl
         
         if (_faceImage != null)
         {
-            _faceImage.SourceUrl = $"https://minotar.net/avatar/{username}/64";
-            _faceImage.SourceRect = default;
+            var accounts = ConfigManager.LoadAccounts();
+            var active = accounts.Accounts.FirstOrDefault(a => a.Username == username) ??
+                         accounts.Accounts.FirstOrDefault(a => a.IsActive) ?? 
+                         accounts.Accounts.FirstOrDefault(a => a.Id == accounts.SelectedAccountId) ?? 
+                         accounts.Accounts.FirstOrDefault();
+
+            if (active != null)
+            {
+                _faceImage.SourceUrl = active.GetAvatarUrl(64);
+                if (active.AccountType == "ElyBy")
+                {
+                    _faceImage.SourceRect = new Rect(8, 8, 8, 8);
+                }
+                else
+                {
+                    _faceImage.SourceRect = default;
+                }
+            }
+            else
+            {
+                _faceImage.SourceUrl = $"https://minotar.net/avatar/{username}/64";
+                _faceImage.SourceRect = default;
+            }
         }
     }
 

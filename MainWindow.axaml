@@ -7,6 +7,7 @@
         mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
         x:Class="JustLauncher.MainWindow"
         Title="JustLauncher"
+        Icon="/Assets/JustLogo.png"
         Width="900" Height="600"
         WindowStartupLocation="CenterScreen"
         SystemDecorations="None"
@@ -67,7 +68,8 @@
         <Grid RowDefinitions="32,*">
             <!-- Custom Title Bar -->
             <Grid Grid.Row="0" x:Name="TitleBar" Background="Transparent" ColumnDefinitions="*,Auto">
-                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0" Spacing="10">
+                    <Image Source="/Assets/JustLogo.png" Width="16" Height="16" VerticalAlignment="Center"/>
                     <TextBlock Text="JustLauncher" FontSize="12" Foreground="{DynamicResource SecondaryText}" VerticalAlignment="Center"/>
                 </StackPanel>
 
@@ -83,9 +85,9 @@
                 <!-- Sidebar -->
                 <Grid Grid.Column="0" RowDefinitions="Auto,*,Auto" Background="{DynamicResource TitleBarBackground}">
                     <!-- Logo Area -->
-                    <StackPanel Grid.Row="0" Margin="20,30,20,20">
-                        <controls:FaceTracker HorizontalAlignment="Center" Margin="0,0,0,15"/>
-                        <TextBlock Text="JustLauncher" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource PrimaryText}" HorizontalAlignment="Center"/>
+                    <StackPanel Grid.Row="0" Margin="20,30,20,20" Spacing="15">
+                        <controls:FaceTracker HorizontalAlignment="Center"/>
+                        <TextBlock Text="JustLauncher" FontSize="20" FontWeight="Black" Foreground="{DynamicResource PrimaryText}" HorizontalAlignment="Center" LetterSpacing="1"/>
                     </StackPanel>
 
                     <!-- Navigation Items -->

@@ -53,12 +53,10 @@ namespace JustLauncher
         {
             if (console.Inlines == null) return;
 
-            // Simple parsing: [HH:mm:ss] [TYPE] message
-            var timestampColor = Color.Parse("#8E9297"); // Secondary text look
-            var typeColor = Color.Parse("#5865F2"); // Blurple
+            var timestampColor = Color.Parse("#8E9297");
+            var typeColor = Color.Parse("#5865F2");
             var messageColor = Color.Parse("#FFFFFF");
 
-            // Check if theme is light or dark
             if (Application.Current?.ActualThemeVariant == Avalonia.Styling.ThemeVariant.Light)
             {
                 timestampColor = Color.Parse("#4F5660");
@@ -70,7 +68,6 @@ namespace JustLauncher
             var typeBrush = new SolidColorBrush(typeColor);
             var msgBrush = new SolidColorBrush(messageColor);
 
-            // Try to find parts
             int firstClose = line.IndexOf(']');
             if (firstClose > 0)
             {
@@ -116,12 +113,16 @@ namespace JustLauncher
             var copyBtn = this.FindControl<Button>("CopyConsoleButton");
             if (copyBtn != null) copyBtn.Click += async (s, e) => {
                 var console = this.FindControl<SelectableTextBlock>("ConsoleOutput");
-                if (console != null && !string.IsNullOrEmpty(console.Text))
+                if (console != null)
                 {
                     var topLevel = TopLevel.GetTopLevel(this);
                     if (topLevel?.Clipboard != null)
                     {
-                        await topLevel.Clipboard.SetTextAsync(ConsoleService.Instance.FullLog);
+                        string logs = ConsoleService.Instance.FullLog;
+                        if (!string.IsNullOrEmpty(logs))
+                        {
+                            await topLevel.Clipboard.SetTextAsync(logs);
+                        }
                     }
                 }
             };

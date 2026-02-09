@@ -133,8 +133,11 @@ namespace JustLauncher
 
             try
             {
-                if (statusText != null) statusText.Text = $"Fetching version info for {installation.Version}...";
-                if (progressBar != null) { progressBar.IsVisible = true; progressBar.IsIndeterminate = true; }
+                Dispatcher.UIThread.Post(() => 
+                {
+                    if (statusText != null) statusText.Text = $"Fetching version info for {installation.Version}...";
+                    if (progressBar != null) { progressBar.IsVisible = true; progressBar.IsIndeterminate = true; }
+                });
 
                 Log("Fetching version manifest...");
                 var manifest = await _minecraftService.GetVersionManifestAsync();
@@ -152,7 +155,9 @@ namespace JustLauncher
                     int foundMajor = PlatformManager.ExtractMajorVersion(foundVersion);
                     if (foundMajor < requiredJava)
                     {
-                        if (!await Services.OverlayService.ShowDialog<bool>(new JavaVersionDialog(requiredJava.ToString(), foundMajor.ToString()))) return;
+                        bool userApproved = await Dispatcher.UIThread.InvokeAsync(async () => 
+                            await Services.OverlayService.ShowDialog<bool>(new JavaVersionDialog(requiredJava.ToString(), foundMajor.ToString())));
+                        if (!userApproved) return;
                     }
                     else if (foundPath != PlatformManager.GetJavaExecutableName())
                     {
@@ -163,41 +168,63 @@ namespace JustLauncher
                 }
                 else
                 {
-                    if (!await Services.OverlayService.ShowDialog<bool>(new JavaVersionDialog(requiredJava.ToString(), "Not Found"))) return;
+                    bool userApproved = await Dispatcher.UIThread.InvokeAsync(async () => 
+                        await Services.OverlayService.ShowDialog<bool>(new JavaVersionDialog(requiredJava.ToString(), "Not Found")));
+                    if (!userApproved) return;
                 }
 
-                if (statusText != null) statusText.Text = "Downloading libraries...";
-                if (progressBar != null) progressBar.IsIndeterminate = false;
+                if (statusText != null) 
+                {
+                    Dispatcher.UIThread.Post(() => 
+                    {
+                        statusText.Text = "Downloading libraries...";
+                        if (progressBar != null) progressBar.IsIndeterminate = false;
+                    });
+                }
+                
                 await _minecraftService.DownloadLibrariesAsync(info, (done, total) => 
                 {
                     Dispatcher.UIThread.Post(() => { if (progressBar != null) progressBar.Value = (double)done / total * 100; });
                 });
 
-                string jarPath = Path.Combine(minecraftDirectory, "versions", installation.Version, installation.Version + ".jar");
+                if (statusText != null) 
+                {
+                    Dispatcher.UIThread.Post(() => statusText.Text = "Downloading version jar...");
+                }
+                
+                string mcDir = PlatformManager.GetMinecraftDirectory();
+                string jarPath = Path.Combine(mcDir, "versions", installation.Version, installation.Version + ".jar");
                 if (!File.Exists(jarPath))
                 {
-                    if (statusText != null) statusText.Text = "Downloading client jar...";
                     await _minecraftService.DownloadFileAsync(info.Downloads.Client.Url, jarPath, (done, total) => 
                     {
                         Dispatcher.UIThread.Post(() => { if (progressBar != null) progressBar.Value = (double)done / total * 100; });
                     });
                 }
 
-                if (statusText != null) statusText.Text = "Downloading assets...";
+                Dispatcher.UIThread.Post(() => { if (statusText != null) statusText.Text = "Downloading assets..."; });
                 await _minecraftService.DownloadAssetsAsync(info, (done, total) => 
                 {
                     Dispatcher.UIThread.Post(() => { if (progressBar != null) progressBar.Value = (double)done / total * 100; });
                 });
 
-                if (statusText != null) statusText.Text = "Extracting natives...";
+                Dispatcher.UIThread.Post(() => { if (statusText != null) statusText.Text = "Extracting natives..."; });
                 await _minecraftService.ExtractNativesAsync(info, installation.Version);
 
-                if (statusText != null) statusText.Text = "Starting game...";
+                Log("Starting game...");
                 var settings = ConfigManager.LoadSettings();
                 var accountsConfig = ConfigManager.LoadAccounts();
                 var account = accountsConfig.Accounts.FirstOrDefault(a => a.IsActive) ?? accountsConfig.Accounts.FirstOrDefault();
                 
                 if (account == null) throw new Exception("No account selected");
+                Log($"Using account: {account.Username} ({account.AccountType})");
+
+                if (account.AccountType == "ElyBy")
+                {
+                    Log("Preparing Ely.by authentication...");
+                    Dispatcher.UIThread.Post(() => { if (statusText != null) statusText.Text = "Preparing Ely.by authentication..."; });
+                    await _minecraftService.EnsureAuthlibInjectorAsync();
+                }
 
                 if (!string.IsNullOrEmpty(installation.GameDirectory) && !Directory.Exists(installation.GameDirectory))
                 {
@@ -205,6 +232,7 @@ namespace JustLauncher
                     Directory.CreateDirectory(installation.GameDirectory);
                 }
 
+                Log("Building launch arguments...");
                 string args = LaunchCommandBuilder.BuildArguments(installation, account, info, settings);
                 
                 var startInfo = new ProcessStartInfo
@@ -215,10 +243,12 @@ namespace JustLauncher
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    WorkingDirectory = installation.GameDirectory
+                    WorkingDirectory = string.IsNullOrEmpty(installation.GameDirectory) ? PlatformManager.GetMinecraftDirectory() : installation.GameDirectory
                 };
 
-                Log("Launching game process...");
+                Log($"Launching process: {startInfo.FileName}");
+                Log($"Arguments (hidden for security): [FILTERED]");
+                
                 var process = new Process { StartInfo = startInfo, EnableRaisingEvents = true };
                 
                 process.OutputDataReceived += (s, ev) => { if (ev.Data != null) Log($"[GAME] {ev.Data}"); };
@@ -228,15 +258,21 @@ namespace JustLauncher
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
                 
-                if (statusText != null) statusText.Text = "Game launched!";
-                if (progressBar != null) progressBar.IsVisible = false;
+                Dispatcher.UIThread.Post(() => 
+                {
+                    if (statusText != null) statusText.Text = "Game launched!";
+                    if (progressBar != null) progressBar.IsVisible = false;
+                });
                 Log("Game started successfully.");
             }
             catch (Exception ex)
             {
                 Log($"CRITICAL ERROR: {ex.Message}");
-                if (statusText != null) statusText.Text = $"Error: {ex.Message}";
-                if (progressBar != null) progressBar.IsVisible = false;
+                Dispatcher.UIThread.Post(() => 
+                {
+                    if (statusText != null) statusText.Text = $"Error: {ex.Message}";
+                    if (progressBar != null) progressBar.IsVisible = false;
+                });
             }
         }
     }

@@ -10,6 +10,8 @@
     <UserControl.Resources>
         <converters:AccountTypeToIconConverter x:Key="AccountTypeToIconConverter"/>
         <converters:SkinToBitmapConverter x:Key="SkinToBitmapConverter"/>
+        <converters:AccountToSkinUrlConverter x:Key="AccountToSkinUrlConverter"/>
+        <converters:AccountToSourceRectConverter x:Key="AccountToSourceRectConverter"/>
     </UserControl.Resources>
 
     <Grid Margin="40" RowDefinitions="Auto,*,Auto">
@@ -50,7 +52,8 @@
                                     <Border Width="96" Height="96" CornerRadius="0" ClipToBounds="True" 
                                             BorderBrush="{DynamicResource BorderBrush}" BorderThickness="3">
                                         <Panel>
-                                            <controls:AsyncImage SourceUrl="{Binding Username, StringFormat='https://minotar.net/avatar/{0}/64'}"
+                                            <controls:AsyncImage SourceUrl="{Binding Converter={StaticResource AccountToSkinUrlConverter}}"
+                                                   SourceRect="{Binding Converter={StaticResource AccountToSourceRectConverter}}"
                                                    Stretch="UniformToFill"
                                                    RenderOptions.BitmapInterpolationMode="None"/>
                                             <!-- Overlay for active status -->

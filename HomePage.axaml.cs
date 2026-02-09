@@ -40,7 +40,6 @@ public partial class HomePage : UserControl
     {
         _currentType = type;
         
-        // Update visual selection
         var offlineBtn = this.FindControl<Button>("OfflineCard");
         var elyByBtn = this.FindControl<Button>("ElyByCard");
         

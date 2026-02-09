@@ -22,8 +22,7 @@
             <!-- Content -->
             <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20">
                 <Grid HorizontalAlignment="Center">
-                    <Border Width="80" Height="80" CornerRadius="12" Background="{DynamicResource SuccessBrush}" Opacity="0.1"/>
-                    <i:Icon Value="fa-solid fa-gamepad" FontSize="40" Foreground="{DynamicResource SuccessBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Image Source="/Assets/JustLogo.png" Width="80" Height="80" />
                 </Grid>
 
                 <StackPanel Spacing="4">

@@ -229,6 +229,15 @@ namespace JustLauncher
         public bool IsActive { get; set; }
         public string SkinUrl { get; set; } = default!;
         public DateTime Created { get; set; } = DateTime.Now;
+
+        public string GetAvatarUrl(int size = 64)
+        {
+            if (AccountType == "ElyBy")
+            {
+                return $"http://skinsystem.ely.by/skins/{Username}.png";
+            }
+            return $"https://minotar.net/avatar/{Username}/{size}";
+        }
     }
 
     public class AccountsConfig

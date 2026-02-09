@@ -135,16 +135,8 @@ public class MinecraftService
 
         foreach (var lib in info.Libraries)
         {
-            bool allowed = lib.IsAllowed(currentOs);
-            bool isLwjgl = lib.Name.Contains("lwjgl");
+            if (!lib.IsAllowed(currentOs)) continue;
             
-            if (isLwjgl)
-            {
-                ConsoleService.Instance.Log($"Checking LWJGL lib: {lib.Name} (Allowed: {allowed})");
-            }
-
-            if (!allowed) continue;
-
             var candidates = new List<Artifact>();
 
             if (lib.Natives != null && lib.Natives.TryGetValue(currentOs, out string? classifier))
@@ -152,7 +144,6 @@ public class MinecraftService
                 if (lib.Downloads.Classifiers != null && lib.Downloads.Classifiers.TryGetValue(classifier, out var nativeArtifact))
                 {
                     candidates.Add(nativeArtifact);
-                    if (isLwjgl) ConsoleService.Instance.Log($"  Added legacy candidate: {classifier}");
                 }
             }
 
@@ -163,7 +154,6 @@ public class MinecraftService
                     if (entry.Key.Contains($"natives-{currentOs}") && PlatformManager.IsArchitectureMatch(entry.Key, currentOs))
                     {
                         candidates.Add(entry.Value);
-                        if (isLwjgl) ConsoleService.Instance.Log($"  Added classifier candidate: {entry.Key}");
                     }
                 }
             }
@@ -173,11 +163,6 @@ public class MinecraftService
                 if (lib.Downloads.Artifact != null)
                 {
                     candidates.Add(lib.Downloads.Artifact);
-                    if (isLwjgl) ConsoleService.Instance.Log("  Added modern artifact candidate (name match)");
-                }
-                else
-                {
-                    if (isLwjgl) ConsoleService.Instance.Log("  Library name match, BUT no main artifact found!");
                 }
             }
 
@@ -256,6 +241,22 @@ public class MinecraftService
                 progressCallback?.Invoke(completed, total);
             }
         }
+    }
+
+    public async Task<string> EnsureAuthlibInjectorAsync()
+    {
+        string toolsDir = Path.Combine(_baseDir, "tools");
+        if (!Directory.Exists(toolsDir)) Directory.CreateDirectory(toolsDir);
+        
+        string injectorPath = Path.Combine(toolsDir, "authlib-injector.jar");
+        if (!File.Exists(injectorPath))
+        {
+            ConsoleService.Instance.Log("Downloading authlib-injector...");
+            string url = "https://github.com/yushijinhun/authlib-injector/releases/download/v1.2.7/authlib-injector-1.2.7.jar";
+            await DownloadFileAsync(url, injectorPath);
+        }
+        
+        return injectorPath;
     }
 
     private string GetCurrentOsName()

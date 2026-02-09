@@ -71,6 +71,7 @@ public static class ConfigManager
 
 public class LauncherSettings
 {
+    public string Language { get; set; } = "en";
     public string JavaPath { get; set; } = string.Empty;
     public double MemoryAllocationGb { get; set; } = 2.0;
     public bool CloseOnLaunch { get; set; } = false;

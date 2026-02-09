@@ -57,7 +57,11 @@ public partial class AccountsPage : UserControl
         {
             panel.ItemsSource = _config.Accounts.ToList();
         }
-        if (countText != null) countText.Text = $"{_config.Accounts.Count} Accounts Connected";
+        if (countText != null) 
+        {
+            var localizedTemplate = Services.LocalizationService.Instance["Accounts_Count"];
+            countText.Text = string.Format(localizedTemplate, _config.Accounts.Count);
+        }
     }
 
     private async void AddAccountButton_Click(object? sender, RoutedEventArgs e)

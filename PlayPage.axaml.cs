@@ -21,7 +21,7 @@ namespace JustLauncher
         private InstallationsConfig installationsConfig = new();
         private string minecraftDirectory = string.Empty;
         private MinecraftService _minecraftService = default!;
-        public string AppVersionText => AppVersion.FullName;
+        public string AppVersionText => AppVersion.Version;
 
         public PlayPage() : this("Player") { }
 
@@ -31,7 +31,11 @@ namespace JustLauncher
             this.username = username;
 
             var welcomeText = this.FindControl<TextBlock>("WelcomeText");
-            if (welcomeText != null) welcomeText.Text = $"Welcome back, {username}!";
+            if (welcomeText != null) 
+            {
+                var localizedTemplate = Services.LocalizationService.Instance["Play_WelcomeBack"];
+                welcomeText.Text = string.Format(localizedTemplate, username);
+            }
 
             httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Add("User-Agent", "JustLauncher/1.0");

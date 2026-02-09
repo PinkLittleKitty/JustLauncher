@@ -1,6 +1,10 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:loc="clr-namespace:JustLauncher.Resources"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="JustLauncher.HomePage">
     
     <Grid>
@@ -13,8 +17,8 @@
                 <Border Background="Transparent" Width="100" Height="100" HorizontalAlignment="Center">
                     <Image Source="/Assets/JustLogo.png" />
                 </Border>
-                <TextBlock Text="SET UP YOUR ACCOUNT" Classes="PageHeader" FontSize="36" LetterSpacing="2" HorizontalAlignment="Center"/>
-                <TextBlock Text="Choose an authentication method to start your journey." Classes="PageDescription" FontSize="16" HorizontalAlignment="Center" Opacity="0.7"/>
+                <TextBlock Text="{loc:Localize Key=Home_SetupTitle}" Classes="PageHeader" FontSize="36" LetterSpacing="2" HorizontalAlignment="Center"/>
+                <TextBlock Text="{loc:Localize Key=Home_SetupDescription}" Classes="PageDescription" FontSize="16" HorizontalAlignment="Center" Opacity="0.7"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Spacing="24" HorizontalAlignment="Center">
@@ -22,8 +26,8 @@
                     <Border Width="300" Height="380" Background="{DynamicResource ContentBackground}" CornerRadius="24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                         <Grid RowDefinitions="*,Auto,Auto" Margin="32">
                             <i:Icon Value="fa-solid fa-user-slash" FontSize="64" Foreground="{DynamicResource SuccessBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Row="1" Text="OFFLINE" FontSize="20" FontWeight="Black" Margin="0,0,0,8" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Row="2" Text="No account required. Best for LAN and local worlds." FontSize="13" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap" TextAlignment="Center" Opacity="0.8"/>
+                            <TextBlock Grid.Row="1" Text="{loc:Localize Key=Home_Offline}" FontSize="20" FontWeight="Black" Margin="0,0,0,8" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Row="2" Text="{loc:Localize Key=Home_OfflineDesc}" FontSize="13" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap" TextAlignment="Center" Opacity="0.8"/>
                         </Grid>
                     </Border>
                 </Button>
@@ -32,8 +36,8 @@
                     <Border Width="300" Height="380" Background="{DynamicResource ContentBackground}" CornerRadius="24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                         <Grid RowDefinitions="*,Auto,Auto" Margin="32">
                             <i:Icon Value="fa-solid fa-globe" FontSize="64" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Row="1" Text="ELY.BY" FontSize="20" FontWeight="Black" Margin="0,0,0,8" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Row="2" Text="Log in with Ely.by to sync skins and friends seamlessly." FontSize="13" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap" TextAlignment="Center" Opacity="0.8"/>
+                            <TextBlock Grid.Row="1" Text="{loc:Localize Key=Home_ElyBy}" FontSize="20" FontWeight="Black" Margin="0,0,0,8" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Row="2" Text="{loc:Localize Key=Home_ElyByDesc}" FontSize="13" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap" TextAlignment="Center" Opacity="0.8"/>
                         </Grid>
                     </Border>
                 </Button>
@@ -41,8 +45,8 @@
                 <Border Width="300" Height="380" Background="{DynamicResource WindowBackground}" CornerRadius="24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Opacity="0.6">
                     <Grid RowDefinitions="*,Auto,Auto" Margin="32">
                         <i:Icon Value="fa-brands fa-microsoft" FontSize="64" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Row="1" Text="MICROSOFT" FontSize="20" FontWeight="Black" Margin="0,0,0,8" HorizontalAlignment="Center"/>
-                        <TextBlock Grid.Row="2" Text="Coming Soon. Official Microsoft account support." FontSize="13" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap" TextAlignment="Center"/>
+                        <TextBlock Grid.Row="1" Text="{loc:Localize Key=Home_Microsoft}" FontSize="20" FontWeight="Black" Margin="0,0,0,8" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Row="2" Text="{loc:Localize Key=Home_MicrosoftDesc}" FontSize="13" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap" TextAlignment="Center"/>
                     </Grid>
                 </Border>
             </StackPanel>

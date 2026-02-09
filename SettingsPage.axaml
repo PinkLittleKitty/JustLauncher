@@ -1,5 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:res="clr-namespace:JustLauncher.Resources"
+             xmlns:loc="clr-namespace:JustLauncher.Resources"
              x:Class="JustLauncher.SettingsPage"
              Background="Transparent">
     
@@ -32,33 +34,46 @@
 
     <ScrollViewer VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <StackPanel Spacing="32" MaxWidth="900" HorizontalAlignment="Left" Margin="40,40,40,80">
-            <TextBlock Text="SETTINGS" Classes="PageHeader"/>
+            <TextBlock Text="{loc:Localize Key=Settings_Title}" Classes="PageHeader"/>
 
             <!-- General Settings -->
             <StackPanel>
-                <TextBlock Text="General" Classes="SettingsHeader"/>
+                <TextBlock Text="{loc:Localize Key=Settings_General}" Classes="SettingsHeader"/>
                 <Border Classes="Card" Padding="24">
                     <StackPanel Spacing="20">
                         <!-- Theme -->
                         <Grid ColumnDefinitions="*,Auto">
                             <StackPanel Grid.Column="0">
-                                <TextBlock Text="Theme" Classes="OptionTitle"/>
-                                <TextBlock Text="Select the application appearance" Classes="OptionDescription"/>
+                                <TextBlock Text="{loc:Localize Key=Settings_Theme}" Classes="OptionTitle"/>
+                                <TextBlock Text="{loc:Localize Key=Settings_ThemeDescription}" Classes="OptionDescription"/>
                             </StackPanel>
                             <ComboBox Grid.Column="1" x:Name="ThemeComboBox" MinWidth="150">
-                                <ComboBoxItem Content="System Default"/>
-                                <ComboBoxItem Content="Light"/>
-                                <ComboBoxItem Content="Dark"/>
+                                <ComboBoxItem Content="{loc:Localize Key=Common_SystemDefault}"/>
+                                <ComboBoxItem Content="{loc:Localize Key=Common_Light}"/>
+                                <ComboBoxItem Content="{loc:Localize Key=Common_Dark}"/>
                             </ComboBox>
                         </Grid>
+                        
+                        <Separator Height="1" Background="{DynamicResource BorderBrush}"/>
+                        
+                        <!-- Language -->
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="{loc:Localize Key=Settings_Language}" Classes="OptionTitle"/>
+                                <TextBlock Text="{loc:Localize Key=Settings_LanguageDescription}" Classes="OptionDescription"/>
+                            </StackPanel>
+                            <ComboBox Grid.Column="1" x:Name="LanguageComboBox" MinWidth="150" SelectionChanged="OnLanguageChanged"/>
+                        </Grid>
+                        
+                        <Separator Height="1" Background="{DynamicResource BorderBrush}"/>
                         
                         <!-- Close on Launch -->
                         <Grid ColumnDefinitions="*,Auto">
                             <StackPanel Grid.Column="0">
-                                <TextBlock Text="Close Launcher on Start" Classes="OptionTitle"/>
-                                <TextBlock Text="Minimize or close the launcher when the game starts" Classes="OptionDescription"/>
+                                <TextBlock Text="{loc:Localize Key=Settings_CloseOnLaunch}" Classes="OptionTitle"/>
+                                <TextBlock Text="{loc:Localize Key=Settings_CloseOnLaunchDescription}" Classes="OptionDescription"/>
                             </StackPanel>
-                            <ToggleSwitch Grid.Column="1" x:Name="CloseOnLaunchToggle" OnContent="On" OffContent="Off"/>
+                            <ToggleSwitch Grid.Column="1" x:Name="CloseOnLaunchToggle" OnContent="{loc:Localize Key=Common_On}" OffContent="{loc:Localize Key=Common_Off}"/>
                         </Grid>
 
                         <Separator Height="1" Background="{DynamicResource BorderBrush}"/>
@@ -66,12 +81,12 @@
                         <!-- Saki Toggle -->
                         <Grid ColumnDefinitions="*,Auto">
                             <StackPanel Grid.Column="0">
-                                <TextBlock Text="Saki (Stickman Mode)" Classes="OptionTitle"/>
-                                <TextBlock Text="Summon a little friend that watches you" Classes="OptionDescription"/>
+                                <TextBlock Text="{loc:Localize Key=Settings_SakiMode}" Classes="OptionTitle"/>
+                                <TextBlock Text="{loc:Localize Key=Settings_SakiModeDescription}" Classes="OptionDescription"/>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
                                 <TextBox x:Name="SakiSkinTextBox" Width="120" Watermark="Skin Name" VerticalAlignment="Center"/>
-                                <ToggleSwitch x:Name="SakiToggle" OnContent="On" OffContent="Off" VerticalAlignment="Center"/>
+                                <ToggleSwitch x:Name="SakiToggle" OnContent="{loc:Localize Key=Common_On}" OffContent="{loc:Localize Key=Common_Off}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Grid>
                     </StackPanel>
@@ -80,16 +95,16 @@
 
             <!-- Java Settings -->
             <StackPanel>
-                <TextBlock Text="Java &amp; Memory" Classes="SettingsHeader"/>
+                <TextBlock Text="{loc:Localize Key=Settings_JavaMemory}" Classes="SettingsHeader"/>
                 <Border Classes="Card" Padding="24">
                     <StackPanel Spacing="20">
                         <!-- Java Path -->
                         <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto">
                             <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,10,0">
-                                <TextBlock Text="Java Executable Path" Classes="OptionTitle"/>
-                                <TextBlock Text="Leave empty to use auto-detected Java" Classes="OptionDescription"/>
+                                <TextBlock Text="{loc:Localize Key=Settings_JavaExecutablePath}" Classes="OptionTitle"/>
+                                <TextBlock Text="{loc:Localize Key=Settings_JavaExecutablePathDescription}" Classes="OptionDescription"/>
                             </StackPanel>
-                            <Button x:Name="BrowseJavaButton" Grid.Row="0" Grid.Column="1" Content="Browse..." Classes="Secondary"/>
+                            <Button x:Name="BrowseJavaButton" Grid.Row="0" Grid.Column="1" Content="{loc:Localize Key=Common_Browse}..." Classes="Secondary"/>
                             <TextBox x:Name="JavaPathTextBox" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,10,0,0" Watermark="Auto-detected"/>
                         </Grid>
 
@@ -99,8 +114,8 @@
                         <StackPanel Spacing="10">
                             <Grid ColumnDefinitions="*,Auto">
                                 <StackPanel Grid.Column="0">
-                                    <TextBlock Text="Memory Allocation" Classes="OptionTitle"/>
-                                    <TextBlock Text="Maximum RAM for Minecraft" Classes="OptionDescription"/>
+                                    <TextBlock Text="{loc:Localize Key=Settings_MemoryAllocation}" Classes="OptionTitle"/>
+                                    <TextBlock Text="{loc:Localize Key=Settings_MemoryAllocationDescription}" Classes="OptionDescription"/>
                                 </StackPanel>
                                 <TextBlock Grid.Column="1" x:Name="MemoryValueText" Text="2 GB" Classes="OptionTitle" Foreground="{DynamicResource AccentBrush}"/>
                             </Grid>
@@ -112,16 +127,16 @@
 
             <!-- Game Settings -->
             <StackPanel>
-                <TextBlock Text="Game Configuration" Classes="SettingsHeader"/>
+                <TextBlock Text="{loc:Localize Key=Settings_GameConfiguration}" Classes="SettingsHeader"/>
                 <Border Classes="Card" Padding="24">
                     <StackPanel Spacing="20">
                         <!-- Separate Directory -->
                         <Grid ColumnDefinitions="*,Auto">
                             <StackPanel Grid.Column="0" Margin="0,0,20,0">
-                                <TextBlock Text="Isolate Game Instances" Classes="OptionTitle"/>
-                                <TextBlock Text="Use separate folders for each installation (Recommended for modpacks)" Classes="OptionDescription" TextWrapping="Wrap"/>
+                                <TextBlock Text="{loc:Localize Key=Settings_IsolateGameInstances}" Classes="OptionTitle"/>
+                                <TextBlock Text="{loc:Localize Key=Settings_IsolateGameInstancesDescription}" Classes="OptionDescription" TextWrapping="Wrap"/>
                             </StackPanel>
-                            <ToggleSwitch Grid.Column="1" x:Name="UseSeparateGameDirToggle" OnContent="On" OffContent="Off"/>
+                            <ToggleSwitch Grid.Column="1" x:Name="UseSeparateGameDirToggle" OnContent="{loc:Localize Key=Common_On}" OffContent="{loc:Localize Key=Common_Off}"/>
                         </Grid>
                     </StackPanel>
                 </Border>
@@ -129,7 +144,7 @@
 
             <!-- Actions -->
             <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" Margin="0,10,0,0">
-                <Button x:Name="SaveButton" Content="SAVE CHANGES" Classes="Primary" Padding="32,12"/>
+                <Button x:Name="SaveButton" Content="{loc:Localize Key=Settings_SaveChanges}" Classes="Primary" Padding="32,12"/>
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:loc="clr-namespace:JustLauncher.Resources"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="JustLauncher.PlayPage">
     
@@ -53,9 +54,9 @@
 
         <!-- Decorative "Minecraft" Background Element -->
         <Canvas Opacity="0.03" IsHitTestVisible="False">
-            <TextBlock Text="MINECRAFT" FontSize="140" FontWeight="Black" Foreground="White" 
+            <TextBlock Text="{loc:Localize Key=Play_Minecraft}" FontSize="140" FontWeight="Black" Foreground="White" 
                        Canvas.Left="-50" Canvas.Top="50" />
-            <TextBlock Text="MINECRAFT" FontSize="140" FontWeight="Black" Foreground="White" 
+            <TextBlock Text="{loc:Localize Key=Play_Minecraft}" FontSize="140" FontWeight="Black" Foreground="White" 
                        Canvas.Right="-50" Canvas.Bottom="100" />
         </Canvas>
 
@@ -70,7 +71,7 @@
                     </i:Icon.RenderTransform>
                 </i:Icon>
                 <TextBlock x:Name="WelcomeText" Text="Welcome back, JustNeki!" FontSize="36" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center"/>
-                <TextBlock Text="Ready for your next adventure?" FontSize="18" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" Opacity="0.6" Margin="0,15,0,0"/>
+                <TextBlock Text="{loc:Localize Key=Play_ReadyForAdventure}" FontSize="18" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" Opacity="0.6" Margin="0,15,0,0"/>
             </StackPanel>
 
             <!-- Bottom Control Panel -->
@@ -93,7 +94,7 @@
                     <Grid Grid.Row="1" ColumnDefinitions="*,260" VerticalAlignment="Center">
                         <!-- Profile Selection -->
                         <StackPanel Grid.Column="0" Spacing="8" Margin="0,0,40,0">
-                            <TextBlock Text="SELECTED INSTALLATION" FontSize="11" Foreground="{DynamicResource SecondaryText}" FontWeight="Bold" LetterSpacing="2"/>
+                            <TextBlock Text="{loc:Localize Key=Play_SelectedInstallation}" FontSize="11" Foreground="{DynamicResource SecondaryText}" FontWeight="Bold" LetterSpacing="2"/>
                             <Grid ColumnDefinitions="*,Auto">
                                 <ComboBox x:Name="ProfileComboBox" Classes="ProfileSelector" HorizontalAlignment="Stretch" VerticalContentAlignment="Center">
                                     <ComboBox.ItemTemplate>
@@ -115,7 +116,7 @@
                         </StackPanel>
 
                         <!-- Play Action -->
-                        <Button Grid.Column="1" x:Name="PlayButton" Content="PLAY" Classes="Primary" HorizontalAlignment="Stretch" Height="56" FontSize="24" VerticalAlignment="Bottom"/>
+                        <Button Grid.Column="1" x:Name="PlayButton" Content="{loc:Localize Key=Play_PlayButton}" Classes="Primary" HorizontalAlignment="Stretch" Height="56" FontSize="24" VerticalAlignment="Bottom"/>
                     </Grid>
                 </Grid>
             </Border>

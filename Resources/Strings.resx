@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" msdata:Ordinal="5" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <!-- Navigation -->
+  <data name="Nav_Play" xml:space="preserve">
+    <value>Play</value>
+  </data>
+  <data name="Nav_Accounts" xml:space="preserve">
+    <value>Accounts</value>
+  </data>
+  <data name="Nav_Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Nav_Console" xml:space="preserve">
+    <value>Console</value>
+  </data>
+  <data name="Nav_About" xml:space="preserve">
+    <value>About</value>
+  </data>
+  
+  <!-- Common -->
+  <data name="Common_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Common_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Common_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Common_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Common_Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Common_Browse" xml:space="preserve">
+    <value>Browse</value>
+  </data>
+  
+  <!-- Home Page -->
+  <data name="Home_SetupTitle" xml:space="preserve">
+    <value>SET UP YOUR ACCOUNT</value>
+  </data>
+  <data name="Home_SetupDescription" xml:space="preserve">
+    <value>Choose an authentication method to start your journey.</value>
+  </data>
+  <data name="Home_OfflineTitle" xml:space="preserve">
+    <value>OFFLINE MODE</value>
+  </data>
+  <data name="Home_OfflineDescription" xml:space="preserve">
+    <value>Play without authentication. Perfect for testing or offline play.</value>
+  </data>
+  <data name="Home_ElyByTitle" xml:space="preserve">
+    <value>ELY.BY ACCOUNT</value>
+  </data>
+  <data name="Home_ElyByDescription" xml:space="preserve">
+    <value>Use your Ely.by credentials for a secure, authenticated experience.</value>
+  </data>
+  <data name="Home_Continue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  
+  <!-- Play Page -->
+  <data name="Play_LaunchButton" xml:space="preserve">
+    <value>PLAY</value>
+  </data>
+  <data name="Play_AddInstallation" xml:space="preserve">
+    <value>Add Installation</value>
+  </data>
+  <data name="Play_StatusReady" xml:space="preserve">
+    <value>Ready to Play</value>
+  </data>
+  <data name="Play_StatusLaunching" xml:space="preserve">
+    <value>Launching...</value>
+  </data>
+  <data name="Play_StatusDownloading" xml:space="preserve">
+    <value>Downloading...</value>
+  </data>
+  <data name="Play_NoInstallations" xml:space="preserve">
+    <value>No installations yet. Click "Add Installation" to get started!</value>
+  </data>
+  
+  <!-- Accounts Page -->
+  <data name="Accounts_Title" xml:space="preserve">
+    <value>ACCOUNTS</value>
+  </data>
+  <data name="Accounts_Description" xml:space="preserve">
+    <value>Manage your Minecraft accounts</value>
+  </data>
+  <data name="Accounts_AddAccount" xml:space="preserve">
+    <value>Add Account</value>
+  </data>
+  <data name="Accounts_NoAccounts" xml:space="preserve">
+    <value>No accounts yet. Click "Add Account" to get started!</value>
+  </data>
+  <data name="Accounts_AccountName" xml:space="preserve">
+    <value>Account Name</value>
+  </data>
+  <data name="Accounts_AccountType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  
+  <!-- Settings Page -->
+  <data name="Settings_Title" xml:space="preserve">
+    <value>SETTINGS</value>
+  </data>
+  <data name="Settings_General" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="Settings_Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Settings_LanguageDescription" xml:space="preserve">
+    <value>Choose your preferred language</value>
+  </data>
+  <data name="Settings_MinecraftDirectory" xml:space="preserve">
+    <value>Minecraft Directory</value>
+  </data>
+  <data name="Settings_JavaPath" xml:space="preserve">
+    <value>Java Path</value>
+  </data>
+  <data name="Settings_JavaPathDescription" xml:space="preserve">
+    <value>Path to Java executable (leave empty for auto-detect)</value>
+  </data>
+  <data name="Settings_Memory" xml:space="preserve">
+    <value>Memory Allocation</value>
+  </data>
+  <data name="Settings_MinMemory" xml:space="preserve">
+    <value>Minimum Memory (MB)</value>
+  </data>
+  <data name="Settings_MaxMemory" xml:space="preserve">
+    <value>Maximum Memory (MB)</value>
+  </data>
+  <data name="Settings_GameSettings" xml:space="preserve">
+    <value>Game Settings</value>
+  </data>
+  <data name="Settings_WindowWidth" xml:space="preserve">
+    <value>Window Width</value>
+  </data>
+  <data name="Settings_WindowHeight" xml:space="preserve">
+    <value>Window Height</value>
+  </data>
+  <data name="Settings_Fullscreen" xml:space="preserve">
+    <value>Fullscreen</value>
+  </data>
+  <data name="Settings_JvmArguments" xml:space="preserve">
+    <value>JVM Arguments</value>
+  </data>
+  <data name="Settings_JvmArgumentsDescription" xml:space="preserve">
+    <value>Additional Java arguments (advanced)</value>
+  </data>
+  
+  <!-- Console Page -->
+  <data name="Console_Title" xml:space="preserve">
+    <value>CONSOLE</value>
+  </data>
+  <data name="Console_CopyLog" xml:space="preserve">
+    <value>Copy Log</value>
+  </data>
+  <data name="Console_ClearLog" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  
+  <!-- About Dialog -->
+  <data name="About_Title" xml:space="preserve">
+    <value>JustLauncher</value>
+  </data>
+  <data name="About_Description" xml:space="preserve">
+    <value>A modern, high-performance Minecraft launcher built with Avalonia.</value>
+  </data>
+  <data name="About_CreatedBy" xml:space="preserve">
+    <value>Created by JustNeki</value>
+  </data>
+  <data name="About_GitHub" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="About_Website" xml:space="preserve">
+    <value>Website</value>
+  </data>
+  
+  <!-- Account Dialog -->
+  <data name="AccountDialog_AddAccount" xml:space="preserve">
+    <value>ADD ACCOUNT</value>
+  </data>
+  <data name="AccountDialog_OfflineMode" xml:space="preserve">
+    <value>Offline Mode</value>
+  </data>
+  <data name="AccountDialog_ElyByAccount" xml:space="preserve">
+    <value>Ely.by Account</value>
+  </data>
+  <data name="AccountDialog_Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="AccountDialog_Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="AccountDialog_Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="AccountDialog_Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  
+  <!-- Installation Dialog -->
+  <data name="InstallationDialog_Title" xml:space="preserve">
+    <value>NEW INSTALLATION</value>
+  </data>
+  <data name="InstallationDialog_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="InstallationDialog_Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="InstallationDialog_SelectVersion" xml:space="preserve">
+    <value>Select a Minecraft version</value>
+  </data>
+  <data name="InstallationDialog_Create" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  
+  <!-- Messages -->
+  <data name="Message_ErrorTitle" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Message_SuccessTitle" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="Message_WarningTitle" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="Message_LaunchError" xml:space="preserve">
+    <value>Failed to launch game</value>
+  </data>
+  <data name="Message_LoginError" xml:space="preserve">
+    <value>Login failed. Please check your credentials.</value>
+  </data>
+  <data name="Message_JavaNotFound" xml:space="preserve">
+    <value>Java not found. Please install Java or specify the path in Settings.</value>
+  </data>
+  <data name="Message_InvalidJavaVersion" xml:space="preserve">
+    <value>Invalid Java version. This Minecraft version requires Java {0}, but found Java {1}.</value>
+  </data>
+  
+  <!-- Settings Page (Additional) -->
+  <data name="Settings_Theme" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="Settings_ThemeDescription" xml:space="preserve">
+    <value>Select the application appearance</value>
+  </data>
+  <data name="Settings_CloseOnLaunch" xml:space="preserve">
+    <value>Close Launcher on Start</value>
+  </data>
+  <data name="Settings_CloseOnLaunchDescription" xml:space="preserve">
+    <value>Minimize or close the launcher when the game starts</value>
+  </data>
+  <data name="Settings_SakiMode" xml:space="preserve">
+    <value>Saki (Stickman Mode)</value>
+  </data>
+  <data name="Settings_SakiModeDescription" xml:space="preserve">
+    <value>Summon a little friend that watches you</value>
+  </data>
+  <data name="Settings_JavaMemory" xml:space="preserve">
+    <value>Java &amp; Memory</value>
+  </data>
+  <data name="Settings_JavaExecutablePath" xml:space="preserve">
+    <value>Java Executable Path</value>
+  </data>
+  <data name="Settings_JavaExecutablePathDescription" xml:space="preserve">
+    <value>Leave empty to use auto-detected Java</value>
+  </data>
+  <data name="Settings_MemoryAllocation" xml:space="preserve">
+    <value>Memory Allocation</value>
+  </data>
+  <data name="Settings_MemoryAllocationDescription" xml:space="preserve">
+    <value>Maximum RAM for Minecraft</value>
+  </data>
+  <data name="Settings_GameConfiguration" xml:space="preserve">
+    <value>Game Configuration</value>
+  </data>
+  <data name="Settings_IsolateGameInstances" xml:space="preserve">
+    <value>Isolate Game Instances</value>
+  </data>
+  <data name="Settings_IsolateGameInstancesDescription" xml:space="preserve">
+    <value>Use separate folders for each installation (Recommended for modpacks)</value>
+  </data>
+  <data name="Settings_SaveChanges" xml:space="preserve">
+    <value>SAVE CHANGES</value>
+  </data>
+  
+  <!-- Play Page (Additional) -->
+  <data name="Play_WelcomeBack" xml:space="preserve">
+    <value>Welcome back, {0}!</value>
+  </data>
+  <data name="Play_ReadyForAdventure" xml:space="preserve">
+    <value>Ready for your next adventure?</value>
+  </data>
+  <data name="Play_SelectedInstallation" xml:space="preserve">
+    <value>SELECTED INSTALLATION</value>
+  </data>
+  <data name="Play_Minecraft" xml:space="preserve">
+    <value>MINECRAFT</value>
+  </data>
+  
+  <!-- Home Page (Additional) -->
+  <data name="Home_Offline" xml:space="preserve">
+    <value>OFFLINE</value>
+  </data>
+  <data name="Home_OfflineDesc" xml:space="preserve">
+    <value>No account required. Best for LAN and local worlds.</value>
+  </data>
+  <data name="Home_ElyBy" xml:space="preserve">
+    <value>ELY.BY</value>
+  </data>
+  <data name="Home_ElyByDesc" xml:space="preserve">
+    <value>Log in with Ely.by to sync skins and friends seamlessly.</value>
+  </data>
+  <data name="Home_Microsoft" xml:space="preserve">
+    <value>MICROSOFT</value>
+  </data>
+  <data name="Home_MicrosoftDesc" xml:space="preserve">
+    <value>Coming Soon. Official Microsoft account support.</value>
+  </data>
+  
+  <!-- Installation Dialog (Additional) -->
+  <data name="Installation_Settings" xml:space="preserve">
+    <value>Installation Settings</value>
+  </data>
+  <data name="Installation_ConfigureDescription" xml:space="preserve">
+    <value>Configure your Minecraft installation settings</value>
+  </data>
+  <data name="Installation_InstallationName" xml:space="preserve">
+    <value>INSTALLATION NAME</value>
+  </data>
+  <data name="Installation_MinecraftVersion" xml:space="preserve">
+    <value>MINECRAFT VERSION</value>
+  </data>
+  <data name="Installation_ModLoader" xml:space="preserve">
+    <value>MOD LOADER</value>
+  </data>
+  <data name="Installation_GameDirectory" xml:space="preserve">
+    <value>GAME DIRECTORY</value>
+  </data>
+  <data name="Installation_JvmArguments" xml:space="preserve">
+    <value>JVM ARGUMENTS</value>
+  </data>
+  <data name="Installation_MemoryAllocation" xml:space="preserve">
+    <value>MEMORY ALLOCATION</value>
+  </data>
+  
+  <!-- Profile Dialog -->
+  <data name="Profile_Settings" xml:space="preserve">
+    <value>Profile Settings</value>
+  </data>
+  <data name="Profile_ProfileName" xml:space="preserve">
+    <value>Profile Name</value>
+  </data>
+  <data name="Profile_GameDirectory" xml:space="preserve">
+    <value>Game Directory</value>
+  </data>
+  <data name="Profile_MemoryAllocationGB" xml:space="preserve">
+    <value>Memory Allocation (GB)</value>
+  </data>
+  
+  <!-- Java Version Dialog -->
+  <data name="Java_VersionWarning" xml:space="preserve">
+    <value>Java Version Warning</value>
+  </data>
+  <data name="Java_Required" xml:space="preserve">
+    <value>REQUIRED</value>
+  </data>
+  <data name="Java_Detected" xml:space="preserve">
+    <value>DETECTED</value>
+  </data>
+  <data name="Java_WarningMessage" xml:space="preserve">
+    <value>The game might not start correctly with the current Java version.</value>
+  </data>
+  <data name="Java_ContinueAnyway" xml:space="preserve">
+    <value>Continue Anyway</value>
+  </data>
+  <data name="Java_SelectJava" xml:space="preserve">
+    <value>Select Java</value>
+  </data>
+  
+  <!-- Common UI -->
+  <data name="Common_On" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="Common_Off" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="Common_SystemDefault" xml:space="preserve">
+    <value>System Default</value>
+  </data>
+  <data name="Common_Light" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="Common_Dark" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="Common_None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Common_Vanilla" xml:space="preserve">
+    <value>Vanilla</value>
+  </data>
+  <data name="Common_Forge" xml:space="preserve">
+    <value>Forge</value>
+  </data>
+  <data name="Common_Fabric" xml:space="preserve">
+    <value>Fabric</value>
+  </data>
+  
+  <!-- Console Page -->
+  <data name="Console_Title" xml:space="preserve">
+    <value>SYSTEM CONSOLE</value>
+  </data>
+  <data name="Console_Description" xml:space="preserve">
+    <value>View live logs and game output</value>
+  </data>
+  <data name="Console_CopyLog" xml:space="preserve">
+    <value>COPY LOG</value>
+  </data>
+  <data name="Console_Clear" xml:space="preserve">
+    <value>CLEAR</value>
+  </data>
+  <data name="Console_Active" xml:space="preserve">
+    <value>CONSOLE ACTIVE</value>
+  </data>
+  
+  <!-- Account Dialog -->
+  <data name="AccountDialog_Title" xml:space="preserve">
+    <value>Add Minecraft Account</value>
+  </data>
+  <data name="AccountDialog_Subtitle" xml:space="preserve">
+    <value>Choose how you want to play</value>
+  </data>
+  <data name="AccountDialog_Step1" xml:space="preserve">
+    <value>STEP 1: SELECT PROVIDER</value>
+  </data>
+  <data name="AccountDialog_Step2" xml:space="preserve">
+    <value>STEP 2: ACCOUNT DETAILS</value>
+  </data>
+  <data name="AccountDialog_OfflineAccount" xml:space="preserve">
+    <value>Offline Account</value>
+  </data>
+  <data name="AccountDialog_OfflineDesc" xml:space="preserve">
+    <value>No authentication. Play locally.</value>
+  </data>
+  <data name="AccountDialog_ElyByAccount" xml:space="preserve">
+    <value>Ely.by Account</value>
+  </data>
+  <data name="AccountDialog_ElyByDesc" xml:space="preserve">
+    <value>Sync skins and friends via Ely.by.</value>
+  </data>
+  <data name="AccountDialog_Microsoft" xml:space="preserve">
+    <value>Microsoft</value>
+  </data>
+  <data name="AccountDialog_MicrosoftDesc" xml:space="preserve">
+    <value>Official Microsoft (Coming Soon)</value>
+  </data>
+  <data name="AccountDialog_Username" xml:space="preserve">
+    <value>USERNAME</value>
+  </data>
+  <data name="AccountDialog_Password" xml:space="preserve">
+    <value>PASSWORD</value>
+  </data>
+  <data name="AccountDialog_OfflineInfo" xml:space="preserve">
+    <value>Offline accounts work on cracked servers and LAN experiments.</value>
+  </data>
+  <data name="AccountDialog_Back" xml:space="preserve">
+    <value>BACK</value>
+  </data>
+  <data name="AccountDialog_Cancel" xml:space="preserve">
+    <value>CANCEL</value>
+  </data>
+  <data name="AccountDialog_Next" xml:space="preserve">
+    <value>NEXT</value>
+  </data>
+  <data name="AccountDialog_LoginSave" xml:space="preserve">
+    <value>LOGIN &amp; SAVE</value>
+  </data>
+  
+  <!-- Accounts Page -->
+  <data name="Accounts_Title" xml:space="preserve">
+    <value>ACCOUNTS</value>
+  </data>
+  <data name="Accounts_Description" xml:space="preserve">
+    <value>Manage your player profiles</value>
+  </data>
+  <data name="Accounts_AddAccount" xml:space="preserve">
+    <value>ADD ACCOUNT</value>
+  </data>
+  <data name="Accounts_Active" xml:space="preserve">
+    <value>ACTIVE</value>
+  </data>
+  <data name="Accounts_UseAccount" xml:space="preserve">
+    <value>USE ACCOUNT</value>
+  </data>
+  <data name="Accounts_Count" xml:space="preserve">
+    <value>{0} Accounts Connected</value>
+  </data>
+  
+  <!-- About Dialog -->
+  <data name="About_Title" xml:space="preserve">
+    <value>JustLauncher</value>
+  </data>
+  <data name="About_Description" xml:space="preserve">
+    <value>A modern, high-performance Minecraft launcher built with Avalonia.</value>
+  </data>
+  <data name="About_CreatedBy" xml:space="preserve">
+    <value>Created by JustNeki</value>
+  </data>
+  <data name="About_GitHub" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="About_Website" xml:space="preserve">
+    <value>Website</value>
+  </data>
+  
+  <!-- Play Page (Additional) -->
+  <data name="Play_PlayButton" xml:space="preserve">
+    <value>PLAY</value>
+  </data>
+</root>

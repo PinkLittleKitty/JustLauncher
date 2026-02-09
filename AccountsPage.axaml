@@ -1,9 +1,13 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:JustLauncher"
              xmlns:converters="clr-namespace:JustLauncher.Converters"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
              xmlns:controls="clr-namespace:JustLauncher.Controls"
+             xmlns:loc="clr-namespace:JustLauncher.Resources"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="JustLauncher.AccountsPage"
              Background="Transparent">
     
@@ -18,8 +22,8 @@
         <!-- Header -->
         <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,40">
             <StackPanel Grid.Column="0">
-                <TextBlock Text="ACCOUNTS" Classes="PageHeader"/>
-                <TextBlock Text="Manage your player profiles" Classes="PageDescription"/>
+                <TextBlock Text="{loc:Localize Key=Accounts_Title}" Classes="PageHeader"/>
+                <TextBlock Text="{loc:Localize Key=Accounts_Description}" Classes="PageDescription"/>
             </StackPanel>
             
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
@@ -29,7 +33,7 @@
                 <Button x:Name="AddAccountButton" Classes="Primary" Padding="20,12">
                     <StackPanel Orientation="Horizontal" Spacing="10">
                         <i:Icon Value="fa-solid fa-plus"/>
-                        <TextBlock Text="ADD ACCOUNT"/>
+                        <TextBlock Text="{loc:Localize Key=Accounts_AddAccount}"/>
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -66,7 +70,7 @@
                                             Background="{DynamicResource SuccessBrush}" CornerRadius="10" Padding="8,4"
                                             VerticalAlignment="Top" HorizontalAlignment="Right"
                                             Margin="0,-5,-5,0" Effect="drop-shadow(0 2 4 #40000000)">
-                                        <TextBlock Text="ACTIVE" FontSize="10" FontWeight="Black" Foreground="White"/>
+                                        <TextBlock Text="{loc:Localize Key=Accounts_Active}" FontSize="10" FontWeight="Black" Foreground="White"/>
                                     </Border>
                                 </Grid>
 
@@ -86,7 +90,7 @@
                                             HorizontalAlignment="Stretch" Padding="0,10">
                                          <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
                                             <i:Icon Value="fa-solid fa-check"/>
-                                            <TextBlock Text="USE ACCOUNT"/>
+                                            <TextBlock Text="{loc:Localize Key=Accounts_UseAccount}"/>
                                         </StackPanel>   
                                     </Button>
                                     

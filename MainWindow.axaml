@@ -4,6 +4,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="https://github.com/projektanker/icons.avalonia"
         xmlns:controls="clr-namespace:JustLauncher.Controls"
+        xmlns:res="clr-namespace:JustLauncher.Resources"
+        xmlns:loc="clr-namespace:JustLauncher.Resources"
         mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
         x:Class="JustLauncher.MainWindow"
         Title="JustLauncher"
@@ -95,25 +97,25 @@
                         <Button x:Name="PlayButton" Classes="SidebarBtn">
                             <StackPanel Orientation="Horizontal" Spacing="15">
                                 <i:Icon Value="fa-solid fa-gamepad" />
-                                <TextBlock Text="Play" VerticalAlignment="Center"/>
+                                <TextBlock Text="{loc:Localize Key=Nav_Play}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
                         <Button x:Name="AccountsButton" Classes="SidebarBtn">
                             <StackPanel Orientation="Horizontal" Spacing="15">
                                 <i:Icon Value="fa-solid fa-users" />
-                                <TextBlock Text="Accounts" VerticalAlignment="Center"/>
+                                <TextBlock Text="{loc:Localize Key=Nav_Accounts}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
                         <Button x:Name="SettingsButton" Classes="SidebarBtn">
                             <StackPanel Orientation="Horizontal" Spacing="15">
                                 <i:Icon Value="fa-solid fa-cog" />
-                                <TextBlock Text="Settings" VerticalAlignment="Center"/>
+                                <TextBlock Text="{loc:Localize Key=Nav_Settings}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
                         <Button x:Name="ConsoleButton" Classes="SidebarBtn">
                             <StackPanel Orientation="Horizontal" Spacing="15">
                                 <i:Icon Value="fa-solid fa-terminal" />
-                                <TextBlock Text="Console" VerticalAlignment="Center"/>
+                                <TextBlock Text="{loc:Localize Key=Nav_Console}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
                     </StackPanel>
@@ -123,7 +125,7 @@
                         <Button x:Name="InfoButton" Classes="SidebarBtn">
                             <StackPanel Orientation="Horizontal" Spacing="15">
                                 <i:Icon Value="fa-solid fa-info-circle" />
-                                <TextBlock Text="About" VerticalAlignment="Center"/>
+                                <TextBlock Text="{loc:Localize Key=Nav_About}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
                     </StackPanel>

@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:loc="clr-namespace:JustLauncher.Resources"
              mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="400"
              x:Class="JustLauncher.JavaVersionDialog"
              Width="500">
@@ -16,7 +17,7 @@
             <!-- Header -->
             <StackPanel Orientation="Horizontal" Spacing="16">
                 <i:Icon Value="fa-solid fa-exclamation-triangle" FontSize="32" Foreground="{DynamicResource WarningBrush}"/>
-                <TextBlock Text="Java Version Warning" Classes="PageHeader" FontSize="24" VerticalAlignment="Center"/>
+                <TextBlock Text="{loc:Localize Key=Java_VersionWarning}" Classes="PageHeader" FontSize="24" VerticalAlignment="Center"/>
             </StackPanel>
 
             <!-- Message -->
@@ -31,13 +32,13 @@
             <Grid ColumnDefinitions="*,12,*">
                 <Border Grid.Column="0" Background="{DynamicResource WindowBackground}" CornerRadius="12" Padding="16" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                     <StackPanel Spacing="4">
-                        <TextBlock Text="REQUIRED" FontSize="10" FontWeight="Black" Foreground="{DynamicResource SecondaryText}" LetterSpacing="1"/>
+                        <TextBlock Text="{loc:Localize Key=Java_Required}" FontSize="10" FontWeight="Black" Foreground="{DynamicResource SecondaryText}" LetterSpacing="1"/>
                         <TextBlock x:Name="RequiredVersionText" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource SuccessBrush}"/>
                     </StackPanel>
                 </Border>
                 <Border Grid.Column="2" Background="{DynamicResource WindowBackground}" CornerRadius="12" Padding="16" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                     <StackPanel Spacing="4">
-                        <TextBlock Text="DETECTED" FontSize="10" FontWeight="Black" Foreground="{DynamicResource SecondaryText}" LetterSpacing="1"/>
+                        <TextBlock Text="{loc:Localize Key=Java_Detected}" FontSize="10" FontWeight="Black" Foreground="{DynamicResource SecondaryText}" LetterSpacing="1"/>
                         <TextBlock x:Name="DetectedVersionText" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource DangerBrush}"/>
                     </StackPanel>
                 </Border>
@@ -45,7 +46,7 @@
 
             <!-- Advice -->
             <Border Background="{DynamicResource WarningBrush}" Opacity="0.1" CornerRadius="8" Padding="12">
-                <TextBlock Text="The game might not start correctly with the current Java version."
+                <TextBlock Text="{loc:Localize Key=Java_WarningMessage}"
                            Foreground="{DynamicResource WarningBrush}"
                            FontSize="12"
                            FontWeight="Medium"

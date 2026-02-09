@@ -2,7 +2,9 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using System;
+using System.Linq;
 using Avalonia.Platform.Storage;
+using JustLauncher.Services;
 
 namespace JustLauncher;
 
@@ -83,6 +85,31 @@ public partial class SettingsPage : UserControl
                 case "Dark": themeCombo.SelectedIndex = 2; break;
                 default: themeCombo.SelectedIndex = 0; break;
             }
+        }
+        
+        // Load language settings
+        var langCombo = this.FindControl<ComboBox>("LanguageComboBox");
+        if (langCombo != null)
+        {
+            langCombo.ItemsSource = LocalizationService.Instance.AvailableLanguages;
+            langCombo.DisplayMemberBinding = new Avalonia.Data.Binding("DisplayName");
+            
+            var currentLang = LocalizationService.Instance.AvailableLanguages
+                .FirstOrDefault(l => l.Code == _settings.Language);
+            if (currentLang != null)
+            {
+                langCombo.SelectedItem = currentLang;
+            }
+        }
+    }
+    
+    private void OnLanguageChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (sender is ComboBox combo && combo.SelectedItem is LanguageInfo langInfo)
+        {
+            LocalizationService.Instance.ChangeLanguage(langInfo.Code);
+            _settings.Language = langInfo.Code;
+            ConfigManager.SaveSettings(_settings);
         }
     }
 

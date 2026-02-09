@@ -26,6 +26,10 @@ public partial class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             var settings = ConfigManager.LoadSettings();
+            
+            // Initialize localization
+            Services.LocalizationService.Instance.ChangeLanguage(settings.Language);
+            
             switch (settings.Theme)
             {
                 case "Light":

@@ -3,7 +3,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:loc="clr-namespace:JustLauncher.Resources"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="JustLauncher.ConsolePage">
     <Grid RowDefinitions="Auto,*,Auto" Margin="32">
         <!-- Header -->
@@ -13,8 +14,8 @@
                     <i:Icon Value="fa-solid fa-terminal" Foreground="White" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
                 <StackPanel VerticalAlignment="Center">
-                    <TextBlock Text="SYSTEM CONSOLE" Classes="PageHeader" FontSize="24"/>
-                    <TextBlock Text="View live logs and game output" Classes="PageDescription" FontSize="13"/>
+                    <TextBlock Text="{loc:Localize Key=Console_Title}" Classes="PageHeader" FontSize="24"/>
+                    <TextBlock Text="{loc:Localize Key=Console_Description}" Classes="PageDescription" FontSize="13"/>
                 </StackPanel>
             </StackPanel>
             
@@ -22,13 +23,13 @@
                 <Button x:Name="CopyConsoleButton" Classes="Secondary" ToolTip.Tip="Copy to Clipboard">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <i:Icon Value="fa-solid fa-copy"/>
-                        <TextBlock Text="COPY LOG"/>
+                        <TextBlock Text="{loc:Localize Key=Console_CopyLog}"/>
                     </StackPanel>
                 </Button>
                 <Button x:Name="ClearConsoleButton" Classes="Danger" ToolTip.Tip="Clear Console">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <i:Icon Value="fa-solid fa-trash-alt"/>
-                        <TextBlock Text="CLEAR"/>
+                        <TextBlock Text="{loc:Localize Key=Console_Clear}"/>
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -54,7 +55,7 @@
 
         <!-- Status Info -->
         <Border Grid.Row="2" Margin="0,16,0,0">
-            <TextBlock Text="CONSOLE ACTIVE" Foreground="{DynamicResource SuccessBrush}" FontSize="10" FontWeight="Bold" LetterSpacing="1"/>
+            <TextBlock Text="{loc:Localize Key=Console_Active}" Foreground="{DynamicResource SuccessBrush}" FontSize="10" FontWeight="Bold" LetterSpacing="1"/>
         </Border>
     </Grid>
 </UserControl>

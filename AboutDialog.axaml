@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:loc="clr-namespace:JustLauncher.Resources"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="350"
              x:Class="JustLauncher.AboutDialog"
              Width="400">
@@ -26,16 +27,16 @@
                 </Grid>
 
                 <StackPanel Spacing="4">
-                    <TextBlock Text="JustLauncher" FontSize="28" FontWeight="Black" Foreground="{DynamicResource PrimaryText}" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{loc:Localize Key=About_Title}" FontSize="28" FontWeight="Black" Foreground="{DynamicResource PrimaryText}" HorizontalAlignment="Center"/>
                     <TextBlock Text="{Binding Version, StringFormat='Version {0}'}" FontSize="14" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" Opacity="0.8"/>
                 </StackPanel>
 
-                <TextBlock Text="A modern, high-performance Minecraft launcher built with Avalonia." 
+                <TextBlock Text="{loc:Localize Key=About_Description}" 
                            FontSize="13" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Opacity="0.7"/>
                 
                 <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
                     <i:Icon Value="fa-solid fa-code" Foreground="{DynamicResource SuccessBrush}" VerticalAlignment="Center"/>
-                    <TextBlock Text="Created by JustNeki" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource PrimaryText}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{loc:Localize Key=About_CreatedBy}" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource PrimaryText}" VerticalAlignment="Center"/>
                 </StackPanel>
 
                 <!-- Social Links -->
@@ -43,13 +44,13 @@
                     <Button x:Name="GitHubButton" Classes="Secondary" Padding="10,8" CornerRadius="8" ToolTip.Tip="View on GitHub">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <i:Icon Value="fa-brands fa-github" FontSize="16"/>
-                            <TextBlock Text="GitHub" FontSize="12" FontWeight="Medium"/>
+                            <TextBlock Text="{loc:Localize Key=About_GitHub}" FontSize="12" FontWeight="Medium"/>
                         </StackPanel>
                     </Button>
                     <Button x:Name="WebsiteButton" Classes="Secondary" Padding="10,8" CornerRadius="8" ToolTip.Tip="Visit Website">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <i:Icon Value="fa-solid fa-globe" FontSize="16"/>
-                            <TextBlock Text="Website" FontSize="12" FontWeight="Medium"/>
+                            <TextBlock Text="{loc:Localize Key=About_Website}" FontSize="12" FontWeight="Medium"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>

@@ -27,7 +27,7 @@ public class ForgeService
         public Dictionary<string, string> Promos { get; set; } = new();
     }
 
-    private readonly HttpClient _httpClient = new();
+
     private readonly JavaManager _javaManager;
     private const string PromosUrl = "https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json";
     private const string MavenUrl = "https://maven.minecraftforge.net/net/minecraftforge/forge";
@@ -42,7 +42,7 @@ public class ForgeService
         var list = new List<ForgeVersion>();
         try
         {
-            var json = await _httpClient.GetStringAsync(PromosUrl);
+            var json = await HttpClientManager.Instance.GetStringAsync(PromosUrl);
             var root = JsonSerializer.Deserialize<PromosRoot>(json);
             
             if (root != null && root.Promos != null)
@@ -77,7 +77,7 @@ public class ForgeService
         {
             if (File.Exists(installerPath)) File.Delete(installerPath);
             
-            var bytes = await _httpClient.GetByteArrayAsync(installerUrl);
+            var bytes = await HttpClientManager.Instance.GetByteArrayAsync(installerUrl);
             await File.WriteAllBytesAsync(installerPath, bytes);
             
             string javaPath = "java";

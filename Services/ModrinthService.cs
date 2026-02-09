@@ -10,13 +10,11 @@ namespace JustLauncher.Services;
 
 public class ModrinthService
 {
-    private readonly HttpClient _httpClient;
     private const string BaseUrl = "https://api.modrinth.com/v2";
 
     public ModrinthService()
     {
-        _httpClient = new HttpClient();
-        _httpClient.DefaultRequestHeaders.Add("User-Agent", "JustLauncher/1.0 (contact@example.com)");
+        // HttpClient is now managed by HttpClientManager singleton
     }
 
     public async Task<List<ModInfo>> SearchModsAsync(string query, string minecraftVersion, string loader)
@@ -28,7 +26,7 @@ public class ModrinthService
         try
         {
             ConsoleService.Instance.Log($"[Modrinth] Searching for '{query}' (Version: {minecraftVersion}, Loader: {loader})");
-            string json = await _httpClient.GetStringAsync(url);
+            string json = await HttpClientManager.Instance.GetStringAsync(url);
             var result = JsonSerializer.Deserialize<ModrinthSearchResult>(json);
             
             if (result == null) 
@@ -72,7 +70,7 @@ public class ModrinthService
         try
         {
             ConsoleService.Instance.Log($"[Modrinth] Fetching versions for {projectId} (Version: {minecraftVersion}, Loader: {loader})");
-            string json = await _httpClient.GetStringAsync(url);
+            string json = await HttpClientManager.Instance.GetStringAsync(url);
             return JsonSerializer.Deserialize<List<ModrinthVersion>>(json) ?? new List<ModrinthVersion>();
         }
         catch (Exception ex)
@@ -87,7 +85,7 @@ public class ModrinthService
         string url = $"{BaseUrl}/version_file/{sha1Hash}?algorithm=sha1";
         try
         {
-            string json = await _httpClient.GetStringAsync(url);
+            string json = await HttpClientManager.Instance.GetStringAsync(url);
             return JsonSerializer.Deserialize<ModrinthVersion>(json);
         }
         catch (Exception ex)

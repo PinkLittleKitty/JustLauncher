@@ -10,15 +10,22 @@ namespace JustLauncher.Services;
 
 public class CurseForgeService
 {
-    private readonly HttpClient _httpClient;
     private const string BaseUrl = "https://api.curseforge.com/v1";
     private const string ApiKey = "$2a$10$89Mof6FSnm86q.OshInatue4V.Lz5aT.6Vf9V.9V.9V.9V.9V.9V"; 
 
     public CurseForgeService()
     {
-        _httpClient = new HttpClient();
-        _httpClient.DefaultRequestHeaders.Add("x-api-key", ApiKey);
-        _httpClient.DefaultRequestHeaders.Add("User-Agent", "JustLauncher/1.0");
+        // Note: CurseForge API key needs to be set per-request as it's service-specific
+        // HttpClient is now managed by HttpClientManager singleton
+    }
+
+    private async Task<string> GetWithApiKeyAsync(string url)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, url);
+        request.Headers.Add("x-api-key", ApiKey);
+        var response = await HttpClientManager.Instance.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadAsStringAsync();
     }
 
     public async Task<List<ModInfo>> SearchModsAsync(string query, string minecraftVersion, string loader)
@@ -30,7 +37,7 @@ public class CurseForgeService
         try
         {
             ConsoleService.Instance.Log($"[CurseForge] Searching for '{query}' (Version: {minecraftVersion}, Loader: {loader})");
-            string json = await _httpClient.GetStringAsync(url);
+            string json = await GetWithApiKeyAsync(url);
             var result = JsonSerializer.Deserialize<CurseForgeSearchResult>(json);
             
             if (result == null)
@@ -65,7 +72,7 @@ public class CurseForgeService
         try
         {
             ConsoleService.Instance.Log($"[CurseForge] Fetching versions for {projectId} (Version: {minecraftVersion}, Loader: {loader})");
-            string json = await _httpClient.GetStringAsync(url);
+            string json = await GetWithApiKeyAsync(url);
             var result = JsonSerializer.Deserialize<CurseForgeFilesResponse>(json);
             
             if (result == null || result.Data.Count == 0)

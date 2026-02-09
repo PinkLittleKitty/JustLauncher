@@ -41,7 +41,6 @@ public class JavaInfo
 public class JavaManager
 {
     private static readonly string JavaInstallDir = Path.Combine(PlatformManager.GetMinecraftDirectory(), "runtime");
-    private readonly HttpClient _httpClient = new();
 
     public JavaManager()
     {
@@ -136,7 +135,7 @@ public class JavaManager
         
         try
         {
-            var response = await _httpClient.GetStringAsync(apiUrl);
+            var response = await HttpClientManager.Instance.GetStringAsync(apiUrl);
             using var doc = JsonDocument.Parse(response);
             var root = doc.RootElement;
             
@@ -290,7 +289,7 @@ public class JavaManager
     
     private async Task DownloadFileAsync(string url, string path, IProgress<double>? progress)
     {
-         using var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+         using var response = await HttpClientManager.Instance.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
          response.EnsureSuccessStatusCode();
          var totalBytes = response.Content.Headers.ContentLength ?? -1L;
          using var stream = await response.Content.ReadAsStreamAsync();

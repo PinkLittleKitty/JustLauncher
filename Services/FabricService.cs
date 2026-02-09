@@ -11,13 +11,12 @@ namespace JustLauncher.Services
     public class FabricService
     {
         private const string META_URL = "https://meta.fabricmc.net/v2";
-        private readonly HttpClient _httpClient = new();
 
         public async Task<List<FabricGameVersion>> GetGameVersionsAsync()
         {
             try
             {
-                var response = await _httpClient.GetStringAsync($"{META_URL}/versions/game");
+                var response = await HttpClientManager.Instance.GetStringAsync($"{META_URL}/versions/game");
                 return JsonSerializer.Deserialize<List<FabricGameVersion>>(response) ?? new List<FabricGameVersion>();
             }
             catch { return new List<FabricGameVersion>(); }
@@ -27,7 +26,7 @@ namespace JustLauncher.Services
         {
             try
             {
-                var response = await _httpClient.GetStringAsync($"{META_URL}/versions/loader/{gameVersion}");
+                var response = await HttpClientManager.Instance.GetStringAsync($"{META_URL}/versions/loader/{gameVersion}");
                 return JsonSerializer.Deserialize<List<FabricLoaderVersion>>(response) ?? new List<FabricLoaderVersion>();
             }
             catch { return new List<FabricLoaderVersion>(); }
@@ -38,7 +37,7 @@ namespace JustLauncher.Services
             try
             {
                 string url = $"{META_URL}/versions/loader/{gameVersion}/{loaderVersion}/profile/json";
-                var json = await _httpClient.GetStringAsync(url);
+                var json = await HttpClientManager.Instance.GetStringAsync(url);
                 
                 string versionId = $"fabric-loader-{loaderVersion}-{gameVersion}";
                 string versionsDir = Path.Combine(PlatformManager.GetMinecraftDirectory(), "versions", versionId);

@@ -12,7 +12,6 @@ namespace JustLauncher;
 public class MinecraftService
 {
     public static MinecraftService Instance { get; } = new MinecraftService();
-    private readonly HttpClient _httpClient;
     private const string ManifestUrl = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json";
     private readonly string _baseDir;
 
@@ -22,26 +21,19 @@ public class MinecraftService
 
     public MinecraftService(string baseDir)
     {
-        _httpClient = new HttpClient();
-        _httpClient.DefaultRequestHeaders.Add("User-Agent", "JustLauncher/1.0");
-        _baseDir = baseDir;
-    }
-    
-    public MinecraftService(string baseDir, HttpClient client)
-    {
-        _httpClient = client;
         _baseDir = baseDir;
     }
 
+
     public async Task<VersionManifest> GetVersionManifestAsync()
     {
-        string json = await _httpClient.GetStringAsync(ManifestUrl);
+        string json = await HttpClientManager.Instance.GetStringAsync(ManifestUrl);
         return JsonSerializer.Deserialize<VersionManifest>(json) ?? new();
     }
 
     public async Task<VersionInfo> GetVersionInfoAsync(string url)
     {
-        string json = await _httpClient.GetStringAsync(url);
+        string json = await HttpClientManager.Instance.GetStringAsync(url);
         return JsonSerializer.Deserialize<VersionInfo>(json) ?? new();
     }
 
@@ -102,7 +94,7 @@ public class MinecraftService
         string tempPath = path + ".tmp";
         try
         {
-            using var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+            using var response = await HttpClientManager.Instance.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
 
             long totalBytes = response.Content.Headers.ContentLength ?? -1L;
@@ -312,7 +304,7 @@ public class MinecraftService
         
         if (!File.Exists(indexPath))
         {
-            indexJson = await _httpClient.GetStringAsync(info.AssetIndex.Url);
+            indexJson = await HttpClientManager.Instance.GetStringAsync(info.AssetIndex.Url);
             string? indexDir = Path.GetDirectoryName(indexPath);
             if (indexDir != null && !Directory.Exists(indexDir)) Directory.CreateDirectory(indexDir);
             File.WriteAllText(indexPath, indexJson);

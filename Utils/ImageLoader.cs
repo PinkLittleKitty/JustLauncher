@@ -9,13 +9,7 @@ namespace JustLauncher.Utils;
 
 public static class ImageLoader
 {
-    private static readonly HttpClient _httpClient = new();
     private static readonly ConcurrentDictionary<string, Bitmap> _cache = new();
-
-    static ImageLoader()
-    {
-        _httpClient.DefaultRequestHeaders.Add("User-Agent", "JustLauncher/1.0");
-    }
 
     public static async Task<Bitmap?> LoadFromUrlAsync(string url)
     {
@@ -24,7 +18,7 @@ public static class ImageLoader
 
         try
         {
-            var bytes = await _httpClient.GetByteArrayAsync(url);
+            var bytes = await HttpClientManager.Instance.GetByteArrayAsync(url);
             using var stream = new MemoryStream(bytes);
             var result = new Bitmap(stream);
             _cache[url] = result;

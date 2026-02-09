@@ -25,13 +25,25 @@ public static class ConfigManager
             string json = File.ReadAllText(AccountsPath);
             return JsonSerializer.Deserialize<AccountsConfig>(json) ?? new AccountsConfig();
         }
-        catch { return new AccountsConfig(); }
+        catch (Exception ex)
+        {
+            ConsoleService.Instance.Log($"[Config] Error loading accounts: {ex.Message}");
+            return new AccountsConfig();
+        }
     }
 
     public static void SaveAccounts(AccountsConfig config)
     {
-        string json = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(AccountsPath, json);
+        try
+        {
+            string json = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(AccountsPath, json);
+        }
+        catch (Exception ex)
+        {
+            ConsoleService.Instance.Log($"[Config] Error saving accounts: {ex.Message}");
+            throw;
+        }
     }
 
     public static InstallationsConfig LoadInstallations()
@@ -42,13 +54,25 @@ public static class ConfigManager
             string json = File.ReadAllText(InstallationsPath);
             return JsonSerializer.Deserialize<InstallationsConfig>(json) ?? new InstallationsConfig();
         }
-        catch { return new InstallationsConfig(); }
+        catch (Exception ex)
+        {
+            ConsoleService.Instance.Log($"[Config] Error loading installations: {ex.Message}");
+            return new InstallationsConfig();
+        }
     }
 
     public static void SaveInstallations(InstallationsConfig config)
     {
-        string json = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(InstallationsPath, json);
+        try
+        {
+            string json = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(InstallationsPath, json);
+        }
+        catch (Exception ex)
+        {
+            ConsoleService.Instance.Log($"[Config] Error saving installations: {ex.Message}");
+            throw;
+        }
     }
 
     public static LauncherSettings LoadSettings()
@@ -59,13 +83,25 @@ public static class ConfigManager
             string json = File.ReadAllText(SettingsPath);
             return JsonSerializer.Deserialize<LauncherSettings>(json) ?? new LauncherSettings();
         }
-        catch { return new LauncherSettings(); }
+        catch (Exception ex)
+        {
+            ConsoleService.Instance.Log($"[Config] Error loading settings: {ex.Message}");
+            return new LauncherSettings();
+        }
     }
 
     public static void SaveSettings(LauncherSettings settings)
     {
-        string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(SettingsPath, json);
+        try
+        {
+            string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(SettingsPath, json);
+        }
+        catch (Exception ex)
+        {
+            ConsoleService.Instance.Log($"[Config] Error saving settings: {ex.Message}");
+            throw;
+        }
     }
 }
 

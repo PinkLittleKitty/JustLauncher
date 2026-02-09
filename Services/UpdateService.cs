@@ -9,12 +9,10 @@ namespace JustLauncher.Services;
 public class UpdateService
 {
     private const string GITHUB_API_URL = "https://api.github.com/repos/PinkLittleKitty/JustLauncher/releases/latest";
-    private readonly HttpClient _httpClient;
 
     public UpdateService()
     {
-        _httpClient = new HttpClient();
-        _httpClient.DefaultRequestHeaders.Add("User-Agent", "JustLauncher");
+        // HttpClient is now managed by HttpClientManager singleton
     }
 
     public async Task<UpdateInfo?> CheckForUpdatesAsync(bool force = false)
@@ -31,7 +29,7 @@ public class UpdateService
             }
 
             ConsoleService.Instance.Log($"[Update] Checking for updates from GitHub...");
-            var response = await _httpClient.GetAsync(GITHUB_API_URL);
+            var response = await HttpClientManager.Instance.GetAsync(GITHUB_API_URL);
             
             if (!response.IsSuccessStatusCode)
             {

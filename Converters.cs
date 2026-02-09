@@ -79,7 +79,6 @@ namespace JustLauncher
         public static AsyncImageConverter Instance { get; } = new AsyncImageConverter();
         
         private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Avalonia.Media.Imaging.Bitmap> _cache = new();
-        private static readonly HttpClient _httpClient = new HttpClient();
 
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
@@ -105,7 +104,7 @@ namespace JustLauncher
 
             try
             {
-                var response = await _httpClient.GetAsync(url);
+                var response = await HttpClientManager.Instance.GetAsync(url);
                 if (response.IsSuccessStatusCode)
                 {
                     var stream = await response.Content.ReadAsStreamAsync();

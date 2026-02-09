@@ -17,7 +17,6 @@ namespace JustLauncher
     public partial class PlayPage : UserControl
     {
         private readonly string username;
-        private readonly HttpClient httpClient;
         private InstallationsConfig installationsConfig = new();
         private string minecraftDirectory = string.Empty;
         private MinecraftService _minecraftService = default!;
@@ -40,8 +39,7 @@ namespace JustLauncher
                 welcomeText.Text = string.Format(localizedTemplate, username);
             }
 
-            httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Add("User-Agent", "JustLauncher/1.0");
+
 
             minecraftDirectory = PlatformManager.GetMinecraftDirectory();
             _minecraftService = new MinecraftService(minecraftDirectory);

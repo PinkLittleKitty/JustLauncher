@@ -151,7 +151,9 @@ public partial class MainWindow : Window
     private void ModsButton_Click(object? sender, RoutedEventArgs e)
     {
         var content = this.FindControl<ContentControl>("MainContent");
-        if (content != null) content.Content = new ModsPage(_currentModGameDir);
+        var installations = ConfigManager.LoadInstallations();
+        var selected = installations.Installations.FirstOrDefault(i => i.Id == installations.SelectedInstallationId);
+        if (content != null && selected != null) content.Content = new ModsPage(selected);
     }
 
     private void TitleBar_PointerPressed(object? sender, PointerPressedEventArgs e)

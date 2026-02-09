@@ -446,7 +446,14 @@ public partial class InstallationDialog : UserControl
                       {
                           gameDir = _existingInstallation.GameDirectory;
                       }
-                      modsControl.Initialize(gameDir);
+
+                      var tempInstallation = _existingInstallation ?? new Installation 
+                      { 
+                          GameDirectory = gameDir,
+                          LoaderType = type,
+                          BaseVersion = _existingInstallation?.BaseVersion ?? "" 
+                      };
+                      modsControl.Initialize(tempInstallation);
                  }
              }
         }

@@ -11,6 +11,7 @@ namespace JustLauncher;
 
 public class MinecraftService
 {
+    public static MinecraftService Instance { get; } = new MinecraftService();
     private readonly HttpClient _httpClient;
     private const string ManifestUrl = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json";
     private readonly string _baseDir;

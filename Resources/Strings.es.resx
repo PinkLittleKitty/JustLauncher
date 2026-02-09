@@ -142,16 +142,6 @@
     <value>No hay instalaciones todavía. ¡Haz clic en "Agregar Instalación" para comenzar!</value>
   </data>
   
-  <!-- Accounts Page -->
-  <data name="Accounts_Title" xml:space="preserve">
-    <value>CUENTAS</value>
-  </data>
-  <data name="Accounts_Description" xml:space="preserve">
-    <value>Administra tus cuentas de Minecraft</value>
-  </data>
-  <data name="Accounts_AddAccount" xml:space="preserve">
-    <value>Agregar Cuenta</value>
-  </data>
   <data name="Accounts_NoAccounts" xml:space="preserve">
     <value>No hay cuentas todavía. ¡Haz clic en "Agregar Cuenta" para comenzar!</value>
   </data>
@@ -212,17 +202,8 @@
     <value>Argumentos adicionales de Java (avanzado)</value>
   </data>
   
-  <!-- Console Page -->
-  <data name="Console_Title" xml:space="preserve">
-    <value>CONSOLA</value>
-  </data>
-  <data name="Console_CopyLog" xml:space="preserve">
-    <value>Copiar Registro</value>
-  </data>
-  <data name="Console_ClearLog" xml:space="preserve">
-    <value>Limpiar</value>
-  </data>
   
+  <!-- About Dialog -->
   <!-- About Dialog -->
   <data name="About_Title" xml:space="preserve">
     <value>JustLauncher</value>
@@ -244,28 +225,8 @@
   </data>
   
   <!-- Account Dialog -->
-  <data name="AccountDialog_AddAccount" xml:space="preserve">
-    <value>AGREGAR CUENTA</value>
-  </data>
-  <data name="AccountDialog_OfflineMode" xml:space="preserve">
-    <value>Modo Sin Conexión</value>
-  </data>
-  <data name="AccountDialog_ElyByAccount" xml:space="preserve">
-    <value>Cuenta Ely.by</value>
-  </data>
-  <data name="AccountDialog_Username" xml:space="preserve">
-    <value>Nombre de Usuario</value>
-  </data>
-  <data name="AccountDialog_Email" xml:space="preserve">
-    <value>Correo Electrónico</value>
-  </data>
-  <data name="AccountDialog_Password" xml:space="preserve">
-    <value>Contraseña</value>
-  </data>
-  <data name="AccountDialog_Login" xml:space="preserve">
-    <value>Iniciar Sesión</value>
-  </data>
   
+  <!-- Installation Dialog -->
   <!-- Installation Dialog -->
   <data name="InstallationDialog_Title" xml:space="preserve">
     <value>NUEVA INSTALACIÓN</value>

@@ -8,14 +8,14 @@ public partial class ModsPage : UserControl
 {
     public ModsPage() : this(null) { }
 
-    public ModsPage(string? gameDirectory)
+    public ModsPage(Installation? installation)
     {
         InitializeComponent();
         
         var modsControl = this.FindControl<Controls.ModsControl>("ModsControl");
         if (modsControl != null)
         {
-            modsControl.Initialize(gameDirectory);
+            modsControl.Initialize(installation);
         }
     }
 

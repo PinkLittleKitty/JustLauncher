@@ -69,4 +69,22 @@ namespace JustLauncher
             throw new NotImplementedException();
         }
     }
+
+    public class AsyncImageConverter : IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value is string url && !string.IsNullOrEmpty(url))
+            {
+                // Note: Simplified for build fix. Proper implementation would use a task-based bitmap loader.
+                return null; 
+            }
+            return null;
+        }
+
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

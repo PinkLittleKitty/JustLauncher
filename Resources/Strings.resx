@@ -142,16 +142,6 @@
     <value>No installations yet. Click "Add Installation" to get started!</value>
   </data>
   
-  <!-- Accounts Page -->
-  <data name="Accounts_Title" xml:space="preserve">
-    <value>ACCOUNTS</value>
-  </data>
-  <data name="Accounts_Description" xml:space="preserve">
-    <value>Manage your Minecraft accounts</value>
-  </data>
-  <data name="Accounts_AddAccount" xml:space="preserve">
-    <value>Add Account</value>
-  </data>
   <data name="Accounts_NoAccounts" xml:space="preserve">
     <value>No accounts yet. Click "Add Account" to get started!</value>
   </data>
@@ -212,16 +202,6 @@
     <value>Additional Java arguments (advanced)</value>
   </data>
   
-  <!-- Console Page -->
-  <data name="Console_Title" xml:space="preserve">
-    <value>CONSOLE</value>
-  </data>
-  <data name="Console_CopyLog" xml:space="preserve">
-    <value>Copy Log</value>
-  </data>
-  <data name="Console_ClearLog" xml:space="preserve">
-    <value>Clear</value>
-  </data>
   
   <data name="About_Title" xml:space="preserve">
     <value>JustLauncher</value>
@@ -242,28 +222,6 @@
     <value>Website</value>
   </data>
   
-  <!-- Account Dialog -->
-  <data name="AccountDialog_AddAccount" xml:space="preserve">
-    <value>ADD ACCOUNT</value>
-  </data>
-  <data name="AccountDialog_OfflineMode" xml:space="preserve">
-    <value>Offline Mode</value>
-  </data>
-  <data name="AccountDialog_ElyByAccount" xml:space="preserve">
-    <value>Ely.by Account</value>
-  </data>
-  <data name="AccountDialog_Username" xml:space="preserve">
-    <value>Username</value>
-  </data>
-  <data name="AccountDialog_Email" xml:space="preserve">
-    <value>Email</value>
-  </data>
-  <data name="AccountDialog_Password" xml:space="preserve">
-    <value>Password</value>
-  </data>
-  <data name="AccountDialog_Login" xml:space="preserve">
-    <value>Login</value>
-  </data>
   
   <!-- Installation Dialog -->
   <data name="InstallationDialog_Title" xml:space="preserve">
@@ -619,5 +577,20 @@
   </data>
   <data name="Update_ViewChangelog" xml:space="preserve">
     <value>View Changelog</value>
+  </data>
+  <data name="Mods_Installed" xml:space="preserve">
+    <value>Installed</value>
+  </data>
+  <data name="Mods_Browse" xml:space="preserve">
+    <value>Browse</value>
+  </data>
+  <data name="Mods_SearchPlaceholder" xml:space="preserve">
+    <value>Search mods...</value>
+  </data>
+  <data name="Mods_ByAuthor" xml:space="preserve">
+    <value>by {0}</value>
+  </data>
+  <data name="Mods_Download" xml:space="preserve">
+    <value>Download</value>
   </data>
 </root>

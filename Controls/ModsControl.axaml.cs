@@ -4,18 +4,22 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using JustLauncher.Services;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace JustLauncher.Controls;
 
 public partial class ModsControl : UserControl
 {
-    private string? _gameDirectory;
+    private Installation? _installation;
     private ModManagerService _modManager = new();
+    private ModrinthService _modrinthService = new();
+    private CurseForgeService _curseForgeService = new();
 
     public ModsControl()
     {
@@ -35,17 +39,33 @@ public partial class ModsControl : UserControl
         var refreshModsBtn = this.FindControl<Button>("RefreshModsButton");
         if (refreshModsBtn != null) refreshModsBtn.Click += async (s, e) => { await LoadModsAsync(); };
 
+        var searchBtn = this.FindControl<Button>("SearchButton");
+        if (searchBtn != null) searchBtn.Click += async (s, e) => { await SearchModsAsync(); };
+
         var modsList = this.FindControl<ListBox>("ModsListBox");
         if (modsList != null)
         {
             modsList.SelectionChanged += ModsListBox_SelectionChanged;
         }
+
+        var browseList = this.FindControl<ListBox>("BrowseListBox");
+        if (browseList != null)
+        {
+            browseList.AddHandler(Button.ClickEvent, async (object? sender, RoutedEventArgs e) =>
+            {
+                if (e.Source is Button btn && btn.Name == "DownloadButton" && btn.Tag is ModInfo mod)
+                {
+                    await DownloadModAsync(mod, btn);
+                }
+            }, RoutingStrategies.Bubble);
+        }
     }
 
-    public void Initialize(string? gameDirectory)
+    public void Initialize(Installation? installation)
     {
-        _gameDirectory = gameDirectory;
+        _installation = installation;
         _ = LoadModsAsync();
+        _ = SearchModsAsync();
     }
 
     public async Task LoadModsAsync()
@@ -61,10 +81,83 @@ public partial class ModsControl : UserControl
         }
     }
 
+    private async Task SearchModsAsync()
+    {
+        if (_installation == null) return;
+
+        var searchBox = this.FindControl<TextBox>("SearchBox");
+        string query = searchBox?.Text ?? "";
+        
+        List<ModInfo> results;
+        if (_installation.LoaderType == ModLoaderType.Fabric)
+        {
+            results = await _modrinthService.SearchModsAsync(query, _installation.BaseVersion, "fabric");
+        }
+        else if (_installation.LoaderType == ModLoaderType.Forge)
+        {
+            results = await _curseForgeService.SearchModsAsync(query, _installation.BaseVersion, "forge");
+        }
+        else
+        {
+            results = new List<ModInfo>();
+        }
+
+        var installedMods = await _modManager.GetModsAsync(GetModsDirectory());
+        foreach (var mod in results)
+        {
+            mod.IsInstalled = installedMods.Any(m => m.Name == mod.Name || m.FileName == mod.FileName);
+        }
+
+        var browseList = this.FindControl<ListBox>("BrowseListBox");
+        if (browseList != null)
+        {
+            browseList.ItemsSource = results;
+        }
+    }
+
+    private async Task DownloadModAsync(ModInfo mod, Button btn)
+    {
+        if (_installation == null) return;
+        btn.IsEnabled = false;
+        btn.Content = "Downloading...";
+
+        try
+        {
+            string? downloadUrl = mod.DownloadUrl;
+            if (string.IsNullOrEmpty(downloadUrl))
+            {
+                if (_installation.LoaderType == ModLoaderType.Fabric)
+                    downloadUrl = await _modrinthService.GetDownloadUrlAsync(mod.ProjectId!, _installation.BaseVersion, "fabric");
+                else if (_installation.LoaderType == ModLoaderType.Forge)
+                    downloadUrl = await _curseForgeService.GetDownloadUrlAsync(mod.ProjectId!, _installation.BaseVersion, "forge");
+            }
+
+            if (!string.IsNullOrEmpty(downloadUrl))
+            {
+                string modsDir = GetModsDirectory();
+                string fileName = Path.GetFileName(new Uri(downloadUrl).LocalPath);
+                string dest = Path.Combine(modsDir, fileName);
+
+                await MinecraftService.Instance.DownloadFileAsync(downloadUrl, dest);
+                
+                mod.IsInstalled = true;
+                btn.IsVisible = false;
+                await LoadModsAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            ConsoleService.Instance.Log($"[Mods] Download failed: {ex.Message}");
+            btn.Content = "Retry";
+            btn.IsEnabled = true;
+        }
+    }
+
     private string GetModsDirectory()
     {
-        if (string.IsNullOrEmpty(_gameDirectory)) return Path.Combine(PlatformManager.GetMinecraftDirectory(), "mods");
-        return Path.Combine(_gameDirectory, "mods");
+        string? gameDir = _installation?.GameDirectory;
+        if (string.IsNullOrEmpty(gameDir)) return Path.Combine(PlatformManager.GetMinecraftDirectory(), "mods");
+        return Path.Combine(gameDir, "mods");
     }
 
     private void OpenModsFolderButton_Click(object? sender, RoutedEventArgs e)

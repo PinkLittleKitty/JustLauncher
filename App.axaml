@@ -1,4 +1,7 @@
-<Application xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="JustLauncher.App">
+<Application xmlns="https://github.com/avaloniaui" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+             xmlns:local="clr-namespace:JustLauncher"
+             x:Class="JustLauncher.App">
     <Application.Styles>
         <FluentTheme />
 
@@ -98,6 +101,7 @@
                     <SolidColorBrush x:Key="WarningBrush" Color="#FFA500"/>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
+            <local:AsyncImageConverter x:Key="AsyncImageConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

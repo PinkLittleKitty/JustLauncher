@@ -284,5 +284,105 @@ namespace JustLauncher
         public bool IsEnabled { get; set; } = true;
         public string Path { get; set; } = default!;
         public string? IconPath { get; set; }
+        
+        public string? ProjectId { get; set; }
+        public string? DownloadUrl { get; set; }
+        public bool IsInstalled { get; set; }
+    }
+
+    public class ModrinthSearchResult
+    {
+        [JsonPropertyName("hits")]
+        public List<ModrinthHit> Hits { get; set; } = new();
+    }
+
+    public class ModrinthHit
+    {
+        [JsonPropertyName("project_id")]
+        public string ProjectId { get; set; } = default!;
+        [JsonPropertyName("title")]
+        public string Title { get; set; } = default!;
+        [JsonPropertyName("description")]
+        public string Description { get; set; } = default!;
+        [JsonPropertyName("author")]
+        public string Author { get; set; } = default!;
+        [JsonPropertyName("icon_url")]
+        public string IconUrl { get; set; } = default!;
+        [JsonPropertyName("versions")]
+        public List<string> Versions { get; set; } = new();
+    }
+
+    public class ModrinthVersion
+    {
+        [JsonPropertyName("id")]
+        public string Id { get; set; } = default!;
+        [JsonPropertyName("files")]
+        public List<ModrinthFile> Files { get; set; } = new();
+    }
+
+    public class ModrinthFile
+    {
+        [JsonPropertyName("url")]
+        public string Url { get; set; } = default!;
+        [JsonPropertyName("filename")]
+        public string Filename { get; set; } = default!;
+        [JsonPropertyName("primary")]
+        public bool Primary { get; set; }
+    }
+
+    public class CurseForgeSearchResult
+    {
+        [JsonPropertyName("data")]
+        public List<CurseForgeMod> Data { get; set; } = new();
+    }
+
+    public class CurseForgeFilesResponse
+    {
+        [JsonPropertyName("data")]
+        public List<CurseForgeFile> Data { get; set; } = new();
+    }
+
+    public class CurseForgeMod
+    {
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = default!;
+        [JsonPropertyName("summary")]
+        public string Summary { get; set; } = default!;
+        [JsonPropertyName("authors")]
+        public List<CurseForgeAuthor> Authors { get; set; } = new();
+        [JsonPropertyName("logo")]
+        public CurseForgeLogo? Logo { get; set; }
+        [JsonPropertyName("latestFiles")]
+        public List<CurseForgeFile> LatestFiles { get; set; } = new();
+    }
+
+    public class CurseForgeAuthor
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = default!;
+    }
+
+    public class CurseForgeLogo
+    {
+        [JsonPropertyName("thumbnailUrl")]
+        public string ThumbnailUrl { get; set; } = default!;
+    }
+
+    public class CurseForgeFile
+    {
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
+        [JsonPropertyName("displayName")]
+        public string DisplayName { get; set; } = default!;
+        [JsonPropertyName("fileName")]
+        public string FileName { get; set; } = default!;
+        [JsonPropertyName("downloadUrl")]
+        public string DownloadUrl { get; set; } = default!;
+        [JsonPropertyName("gameVersions")]
+        public List<string> GameVersions { get; set; } = new();
+        [JsonPropertyName("modLoader")]
+        public int? ModLoader { get; set; }
     }
 }

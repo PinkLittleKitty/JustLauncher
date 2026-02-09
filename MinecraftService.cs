@@ -69,28 +69,10 @@ public class MinecraftService
         }
     }
 
-    private bool IsLibraryAllowed(List<Rule> rules, string currentOs)
-    {
-        if (rules == null || rules.Count == 0) return true;
-        bool allow = false;
-        foreach (var rule in rules)
-        {
-            if (rule.Action == "allow")
-            {
-                if (rule.Os.Name == null || rule.Os.Name == currentOs) allow = true;
-            }
-            else if (rule.Action == "disallow")
-            {
-                if (rule.Os.Name == currentOs) allow = false;
-            }
-        }
-        return allow;
-    }
-
     public async Task DownloadLibrariesAsync(VersionInfo info, Action<int, int>? progressCallback = null)
     {
         var currentOs = GetCurrentOsName();
-        var libraries = info.Libraries.Where(lib => IsLibraryAllowed(lib.Rules, currentOs)).ToList();
+        var libraries = info.Libraries.Where(lib => lib.IsAllowed(currentOs)).ToList();
 
         int completed = 0;
         foreach (var lib in libraries)
@@ -105,15 +87,33 @@ public class MinecraftService
                 }
             }
 
-            // Download native artifact if applicable (legacy system)
-            if (lib.Natives != null && lib.Natives.TryGetValue(currentOs, out string? classifier))
+            // Download legacy native artifact if applicable
+            if (lib.Natives != null && lib.Natives.TryGetValue(currentOs, out string? legacyClassifier))
             {
-                if (lib.Downloads.Classifiers != null && lib.Downloads.Classifiers.TryGetValue(classifier, out var nativeArtifact))
+                if (lib.Downloads.Classifiers != null && lib.Downloads.Classifiers.TryGetValue(legacyClassifier, out var nativeArtifact))
                 {
                     string path = Path.Combine(_baseDir, "libraries", nativeArtifact.Path);
                     if (!File.Exists(path))
                     {
+                        ConsoleService.Instance.Log($"Downloading legacy native: {lib.Name} ({legacyClassifier})");
                         await DownloadFileAsync(nativeArtifact.Url, path);
+                    }
+                }
+            }
+
+            // Download modern native classifiers (natives-linux, etc.)
+            if (lib.Downloads.Classifiers != null)
+            {
+                foreach (var classifier in lib.Downloads.Classifiers)
+                {
+                    if (classifier.Key.Contains($"natives-{currentOs}"))
+                    {
+                        string path = Path.Combine(_baseDir, "libraries", classifier.Value.Path);
+                        if (!File.Exists(path))
+                        {
+                            ConsoleService.Instance.Log($"Downloading modern native: {lib.Name} ({classifier.Key})");
+                            await DownloadFileAsync(classifier.Value.Url, path);
+                        }
                     }
                 }
             }
@@ -129,17 +129,25 @@ public class MinecraftService
         string nativesDir = Path.Combine(_baseDir, "versions", versionId, "natives");
         ConsoleService.Instance.Log($"Extraction OS: {currentOs}");
         ConsoleService.Instance.Log($"Extracting natives to: {nativesDir}");
+        ConsoleService.Instance.Log($"Total libraries in version info: {info.Libraries.Count}");
         
         if (!Directory.Exists(nativesDir)) Directory.CreateDirectory(nativesDir);
         else 
         {
-            // Clear old natives to ensure clean state
             foreach (var file in Directory.GetFiles(nativesDir)) File.Delete(file);
         }
 
         foreach (var lib in info.Libraries)
         {
-            if (!IsLibraryAllowed(lib.Rules, currentOs)) continue;
+            bool allowed = lib.IsAllowed(currentOs);
+            bool isLwjgl = lib.Name.Contains("lwjgl");
+            
+            if (isLwjgl)
+            {
+                ConsoleService.Instance.Log($"Checking LWJGL lib: {lib.Name} (Allowed: {allowed})");
+            }
+
+            if (!allowed) continue;
 
             var candidates = new List<Artifact>();
 
@@ -149,6 +157,7 @@ public class MinecraftService
                 if (lib.Downloads.Classifiers != null && lib.Downloads.Classifiers.TryGetValue(classifier, out var nativeArtifact))
                 {
                     candidates.Add(nativeArtifact);
+                    if (isLwjgl) ConsoleService.Instance.Log($"  Added legacy candidate: {classifier}");
                 }
             }
 
@@ -160,14 +169,23 @@ public class MinecraftService
                     if (entry.Key.Contains($"natives-{currentOs}"))
                     {
                         candidates.Add(entry.Value);
+                        if (isLwjgl) ConsoleService.Instance.Log($"  Added classifier candidate: {entry.Key}");
                     }
                 }
             }
 
             // 3. Modern style: the whole library IS the native (e.g., name contains natives-linux)
-            if (lib.Name.Contains($"natives-{currentOs}") && lib.Downloads.Artifact != null)
+            if (lib.Name.Contains($"natives-{currentOs}"))
             {
-                candidates.Add(lib.Downloads.Artifact);
+                if (lib.Downloads.Artifact != null)
+                {
+                    candidates.Add(lib.Downloads.Artifact);
+                    if (isLwjgl) ConsoleService.Instance.Log("  Added modern artifact candidate (name match)");
+                }
+                else
+                {
+                    if (isLwjgl) ConsoleService.Instance.Log("  Library name match, BUT no main artifact found!");
+                }
             }
 
             foreach (var artifact in candidates.Where(a => !string.IsNullOrEmpty(a.Url)).GroupBy(a => a.Path).Select(g => g.First()))
@@ -182,11 +200,10 @@ public class MinecraftService
                         {
                             foreach (var entry in archive.Entries)
                             {
-                                // Only extract shared libraries
                                 if (entry.FullName.EndsWith(".so") || entry.FullName.EndsWith(".dll") || entry.FullName.EndsWith(".dylib"))
                                 {
                                     string destPath = Path.Combine(nativesDir, entry.Name);
-                                    entry.ExtractToFile(destPath, true); // Overwrite if exists
+                                    entry.ExtractToFile(destPath, true);
                                     ConsoleService.Instance.Log($"  -> Extracted: {entry.Name}");
                                 }
                             }
@@ -199,9 +216,7 @@ public class MinecraftService
                 }
                 else
                 {
-                    // If it's a candidate but doesn't exist, we might have skipped downloading it?
-                    // This is unexpected if IsLibraryAllowed is correct.
-                    ConsoleService.Instance.Log($"[WARNING] Native candidate not found in libraries: {artifact.Path}");
+                    ConsoleService.Instance.Log($"[WARNING] Native jar not found on disk: {artifact.Path}");
                 }
             }
         }

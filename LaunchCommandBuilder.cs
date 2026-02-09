@@ -25,22 +25,38 @@ public static class LaunchCommandBuilder
 
         // Classpath
         var classpath = new List<string>();
-        string currentOs = PlatformManager.GetJavaExecutableName() == "java.exe" ? "windows" : "linux"; // Simplified OS detection for classifiers
+        string currentOs = "linux";
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)) currentOs = "windows";
+        else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX)) currentOs = "osx";
 
         foreach (var lib in versionInfo.Libraries)
         {
+            if (!lib.IsAllowed(currentOs)) continue;
+
             // Main artifact
             if (lib.Downloads.Artifact != null && !string.IsNullOrEmpty(lib.Downloads.Artifact.Path))
             {
                 classpath.Add(Path.Combine(mcDir, "libraries", lib.Downloads.Artifact.Path));
             }
 
-            // Native artifact
+            // Legacy Native artifact
             if (lib.Natives != null && lib.Natives.TryGetValue(currentOs, out string? classifier))
             {
                 if (lib.Downloads.Classifiers != null && lib.Downloads.Classifiers.TryGetValue(classifier, out var nativeArtifact))
                 {
                     classpath.Add(Path.Combine(mcDir, "libraries", nativeArtifact.Path));
+                }
+            }
+
+            // Modern Native classifiers
+            if (lib.Downloads.Classifiers != null)
+            {
+                foreach (var entry in lib.Downloads.Classifiers)
+                {
+                    if (entry.Key.Contains($"natives-{currentOs}"))
+                    {
+                        classpath.Add(Path.Combine(mcDir, "libraries", entry.Value.Path));
+                    }
                 }
             }
         }

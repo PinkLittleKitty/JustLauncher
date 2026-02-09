@@ -85,6 +85,24 @@ namespace JustLauncher
         public List<Rule> Rules { get; set; } = new();
         [JsonPropertyName("natives")]
         public Dictionary<string, string>? Natives { get; set; }
+
+        public bool IsAllowed(string currentOs)
+        {
+            if (Rules == null || Rules.Count == 0) return true;
+            bool allow = false;
+            foreach (var rule in Rules)
+            {
+                if (rule.Action == "allow")
+                {
+                    if (rule.Os == null || rule.Os.Name == null || rule.Os.Name == currentOs) allow = true;
+                }
+                else if (rule.Action == "disallow")
+                {
+                    if (rule.Os != null && rule.Os.Name == currentOs) allow = false;
+                }
+            }
+            return allow;
+        }
     }
 
     public class LibraryDownloads
@@ -109,13 +127,16 @@ namespace JustLauncher
 
     public class Rule
     {
+        [JsonPropertyName("action")]
         public string Action { get; set; } = default!;
-        public Os Os { get; set; } = new();
+        [JsonPropertyName("os")]
+        public Os? Os { get; set; }
     }
 
     public class Os
     {
-        public string Name { get; set; } = default!;
+        [JsonPropertyName("name")]
+        public string? Name { get; set; }
     }
 
     public class VersionDownloads

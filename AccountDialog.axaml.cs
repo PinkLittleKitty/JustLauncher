@@ -1,7 +1,9 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 
 namespace JustLauncher;
 
@@ -33,6 +35,9 @@ public partial class AccountDialog : Window
 
         var combo = this.FindControl<ComboBox>("AccountTypeComboBox");
         if (combo != null) combo.SelectionChanged += AccountTypeComboBox_SelectionChanged;
+
+        var header = this.FindControl<Control>("DialogHeader");
+        if (header != null) header.PointerPressed += (s, e) => BeginMoveDrag(e);
     }
 
     private void AccountTypeComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)

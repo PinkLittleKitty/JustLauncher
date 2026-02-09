@@ -3,13 +3,14 @@
         x:Class="JustLauncher.ProfileDialog"
         Title="Profile Settings" Height="400" Width="500"
         WindowStartupLocation="CenterOwner"
+        SystemDecorations="None"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
         Background="#1A1A1A">
     
     <Grid RowDefinitions="50,*,60">
         <!-- Title Bar -->
-        <Border Grid.Row="0" Background="#0D1117">
+        <Border Grid.Row="0" x:Name="DialogHeader" Background="#0D1117">
             <Grid ColumnDefinitions="*,Auto">
                 <TextBlock Text="Profile Settings" FontSize="16" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" Margin="20,0"/>
                 <Button x:Name="CloseButton" Grid.Column="1" Content="✕" Width="30" Height="30" 

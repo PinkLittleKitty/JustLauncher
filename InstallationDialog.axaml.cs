@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 
@@ -48,6 +49,9 @@ public partial class InstallationDialog : Window
 
         var createBtn = this.FindControl<Button>("CreateButton");
         if (createBtn != null) createBtn.Click += CreateButton_Click;
+
+        var header = this.FindControl<Control>("DialogHeader");
+        if (header != null) header.PointerPressed += (s, e) => BeginMoveDrag(e);
     }
 
     private void CreateButton_Click(object? sender, RoutedEventArgs e)

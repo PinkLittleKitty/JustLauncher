@@ -6,6 +6,7 @@
         x:Class="JustLauncher.AccountDialog"
         Title="Account Manager" Height="400" Width="500"
         WindowStartupLocation="CenterOwner"
+        SystemDecorations="None"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
         Background="#23272A"
@@ -24,7 +25,7 @@
 
         <Grid Margin="30" RowDefinitions="Auto,*,Auto">
             <!-- Header -->
-            <Grid Grid.Row="0" Margin="0,0,0,30" ColumnDefinitions="*,Auto">
+            <Grid Grid.Row="0" x:Name="DialogHeader" Margin="0,0,0,30" ColumnDefinitions="*,Auto" Background="Transparent">
                 <StackPanel>
                     <TextBlock x:Name="DialogTitle" Text="Add New Account" FontSize="24" FontWeight="Bold" Foreground="White"/>
                     <TextBlock Text="Configure your Minecraft account settings" FontSize="14" Foreground="Gray" Margin="0,5,0,0"/>

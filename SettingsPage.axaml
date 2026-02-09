@@ -33,6 +33,8 @@
                 <TextBlock Text="Launcher" FontSize="18" Foreground="White" FontWeight="Bold"/>
                 <Border Background="#2C2F33" CornerRadius="8" Padding="20">
                     <StackPanel Spacing="15">
+                        <CheckBox x:Name="UseSeparateGameDirCheckBox" Content="Use separate game directory for each installation" Foreground="White"
+                                  ToolTip.Tip="When enabled, new installations will default to .minecraft/instances/{Name}"/>
                         <CheckBox x:Name="CloseOnLaunchCheckBox" Content="Close launcher when game starts" Foreground="White"/>
                         <CheckBox x:Name="DarkModeCheckBox" Content="Use Dark Mode" IsChecked="True" IsEnabled="False" Foreground="White"/>
                     </StackPanel>

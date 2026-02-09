@@ -63,6 +63,9 @@ public partial class SettingsPage : UserControl
         var pathBox = this.FindControl<TextBox>("JavaPathTextBox");
         if (pathBox != null) pathBox.Text = _settings.JavaPath;
 
+        var separateDirBox = this.FindControl<CheckBox>("UseSeparateGameDirCheckBox");
+        if (separateDirBox != null) separateDirBox.IsChecked = _settings.UseSeparateGameDir;
+
         var slider = this.FindControl<Slider>("MemorySlider");
         if (slider != null) slider.Value = _settings.MemoryAllocationGb;
 
@@ -78,10 +81,12 @@ public partial class SettingsPage : UserControl
         var pathBox = this.FindControl<TextBox>("JavaPathTextBox");
         var slider = this.FindControl<Slider>("MemorySlider");
         var closeCheck = this.FindControl<CheckBox>("CloseOnLaunchCheckBox");
+        var separateDirBox = this.FindControl<CheckBox>("UseSeparateGameDirCheckBox");
 
         _settings.JavaPath = pathBox?.Text ?? "";
         _settings.MemoryAllocationGb = slider?.Value ?? 2.0;
         _settings.CloseOnLaunch = closeCheck?.IsChecked ?? false;
+        _settings.UseSeparateGameDir = separateDirBox?.IsChecked ?? false;
 
         ConfigManager.SaveSettings(_settings);
     }

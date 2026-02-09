@@ -7,6 +7,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
+using Avalonia;
 
 namespace JustLauncher;
 
@@ -22,6 +23,33 @@ public partial class InstallationDialog : Window
         InitializeComponent();
         var textBox = this.FindControl<TextBox>("GameDirectoryTextBox");
         if (textBox != null) textBox.Text = PlatformManager.GetMinecraftDirectory();
+        
+        var nameBox = this.FindControl<TextBox>("NameTextBox");
+        if (nameBox != null)
+        {
+            nameBox.TextChanged += (s, e) =>
+            {
+                 var name = nameBox.Text;
+                 var settings = ConfigManager.LoadSettings();
+                 if (settings.UseSeparateGameDir && !string.IsNullOrWhiteSpace(name))
+                 {
+                     var dirBox = this.FindControl<TextBox>("GameDirectoryTextBox");
+                     if (dirBox != null)
+                     {
+                         var safeName = string.Join("_", name.Split(System.IO.Path.GetInvalidFileNameChars()));
+                         var basePath = PlatformManager.GetMinecraftDirectory();
+                         
+                         if (string.IsNullOrWhiteSpace(dirBox.Text) || dirBox.Text.StartsWith(basePath))
+                         {
+                             Dispatcher.UIThread.Post(() => 
+                             {
+                                 dirBox.Text = System.IO.Path.Combine(basePath, "instances", safeName);
+                             });
+                         }
+                     }
+                 }
+            };
+        }
 
         _ = LoadVersionsAsync();
     }
@@ -59,7 +87,6 @@ public partial class InstallationDialog : Window
                 memoryLabel.Text = $"{(int)slider.Value} GB";
             }
             
-            // Update JavaArgs to reflect memory allocation
             var argsBox = this.FindControl<TextBox>("JavaArgsTextBox");
             if (argsBox != null)
             {
@@ -80,7 +107,6 @@ public partial class InstallationDialog : Window
             var versions = manifest.Versions.Select(v => v.Id).ToList();
             versionCombo.ItemsSource = versions;
             
-            // Pre-select existing version if editing
             if (_existingInstallation != null && !string.IsNullOrEmpty(_existingInstallation.Version))
             {
                 int index = versions.IndexOf(_existingInstallation.Version);
@@ -114,8 +140,6 @@ public partial class InstallationDialog : Window
         if (title != null) title.Text = "Edit Installation";
         if (button != null) button.Content = "Save Changes";
         
-        // Set memory slider value from existing installation
-        // Use Dispatcher to ensure UI is fully loaded
         Dispatcher.UIThread.Post(() =>
         {
             var memorySlider = this.FindControl<Slider>("MemorySlider");
@@ -130,9 +154,6 @@ public partial class InstallationDialog : Window
             }
         });
         
-        // Note: Version combo will be pre-selected in LoadVersionsAsync
-        // Mod loader combo will be handled similarly if it exists
-
         var removeBtn = this.FindControl<Button>("RemoveButton");
         if (removeBtn != null) removeBtn.IsVisible = true;
     }
@@ -151,12 +172,28 @@ public partial class InstallationDialog : Window
         var argsBox = this.FindControl<TextBox>("JavaArgsTextBox");
         var memorySlider = this.FindControl<Slider>("MemorySlider");
 
+        var gameDir = dirBox?.Text;
+        if (string.IsNullOrWhiteSpace(gameDir))
+        {
+             var settings = ConfigManager.LoadSettings();
+             var name = nameBox?.Text ?? "New Installation";
+             if (settings.UseSeparateGameDir)
+             {
+                 var safeName = string.Join("_", name.Split(System.IO.Path.GetInvalidFileNameChars()));
+                 gameDir = System.IO.Path.Combine(PlatformManager.GetMinecraftDirectory(), "instances", safeName);
+             }
+             else
+             {
+                 gameDir = PlatformManager.GetMinecraftDirectory();
+             }
+        }
+
         Result = new Installation
         {
             Id = _existingInstallation?.Id ?? Guid.NewGuid().ToString(),
             Name = string.IsNullOrWhiteSpace(nameBox?.Text) ? "New Installation" : nameBox.Text,
             Version = versionCombo?.SelectedItem?.ToString() ?? "1.21.1",
-            GameDirectory = dirBox?.Text ?? PlatformManager.GetMinecraftDirectory(),
+            GameDirectory = gameDir,
             JavaArgs = argsBox?.Text ?? "-Xmx2G",
             MemoryAllocationGb = memorySlider?.Value ?? 4.0,
             Icon = "grass_block"

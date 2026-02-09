@@ -74,5 +74,6 @@ public class LauncherSettings
     public string JavaPath { get; set; } = string.Empty;
     public double MemoryAllocationGb { get; set; } = 2.0;
     public bool CloseOnLaunch { get; set; } = false;
+    public bool UseSeparateGameDir { get; set; } = false;
     public bool DarkMode { get; set; } = true;
 }

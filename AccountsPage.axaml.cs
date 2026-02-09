@@ -83,7 +83,6 @@ public partial class AccountsPage : UserControl
     private async void EditAccount(Account? account)
     {
         if (account == null) return;
-        // In a real app we'd pass the account to the dialog for editing
         var dialog = new AccountDialog(); 
         var parent = VisualRoot as Window;
         var result = await dialog.ShowDialog<Account>(parent!);

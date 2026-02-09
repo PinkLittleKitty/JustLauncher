@@ -48,7 +48,6 @@ public partial class JavaVersionDialog : Window
 
     private void DownloadButton_Click(object? sender, RoutedEventArgs e)
     {
-        // Open Adoptium download page
         PlatformManager.OpenBrowser("https://adoptium.net/temurin/releases/");
         Close();
     }

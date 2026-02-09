@@ -75,5 +75,6 @@ public class LauncherSettings
     public double MemoryAllocationGb { get; set; } = 2.0;
     public bool CloseOnLaunch { get; set; } = false;
     public bool UseSeparateGameDir { get; set; } = false;
+    public string Theme { get; set; } = "System";
     public bool DarkMode { get; set; } = true;
 }

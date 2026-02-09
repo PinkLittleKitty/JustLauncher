@@ -1,0 +1,46 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="JustLauncher.AboutDialog"
+        Title="About JustLauncher" Height="300" Width="400"
+        WindowStartupLocation="CenterOwner"
+        SystemDecorations="None"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        Background="{DynamicResource WindowBackground}"
+        TransparencyLevelHint="AcrylicBlur">
+    
+    <Panel>
+        <ExperimentalAcrylicBorder IsHitTestVisible="False">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="0.5"
+                    MaterialOpacity="0.65" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
+
+        <Grid RowDefinitions="Auto,*,Auto" Margin="20">
+            <!-- Header -->
+            <Grid Grid.Row="0" Margin="0,0,0,20">
+                <Button x:Name="CloseButton" HorizontalAlignment="Right" Content="✕" 
+                        Background="Transparent" Foreground="{DynamicResource SecondaryText}" Padding="10"/>
+            </Grid>
+
+            <!-- Content -->
+            <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+                <TextBlock Text="JustLauncher" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource PrimaryText}" HorizontalAlignment="Center"/>
+                <TextBlock Text="Version 0.0.2" FontSize="14" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center"/>
+                <TextBlock Text="Just a minecraft launcher.." 
+                           FontSize="12" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                
+                <TextBlock Text="Created by JustNeki" FontSize="12" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" Margin="0,20,0,0"/>
+            </StackPanel>
+
+            <!-- Footer -->
+            <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,20,0,0">
+                <TextBlock Text="© 2026 JustNeki" FontSize="10" Foreground="{DynamicResource SecondaryText}"/>
+            </StackPanel>
+        </Grid>
+    </Panel>
+</Window>

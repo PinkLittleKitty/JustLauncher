@@ -13,14 +13,9 @@ public static class LaunchCommandBuilder
         var args = new List<string>();
         string mcDir = PlatformManager.GetMinecraftDirectory();
 
-        // JVM Arguments - Optimized for Minecraft Performance
-        // Based on Aikar's flags: https://mcflags.emc.gs
+        args.Add($"-Xmx{(int)installation.MemoryAllocationGb}G");
+        args.Add($"-Xms{(int)installation.MemoryAllocationGb}G");
         
-        // Memory allocation
-        args.Add($"-Xmx{(int)settings.MemoryAllocationGb}G");
-        args.Add($"-Xms{(int)settings.MemoryAllocationGb}G");
-        
-        // G1GC Garbage Collector - Optimized for low pause times
         args.Add("-XX:+UseG1GC");
         args.Add("-XX:+ParallelRefProcEnabled");
         args.Add("-XX:MaxGCPauseMillis=200");
@@ -40,14 +35,11 @@ public static class LaunchCommandBuilder
         args.Add("-XX:+PerfDisableSharedMem");
         args.Add("-XX:MaxTenuringThreshold=1");
         
-        // Aikar's flags metadata
         args.Add("-Dusing.aikars.flags=https://mcflags.emc.gs");
         args.Add("-Daikars.new.flags=true");
         
-        // Platform-specific optimizations
         if (PlatformManager.IsWindows())
         {
-            // Intel GPU driver optimization trick for Windows
             args.Add("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump");
         }
         
@@ -57,7 +49,6 @@ public static class LaunchCommandBuilder
         args.Add("-Dminecraft.launcher.brand=JustLauncher");
         args.Add("-Dminecraft.launcher.version=0.0.2");
 
-        // Classpath
         var classpath = new List<string>();
         string currentOs = PlatformManager.GetCurrentOsName();
 
@@ -65,13 +56,11 @@ public static class LaunchCommandBuilder
         {
             if (!lib.IsAllowed(currentOs)) continue;
 
-            // Main artifact
             if (lib.Downloads.Artifact != null && !string.IsNullOrEmpty(lib.Downloads.Artifact.Path))
             {
                 classpath.Add(Path.Combine(mcDir, "libraries", lib.Downloads.Artifact.Path));
             }
 
-            // Legacy Native artifact
             if (lib.Natives != null && lib.Natives.TryGetValue(currentOs, out string? classifier))
             {
                 if (lib.Downloads.Classifiers != null && lib.Downloads.Classifiers.TryGetValue(classifier, out var nativeArtifact))
@@ -80,7 +69,6 @@ public static class LaunchCommandBuilder
                 }
             }
 
-            // Modern Native classifiers
             if (lib.Downloads.Classifiers != null)
             {
                 foreach (var entry in lib.Downloads.Classifiers)
@@ -97,13 +85,10 @@ public static class LaunchCommandBuilder
         args.Add("-cp");
         args.Add(string.Join(Path.PathSeparator, classpath));
 
-        // Main Class
         args.Add(versionInfo.MainClass);
 
-        // Game Arguments
         if (!string.IsNullOrEmpty(versionInfo.MinecraftArguments))
         {
-            // Legacy argument string template
             string gameArgs = versionInfo.MinecraftArguments;
             gameArgs = gameArgs.Replace("${auth_player_name}", account.Username);
             gameArgs = gameArgs.Replace("${version_name}", installation.Version);
@@ -120,7 +105,6 @@ public static class LaunchCommandBuilder
         }
         else
         {
-            // Modern hardcoded fallback (for versions without arguments list or template)
             args.Add("--username");
             args.Add(account.Username);
             args.Add("--version");
@@ -140,7 +124,6 @@ public static class LaunchCommandBuilder
             args.Add("--versionType");
             args.Add(versionInfo.Type);
             
-            // Helpful for some older versions that might not have the template but still need this
             args.Add("--userProperties");
             args.Add("{}");
         }

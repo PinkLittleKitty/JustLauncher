@@ -9,7 +9,7 @@
         SystemDecorations="None"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
-        Background="#23272A"
+        Background="{DynamicResource WindowBackground}"
         TransparencyLevelHint="AcrylicBlur">
     
     <Panel>
@@ -27,22 +27,22 @@
             <!-- Header -->
             <Grid Grid.Row="0" x:Name="DialogHeader" Margin="0,0,0,30" ColumnDefinitions="*,Auto" Background="Transparent">
                 <StackPanel>
-                    <TextBlock x:Name="DialogTitle" Text="Add New Account" FontSize="24" FontWeight="Bold" Foreground="White"/>
-                    <TextBlock Text="Configure your Minecraft account settings" FontSize="14" Foreground="Gray" Margin="0,5,0,0"/>
+                    <TextBlock x:Name="DialogTitle" Text="Add New Account" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource PrimaryText}"/>
+                    <TextBlock Text="Configure your Minecraft account settings" FontSize="14" Foreground="{DynamicResource SecondaryText}" Margin="0,5,0,0"/>
                 </StackPanel>
                 <Button x:Name="CloseButton" Grid.Column="1" Content="✕" 
-                        Background="Transparent" Foreground="#999" Padding="10"/>
+                        Background="Transparent" Foreground="{DynamicResource SecondaryText}" Padding="10"/>
             </Grid>
 
             <!-- Form -->
             <StackPanel Grid.Row="1" Spacing="20">
                 <StackPanel Spacing="8">
-                    <TextBlock Text="Username" Foreground="White" FontWeight="SemiBold"/>
+                    <TextBlock Text="Username" Foreground="{DynamicResource PrimaryText}" FontWeight="SemiBold"/>
                     <TextBox x:Name="UsernameTextBox"/>
                 </StackPanel>
 
                 <StackPanel Spacing="8">
-                    <TextBlock Text="Account Type" Foreground="White" FontWeight="SemiBold"/>
+                    <TextBlock Text="Account Type" Foreground="{DynamicResource PrimaryText}" FontWeight="SemiBold"/>
                     <ComboBox x:Name="AccountTypeComboBox" HorizontalAlignment="Stretch" SelectedIndex="0">
                         <ComboBoxItem Content="Offline Account" Tag="Offline"/>
                         <ComboBoxItem Content="Microsoft Account" Tag="Microsoft" IsEnabled="False"/>
@@ -51,11 +51,11 @@
                 </StackPanel>
 
                 <!-- Info Panel -->
-                <Border Background="#1e2124" CornerRadius="6" Padding="15">
+                <Border Background="{DynamicResource ContentBackground}" CornerRadius="6" Padding="15">
                     <StackPanel Spacing="5">
-                        <TextBlock x:Name="InfoTitle" Text="Offline Account" FontSize="14" FontWeight="Bold" Foreground="#00C851"/>
+                        <TextBlock x:Name="InfoTitle" Text="Offline Account" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource SuccessBrush}"/>
                         <TextBlock x:Name="InfoText" Text="Offline accounts allow you to play Minecraft without authentication. You can use any username you want." 
-                                   FontSize="12" Foreground="Gray" TextWrapping="Wrap"/>
+                                   FontSize="12" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
             </StackPanel>

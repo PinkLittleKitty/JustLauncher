@@ -27,7 +27,6 @@ public partial class HomePage : UserControl
         string username = this.FindControl<TextBox>("UsernameTextBox")?.Text ?? "Player";
         if (string.IsNullOrWhiteSpace(username)) username = "Player";
 
-        // Persist this account so it's used on next startup
         var config = ConfigManager.LoadAccounts();
         var account = config.Accounts.FirstOrDefault(a => a.Username == username);
         if (account == null)

@@ -19,7 +19,6 @@ namespace JustLauncher
         private readonly string username;
         private readonly HttpClient httpClient;
         private InstallationsConfig installationsConfig = new();
-        private string installationsConfigPath = string.Empty;
         private string minecraftDirectory = string.Empty;
         private MinecraftService _minecraftService = default!;
 
@@ -30,16 +29,16 @@ namespace JustLauncher
             InitializeComponent();
             this.username = username;
 
+            var welcomeText = this.FindControl<TextBlock>("WelcomeText");
+            if (welcomeText != null) welcomeText.Text = $"Welcome back, {username}!";
+
             httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Add("User-Agent", "JustLauncher/1.0");
 
             minecraftDirectory = PlatformManager.GetMinecraftDirectory();
-            Log($"Minecraft directory: {minecraftDirectory}");
             _minecraftService = new MinecraftService(minecraftDirectory);
-            _ = CheckJavaAndShowCompatibleVersions();
-            LoadInstallations();
             
-            Log($"Launcher started for user: {username}");
+            LoadInstallations();
         }
 
         private void Log(string message)
@@ -51,58 +50,11 @@ namespace JustLauncher
         {
             AvaloniaXamlLoader.Load(this);
             
-            var addBtn = this.FindControl<Button>("AddInstallationButton");
-            if (addBtn != null) addBtn.Click += AddInstallationButton_Click;
+            var playBtn = this.FindControl<Button>("PlayButton");
+            if (playBtn != null) playBtn.Click += PlayButton_Click;
 
-            var panel = this.FindControl<ItemsControl>("InstallationsPanel");
-            if (panel != null)
-            {
-                panel.AddHandler(Button.ClickEvent, (s, e) =>
-                {
-                    if (e.Source is Button btn)
-                    {
-                        if (btn.Name == "LaunchButton") LaunchButton_Click(btn, e);
-                        else if (btn.Name == "EditInstallationButton") EditInstallation_Click(btn, e);
-                    }
-                });
-            }
-        }
-
-        private async void EditInstallation_Click(object? sender, RoutedEventArgs e)
-        {
-            var btn = sender as Button;
-            var installation = btn?.Tag as Installation;
-            if (installation == null) return;
-
-            var dialog = new InstallationDialog(installation);
-            var parent = VisualRoot as Window;
-            var result = await dialog.ShowDialog<bool>(parent!);
-
-            if (result)
-            {
-                if (dialog.DeleteRequested)
-                {
-                    installationsConfig.Installations.RemoveAll(i => i.Id == installation.Id);
-                    ConfigManager.SaveInstallations(installationsConfig);
-                    RefreshInstallations();
-                    return;
-                }
-
-                if (dialog.Result != null)
-                {
-                    var existing = installationsConfig.Installations.FirstOrDefault(i => i.Id == installation.Id);
-                    if (existing != null)
-                    {
-                        existing.Name = dialog.Result.Name;
-                        existing.Version = dialog.Result.Version;
-                        existing.GameDirectory = dialog.Result.GameDirectory;
-                        existing.JavaArgs = dialog.Result.JavaArgs;
-                        
-                        ConfigManager.SaveInstallations(installationsConfig);
-                        RefreshInstallations();
-                    }
-                }
-            }
+            var manageBtn = this.FindControl<Button>("ManageProfilesButton");
+            if (manageBtn != null) manageBtn.Click += ManageProfilesButton_Click;
         }
 
         private void LoadInstallations()
@@ -113,75 +65,64 @@ namespace JustLauncher
 
         private void RefreshInstallations()
         {
-            var panel = this.FindControl<ItemsControl>("InstallationsPanel");
-            if (panel != null)
+            var combo = this.FindControl<ComboBox>("ProfileComboBox");
+            if (combo != null)
             {
-                panel.ItemsSource = null;
-                panel.ItemsSource = installationsConfig.Installations.ToList();
-            }
-        }
-
-        private async Task CheckJavaAndShowCompatibleVersions()
-        {
-            try
-            {
-                string? javaVersion = await PlatformManager.GetJavaVersionAsync();
-                await Dispatcher.UIThread.InvokeAsync(() =>
+                combo.ItemsSource = null;
+                combo.ItemsSource = installationsConfig.Installations.ToList();
+                if (installationsConfig.Installations.Count > 0)
                 {
-                    var textBlock = this.FindControl<TextBlock>("JavaVersionText");
-                    var button = this.FindControl<Button>("DownloadJavaButton");
-                    
-                    if (textBlock != null && button != null)
-                    {
-                        if (javaVersion != null)
-                        {
-                            textBlock.Text = $"Java: {javaVersion}";
-                            textBlock.Foreground = Brushes.LightGreen;
-                            button.IsVisible = false;
-                        }
-                        else
-                        {
-                            textBlock.Text = "Java: Not Found";
-                            textBlock.Foreground = Brushes.Red;
-                            button.IsVisible = true;
-                        }
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                Log($"Error checking Java: {ex.Message}");
-                await Dispatcher.UIThread.InvokeAsync(() => {
-                    var textBlock = this.FindControl<TextBlock>("JavaVersionText");
-                    if (textBlock != null) textBlock.Text = "Java: Error";
-                });
-            }
-        }
-
-        private async void AddInstallationButton_Click(object? sender, RoutedEventArgs e)
-        {
-            var dialog = new InstallationDialog();
-            var parent = VisualRoot as Window;
-            var result = await dialog.ShowDialog<bool>(parent!);
-            
-            if (result)
-            {
-                if (dialog.Result != null)
-                {
-                    installationsConfig.Installations.Add(dialog.Result);
-                    ConfigManager.SaveInstallations(installationsConfig);
-                    RefreshInstallations();
+                    combo.SelectedIndex = 0;
                 }
             }
         }
 
-
-        private async void LaunchButton_Click(object? sender, RoutedEventArgs e)
+        private async void ManageProfilesButton_Click(object? sender, RoutedEventArgs e)
         {
-            var btn = sender as Button;
-            var installation = btn?.Tag as Installation;
-            if (installation == null) return;
+            var combo = this.FindControl<ComboBox>("ProfileComboBox");
+            var selected = combo?.SelectedItem as Installation;
 
+            var dialog = selected != null ? new InstallationDialog(selected) : new InstallationDialog();
+            var parent = VisualRoot as Window;
+            var result = await dialog.ShowDialog<bool>(parent!);
+            
+            if (result && dialog.Result != null)
+            {
+                if (selected != null)
+                {
+                    // Update existing
+                    var index = installationsConfig.Installations.FindIndex(i => i.Id == selected.Id);
+                    if (index >= 0)
+                    {
+                        installationsConfig.Installations[index] = dialog.Result;
+                    }
+                }
+                else
+                {
+                    // Add new
+                    installationsConfig.Installations.Add(dialog.Result);
+                }
+
+                ConfigManager.SaveInstallations(installationsConfig);
+                RefreshInstallations();
+            }
+        }
+
+        private async void PlayButton_Click(object? sender, RoutedEventArgs e)
+        {
+            var combo = this.FindControl<ComboBox>("ProfileComboBox");
+            var installation = combo?.SelectedItem as Installation;
+            
+            if (installation == null)
+            {
+                return;
+            }
+
+            await LaunchGame(installation);
+        }
+
+        private async Task LaunchGame(Installation installation)
+        {
             var statusText = this.FindControl<TextBlock>("StatusText");
             var progressBar = this.FindControl<ProgressBar>("ProgressBar");
             
@@ -200,73 +141,34 @@ namespace JustLauncher
                 Log($"Fetching version details for {ver.Id}...");
                 var info = await _minecraftService.GetVersionInfoAsync(ver.Url);
 
-                // Java Version Validation - Search for compatible Java installation
-                int requiredJava = info.JavaVersion?.MajorVersion ?? 17; // Default to 17 for modern MC if not specified
-                
-                Log($"Searching for Java {requiredJava} or higher...");
+                int requiredJava = info.JavaVersion?.MajorVersion ?? 17;
                 var (foundVersion, foundPath) = await PlatformManager.FindJavaInstallationAsync(requiredJava);
                 
                 if (foundVersion != null && foundPath != null)
                 {
                     int foundMajor = PlatformManager.ExtractMajorVersion(foundVersion);
-                    if (foundMajor >= requiredJava)
+                    if (foundMajor < requiredJava)
                     {
-                        Log($"Found compatible Java {foundMajor} at: {foundPath}");
-                        // Update settings to use this Java path if it's not the default
-                        if (foundPath != PlatformManager.GetJavaExecutableName())
-                        {
-                            var javaSettings = ConfigManager.LoadSettings();
-                            javaSettings.JavaPath = foundPath;
-                            ConfigManager.SaveSettings(javaSettings);
-                            Log($"Updated Java path in settings to: {foundPath}");
-                        }
-                    }
-                    else
-                    {
-                        // Found Java but version is too old
-                        Log($"[WARNING] Java Version Mismatch!");
-                        Log($"[WARNING] Required: Java {requiredJava}, Detected: Java {foundMajor}");
-                        Log($"[WARNING] The game might fail to start. Please update your Java Runtime.");
-                        
-                        // Show dialog and wait for user decision
                         var dialog = new JavaVersionDialog(requiredJava.ToString(), foundMajor.ToString());
                         var owner = VisualRoot as Window;
                         if (owner == null) return;
-                        
-                        bool shouldContinue = await dialog.ShowDialog<bool>(owner);
-                        
-                        if (!shouldContinue)
-                        {
-                            // User chose to download Java and closed the dialog
-                            if (statusText != null) statusText.Text = "Launch cancelled";
-                            if (progressBar != null) progressBar.IsIndeterminate = false;
-                            return;
-                        }
-                        
-                        // User chose "Launch Anyway" - continue with launch
-                        Log("User chose to launch despite Java version mismatch.");
+                        if (!await dialog.ShowDialog<bool>(owner)) return;
+                    }
+                    else if (foundPath != PlatformManager.GetJavaExecutableName())
+                    {
+                         var javaSettings = ConfigManager.LoadSettings();
+                         javaSettings.JavaPath = foundPath;
+                         ConfigManager.SaveSettings(javaSettings);
                     }
                 }
                 else
                 {
-                    // No Java found at all
-                    Log("[ERROR] No Java installation found!");
                     var dialog = new JavaVersionDialog(requiredJava.ToString(), "Not Found");
                     var owner = VisualRoot as Window;
                     if (owner == null) return;
-                    
-                    bool shouldContinue = await dialog.ShowDialog<bool>(owner);
-                    
-                    if (!shouldContinue)
-                    {
-                        if (statusText != null) statusText.Text = "Launch cancelled - No Java found";
-                        if (progressBar != null) progressBar.IsIndeterminate = false;
-                        return;
-                    }
+                    if (!await dialog.ShowDialog<bool>(owner)) return;
                 }
 
-                // Download Libraries
-                Log("Checking libraries...");
                 if (statusText != null) statusText.Text = "Downloading libraries...";
                 if (progressBar != null) progressBar.IsIndeterminate = false;
                 await _minecraftService.DownloadLibrariesAsync(info, (done, total) => 
@@ -274,11 +176,9 @@ namespace JustLauncher
                     Dispatcher.UIThread.Post(() => { if (progressBar != null) progressBar.Value = (double)done / total * 100; });
                 });
 
-                // Download Client
                 string jarPath = Path.Combine(minecraftDirectory, "versions", installation.Version, installation.Version + ".jar");
                 if (!File.Exists(jarPath))
                 {
-                    Log("Downloading client JAR...");
                     if (statusText != null) statusText.Text = "Downloading client jar...";
                     await _minecraftService.DownloadFileAsync(info.Downloads.Client.Url, jarPath, (done, total) => 
                     {
@@ -286,21 +186,15 @@ namespace JustLauncher
                     });
                 }
 
-                // Download Assets
-                Log("Checking assets...");
                 if (statusText != null) statusText.Text = "Downloading assets...";
                 await _minecraftService.DownloadAssetsAsync(info, (done, total) => 
                 {
                     Dispatcher.UIThread.Post(() => { if (progressBar != null) progressBar.Value = (double)done / total * 100; });
                 });
 
-                // Extract Natives
-                Log("Extracting native libraries...");
                 if (statusText != null) statusText.Text = "Extracting natives...";
                 await _minecraftService.ExtractNativesAsync(info, installation.Version);
 
-                // Launching
-                Log("Building launch command...");
                 if (statusText != null) statusText.Text = "Starting game...";
                 var settings = ConfigManager.LoadSettings();
                 var accountsConfig = ConfigManager.LoadAccounts();

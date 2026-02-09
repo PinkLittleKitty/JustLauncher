@@ -23,7 +23,6 @@ public partial class AccountDialog : Window
     {
         AvaloniaXamlLoader.Load(this);
         
-        // Manual event attachment to bypass XAML compiler issues
         var closeBtn = this.FindControl<Button>("CloseButton");
         if (closeBtn != null) closeBtn.Click += CloseButton_Click;
 

@@ -31,6 +31,6 @@ public class ConsoleService
     {
         _logs.Clear();
         _buffer.Clear();
-        Dispatcher.UIThread.Post(() => MessageLogged?.Invoke(null!)); // Signal clear
+        Dispatcher.UIThread.Post(() => MessageLogged?.Invoke(null!));
     }
 }

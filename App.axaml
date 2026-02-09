@@ -1,1 +1,39 @@
-<Application xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="JustLauncher.App"><Application.Styles><FluentTheme /></Application.Styles></Application>
+<Application xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="JustLauncher.App">
+    <Application.Styles>
+        <FluentTheme />
+    </Application.Styles>
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="WindowBackground" Color="#FFFFFF"/>
+                    <SolidColorBrush x:Key="ContentBackground" Color="#F2F3F5"/>
+                    <SolidColorBrush x:Key="PrimaryText" Color="#060607"/>
+                    <SolidColorBrush x:Key="SecondaryText" Color="#4F5660"/>
+                    <SolidColorBrush x:Key="BorderBrush" Color="#E3E5E8"/>
+                    <SolidColorBrush x:Key="TitleBarBackground" Color="#E3E5E8"/>
+                    <SolidColorBrush x:Key="HoverBackground" Color="#D8D9DA"/>
+                    <SolidColorBrush x:Key="InputBackground" Color="#FFFFFF"/>
+                    <SolidColorBrush x:Key="SuccessBrush" Color="#008035"/>
+                    <SolidColorBrush x:Key="AccentBrush" Color="#0060DF"/>
+                    <SolidColorBrush x:Key="DangerBrush" Color="#D32F2F"/>
+                    <SolidColorBrush x:Key="WarningBrush" Color="#E65100"/>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="WindowBackground" Color="#23272A"/>
+                    <SolidColorBrush x:Key="ContentBackground" Color="#2C2F33"/>
+                    <SolidColorBrush x:Key="PrimaryText" Color="#FFFFFF"/>
+                    <SolidColorBrush x:Key="SecondaryText" Color="#8E9297"/>
+                    <SolidColorBrush x:Key="BorderBrush" Color="#2C2F33"/>
+                    <SolidColorBrush x:Key="TitleBarBackground" Color="#1E2124"/>
+                    <SolidColorBrush x:Key="HoverBackground" Color="#40444B"/>
+                    <SolidColorBrush x:Key="InputBackground" Color="#1E2124"/>
+                    <SolidColorBrush x:Key="SuccessBrush" Color="#00C851"/>
+                    <SolidColorBrush x:Key="AccentBrush" Color="#58A6FF"/>
+                    <SolidColorBrush x:Key="DangerBrush" Color="#ED4245"/>
+                    <SolidColorBrush x:Key="WarningBrush" Color="#FFA500"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

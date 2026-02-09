@@ -26,7 +26,6 @@ public class MinecraftService
         _baseDir = baseDir;
     }
     
-    // For when we want to share the client
     public MinecraftService(string baseDir, HttpClient client)
     {
         _httpClient = client;
@@ -77,7 +76,6 @@ public class MinecraftService
         int completed = 0;
         foreach (var lib in libraries)
         {
-            // Download main artifact
             if (lib.Downloads.Artifact != null && !string.IsNullOrEmpty(lib.Downloads.Artifact.Url))
             {
                 string path = Path.Combine(_baseDir, "libraries", lib.Downloads.Artifact.Path);
@@ -87,7 +85,6 @@ public class MinecraftService
                 }
             }
 
-            // Download legacy native artifact if applicable
             if (lib.Natives != null && lib.Natives.TryGetValue(currentOs, out string? legacyClassifier))
             {
                 if (lib.Downloads.Classifiers != null && lib.Downloads.Classifiers.TryGetValue(legacyClassifier, out var nativeArtifact))
@@ -101,7 +98,6 @@ public class MinecraftService
                 }
             }
 
-            // Download modern native classifiers (natives-linux, etc.)
             if (lib.Downloads.Classifiers != null)
             {
                 foreach (var classifier in lib.Downloads.Classifiers)
@@ -151,7 +147,6 @@ public class MinecraftService
 
             var candidates = new List<Artifact>();
 
-            // 1. Check legacy natives dictionary
             if (lib.Natives != null && lib.Natives.TryGetValue(currentOs, out string? classifier))
             {
                 if (lib.Downloads.Classifiers != null && lib.Downloads.Classifiers.TryGetValue(classifier, out var nativeArtifact))
@@ -161,7 +156,6 @@ public class MinecraftService
                 }
             }
 
-            // 2. Check classifiers for "natives-linux" etc.
             if (lib.Downloads.Classifiers != null)
             {
                 foreach (var entry in lib.Downloads.Classifiers)
@@ -174,7 +168,6 @@ public class MinecraftService
                 }
             }
 
-            // 3. Modern style: the whole library IS the native (e.g., name contains natives-linux)
             if (lib.Name.Contains($"natives-{currentOs}") && PlatformManager.IsArchitectureMatch(lib.Name, currentOs))
             {
                 if (lib.Downloads.Artifact != null)
@@ -224,7 +217,6 @@ public class MinecraftService
 
     public async Task DownloadAssetsAsync(VersionInfo info, Action<int, int>? progressCallback = null)
     {
-        // 1. Download and save the Asset Index file itself
         string indexPath = Path.Combine(_baseDir, "assets", "indexes", $"{info.AssetIndex.Id}.json");
         string indexJson;
         
@@ -259,7 +251,7 @@ public class MinecraftService
             }
 
             completed++;
-            if (completed % 10 == 0 || completed == total) // Report progress every 10 files
+            if (completed % 10 == 0 || completed == total)
             {
                 progressCallback?.Invoke(completed, total);
             }

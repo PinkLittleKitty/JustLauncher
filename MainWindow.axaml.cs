@@ -47,6 +47,16 @@ public partial class MainWindow : Window
         var setBtn = this.FindControl<Button>("SettingsButton");
         if (setBtn != null) setBtn.Click += SettingsButton_Click;
 
+        var infoBtn = this.FindControl<Button>("InfoButton");
+        if (infoBtn != null)
+        {
+            infoBtn.Click += async (s, e) => 
+            {
+                var dialog = new AboutDialog();
+                await dialog.ShowDialog(this);
+            };
+        }
+
         var minBtn = this.FindControl<Button>("MinimizeButton");
         if (minBtn != null) minBtn.Click += MinimizeButton_Click;
 

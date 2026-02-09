@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using System;
+using Avalonia.Platform.Storage;
 
 namespace JustLauncher;
 
@@ -24,35 +25,28 @@ public partial class SettingsPage : UserControl
 
         var browseBtn = this.FindControl<Button>("BrowseJavaButton");
         if (browseBtn != null) browseBtn.Click += BrowseJavaButton_Click;
+
+        var slider = this.FindControl<Slider>("MemorySlider");
+        if (slider != null)
+        {
+            slider.PropertyChanged += MemorySlider_PropertyChanged;
+        }
     }
 
     private void MemorySlider_PropertyChanged(object? sender, Avalonia.AvaloniaPropertyChangedEventArgs e)
     {
         if (e.Property == Avalonia.Controls.Primitives.RangeBase.ValueProperty && sender is Slider slider)
         {
-            _settings.MemoryAllocationGb = slider.Value;
-            ConfigManager.SaveSettings(_settings);
-            
-            var valueText = this.FindControl<TextBlock>("MemoryValueText");
-            if (valueText != null)
-            {
-                valueText.Text = $"{(int)slider.Value} GB";
-            }
+            UpdateMemoryText(slider.Value);
         }
     }
 
-    private void MemorySlider_ValueChanged(object? sender, Avalonia.Input.PointerReleasedEventArgs e)
+    private void UpdateMemoryText(double value)
     {
-        if (sender is Slider slider)
+        var valueText = this.FindControl<TextBlock>("MemoryValueText");
+        if (valueText != null)
         {
-            _settings.MemoryAllocationGb = slider.Value;
-            ConfigManager.SaveSettings(_settings);
-            
-            var valueText = this.FindControl<TextBlock>("MemoryValueText");
-            if (valueText != null)
-            {
-                valueText.Text = $"{(int)slider.Value} GB";
-            }
+            valueText.Text = $"{(int)value} GB";
         }
     }
 
@@ -63,37 +57,77 @@ public partial class SettingsPage : UserControl
         var pathBox = this.FindControl<TextBox>("JavaPathTextBox");
         if (pathBox != null) pathBox.Text = _settings.JavaPath;
 
-        var separateDirBox = this.FindControl<CheckBox>("UseSeparateGameDirCheckBox");
-        if (separateDirBox != null) separateDirBox.IsChecked = _settings.UseSeparateGameDir;
+        var separateDirToggle = this.FindControl<ToggleSwitch>("UseSeparateGameDirToggle");
+        if (separateDirToggle != null) separateDirToggle.IsChecked = _settings.UseSeparateGameDir;
 
         var slider = this.FindControl<Slider>("MemorySlider");
         if (slider != null) slider.Value = _settings.MemoryAllocationGb;
 
-        var valueText = this.FindControl<TextBlock>("MemoryValueText");
-        if (valueText != null) valueText.Text = $"{(int)_settings.MemoryAllocationGb} GB";
+        UpdateMemoryText(_settings.MemoryAllocationGb);
 
-        var closeCheck = this.FindControl<CheckBox>("CloseOnLaunchCheckBox");
-        if (closeCheck != null) closeCheck.IsChecked = _settings.CloseOnLaunch;
+        var closeToggle = this.FindControl<ToggleSwitch>("CloseOnLaunchToggle");
+        if (closeToggle != null) closeToggle.IsChecked = _settings.CloseOnLaunch;
+        
+        var themeCombo = this.FindControl<ComboBox>("ThemeComboBox");
+        if (themeCombo != null)
+        {
+            switch (_settings.Theme)
+            {
+                case "Light": themeCombo.SelectedIndex = 1; break;
+                case "Dark": themeCombo.SelectedIndex = 2; break;
+                default: themeCombo.SelectedIndex = 0; break;
+            }
+        }
     }
 
     private void SaveButton_Click(object? sender, RoutedEventArgs e)
     {
         var pathBox = this.FindControl<TextBox>("JavaPathTextBox");
         var slider = this.FindControl<Slider>("MemorySlider");
-        var closeCheck = this.FindControl<CheckBox>("CloseOnLaunchCheckBox");
-        var separateDirBox = this.FindControl<CheckBox>("UseSeparateGameDirCheckBox");
+        var closeToggle = this.FindControl<ToggleSwitch>("CloseOnLaunchToggle");
+        var separateDirToggle = this.FindControl<ToggleSwitch>("UseSeparateGameDirToggle");
+        var themeCombo = this.FindControl<ComboBox>("ThemeComboBox");
 
         _settings.JavaPath = pathBox?.Text ?? "";
         _settings.MemoryAllocationGb = slider?.Value ?? 2.0;
-        _settings.CloseOnLaunch = closeCheck?.IsChecked ?? false;
-        _settings.UseSeparateGameDir = separateDirBox?.IsChecked ?? false;
+        _settings.CloseOnLaunch = closeToggle?.IsChecked ?? false;
+        _settings.UseSeparateGameDir = separateDirToggle?.IsChecked ?? false;
+        
+        if (themeCombo != null)
+        {
+            switch (themeCombo.SelectedIndex)
+            {
+                case 1: _settings.Theme = "Light"; break;
+                case 2: _settings.Theme = "Dark"; break;
+                default: _settings.Theme = "System"; break;
+            }
+        }
 
         ConfigManager.SaveSettings(_settings);
+        
+        if (Avalonia.Application.Current != null)
+        {
+            switch (_settings.Theme)
+            {
+                case "Light":
+                    Avalonia.Application.Current.RequestedThemeVariant = Avalonia.Styling.ThemeVariant.Light;
+                    break;
+                case "Dark":
+                    Avalonia.Application.Current.RequestedThemeVariant = Avalonia.Styling.ThemeVariant.Dark;
+                    break;
+                default:
+                    Avalonia.Application.Current.RequestedThemeVariant = Avalonia.Styling.ThemeVariant.Default;
+                    break;
+            }
+        }
     }
 
     private async void BrowseJavaButton_Click(object? sender, RoutedEventArgs e)
     {
-        var result = await (VisualRoot as Window)!.StorageProvider.OpenFilePickerAsync(new Avalonia.Platform.Storage.FilePickerOpenOptions
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel == null) return;
+
+        var result = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
             Title = "Select Java Executable",
             AllowMultiple = false

@@ -30,26 +30,21 @@ public static class PlatformManager
         bool isX86 = arch == Architecture.X86;
         bool isArm64 = arch == Architecture.Arm64;
 
-        // If classifier doesn't contain a specific arch suffix, assume x64 for Windows/Linux
-        // Modern MC uses natives-windows (x64), natives-windows-x86, natives-windows-arm64
         
         string baseNatives = $"natives-{currentOs}";
         if (classifier == baseNatives) 
         {
-            // Special case: for macOS, the generic one is often universal
             if (currentOs == "osx") return true;
             return is64;
         }
 
-        // Exact matches/suffixes for various architectures
         if (classifier.EndsWith("-x86") || classifier.EndsWith("-i386")) return isX86;
         if (classifier.EndsWith("-x64") || classifier.EndsWith("-x86_64") || classifier.EndsWith("-amd64")) return is64;
         if (classifier.EndsWith("-arm64") || classifier.EndsWith("-aarch64")) return isArm64;
 
-        // Contains check for some edge cases
         if (currentOs == "osx" && (classifier.Contains("arm64") || classifier.Contains("aarch64"))) return isArm64;
 
-        return true; // Fallback for unknown patterns (e.g. jtracy-natives-linux)
+        return true;
     }
 
     public static string GetMinecraftDirectory()
@@ -119,13 +114,11 @@ public static class PlatformManager
         }
         catch
         {
-            // Ignore browser open failures
         }
     }
 
     public static string GetJavaExecutable()
     {
-        // For now, return what we find in PATH
         return GetJavaExecutableName();
     }
 
@@ -133,12 +126,10 @@ public static class PlatformManager
     {
         var candidates = new System.Collections.Generic.List<(string version, string path, int major)>();
 
-        // Helper to check a potential java path
         async Task CheckCandidate(string javaPath)
         {
             if (!File.Exists(javaPath)) return;
             
-            // Avoid duplicates
             if (candidates.Any(c => c.path == javaPath)) return;
 
             var version = await GetJavaVersionFromPathAsync(javaPath);
@@ -149,20 +140,14 @@ public static class PlatformManager
             }
         }
 
-        // 1. Check PATH
         var pathVersion = await GetJavaVersionFromPathAsync(GetJavaExecutableName());
         if (pathVersion != null)
         {
-            // Resolve full path for PATH java if possible (Linux `which`, Windows `where` logic is complex, 
-            // so we might just use the executable name if we can't find it, but let's try to resolve it if it's an absolute path)
-            // For now, we store it as is, but we want to prefer absolute paths if found later.
             candidates.Add((pathVersion, GetJavaExecutableName(), ExtractMajorVersion(pathVersion)));
         }
 
-        // 2. Search common installation directories
         var searchPaths = new System.Collections.Generic.List<string>(GetCommonJavaSearchPaths());
         
-        // Add more paths (SDKMAN, .jdks for IntelliJ)
         string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
@@ -172,7 +157,6 @@ public static class PlatformManager
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             searchPaths.Add(Path.Combine(home, ".jdks"));
-            // Add other common drives if needed, but Program Files is usually enough
         }
 
         foreach (var basePath in searchPaths)
@@ -184,10 +168,8 @@ public static class PlatformManager
                 var dirs = Directory.GetDirectories(basePath);
                 foreach (var dir in dirs)
                 {
-                    // Standard bin/java layout
                     await CheckCandidate(Path.Combine(dir, "bin", GetJavaExecutableName()));
                     
-                    // MacOS content layout
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                     {
                         await CheckCandidate(Path.Combine(dir, "Contents", "Home", "bin", "java"));
@@ -197,20 +179,15 @@ public static class PlatformManager
             catch { /* Ignore access errors */ }
         }
 
-        // 3. Selection Logic
         
-        // Filter for compatible versions
         var compatible = candidates.Where(c => c.major >= requiredMajorVersion).ToList();
 
         if (compatible.Any())
         {
-            // Pick the highest version available
             var best = compatible.OrderByDescending(c => c.major).First();
             return (best.version, best.path);
         }
 
-        // If no compatible version found, return the highest available one (even if incompatible)
-        // This allows the UI to say "Detected: Java 17" instead of nothing.
         if (candidates.Any())
         {
             var bestStart = candidates.OrderByDescending(c => c.major).First();
@@ -225,7 +202,6 @@ public static class PlatformManager
         var parts = versionString.Split('.');
         if (parts.Length > 0 && int.TryParse(parts[0], out int major))
         {
-            // Handle old version formats like 1.8.x
             if (major == 1 && parts.Length > 1 && int.TryParse(parts[1], out int second))
             {
                 return second;
@@ -254,11 +230,9 @@ public static class PlatformManager
             string output = await process.StandardError.ReadToEndAsync();
             await process.WaitForExitAsync();
 
-            // Try different patterns for java version output
             var match = System.Text.RegularExpressions.Regex.Match(output, @"version ""([^""]+)""");
             if (match.Success) return match.Groups[1].Value;
 
-            // Fallback for some OpenJDK outputs that don't say "version"
             match = System.Text.RegularExpressions.Regex.Match(output, @"openjdk (\d+\.\d+\.\d+)");
             if (match.Success) return match.Groups[1].Value;
 

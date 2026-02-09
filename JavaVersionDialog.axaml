@@ -6,32 +6,32 @@
         SizeToContent="Height"
         WindowStartupLocation="CenterOwner"
         CanResize="False"
-        Background="#23272A"
+        Background="{DynamicResource WindowBackground}"
     Margin="0,0,0,20">
     <Border Padding="30">
         <StackPanel Spacing="20">
             <!-- Warning Icon and Title -->
             <StackPanel Orientation="Horizontal" Spacing="15">
                 <TextBlock Text="⚠️" FontSize="32"/>
-                <TextBlock Text="Java Version Mismatch" FontSize="24" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
+                <TextBlock Text="Java Version Mismatch" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource PrimaryText}" VerticalAlignment="Center"/>
             </StackPanel>
 
             <!-- Message -->
             <TextBlock x:Name="MessageText" 
                        TextWrapping="Wrap" 
-                       Foreground="#DCDDDE" 
+                       Foreground="{DynamicResource SecondaryText}" 
                        FontSize="14"
                        LineHeight="22"/>
 
             <!-- Version Info -->
-            <Border Background="#2C2F33" CornerRadius="8" Padding="15">
+            <Border Background="{DynamicResource ContentBackground}" CornerRadius="8" Padding="15">
                 <StackPanel Spacing="10">
                     <StackPanel Orientation="Horizontal" Spacing="10">
-                        <TextBlock Text="Required:" Foreground="Gray" Width="100"/>
-                        <TextBlock x:Name="RequiredVersionText" Foreground="#00C851" FontWeight="Bold"/>
+                        <TextBlock Text="Required:" Foreground="{DynamicResource SecondaryText}" Width="100"/>
+                        <TextBlock x:Name="RequiredVersionText" Foreground="{DynamicResource SuccessBrush}" FontWeight="Bold"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Spacing="10">
-                        <TextBlock Text="Detected:" Foreground="Gray" Width="100"/>
+                        <TextBlock Text="Detected:" Foreground="{DynamicResource SecondaryText}" Width="100"/>
                         <TextBlock x:Name="DetectedVersionText" Foreground="#FF6B6B" FontWeight="Bold"/>
                     </StackPanel>
                 </StackPanel>

@@ -12,7 +12,6 @@ namespace JustLauncher
         {
             InitializeComponent();
             
-            // Initial load
             var console = this.FindControl<SelectableTextBlock>("ConsoleOutput");
             if (console != null)
             {
@@ -20,7 +19,6 @@ namespace JustLauncher
                 ScrollToEnd();
             }
 
-            // Subscribe to new logs
             ConsoleService.Instance.MessageLogged += OnMessageLogged;
         }
 
@@ -31,7 +29,7 @@ namespace JustLauncher
                 var console = this.FindControl<SelectableTextBlock>("ConsoleOutput");
                 if (console == null) return;
 
-                if (message == null) // Clear signal
+                if (message == null)
                 {
                     console.Text = "";
                 }
@@ -70,7 +68,6 @@ namespace JustLauncher
             };
         }
 
-        // Unsubscribe when detached to avoid memory leaks
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
             ConsoleService.Instance.MessageLogged -= OnMessageLogged;

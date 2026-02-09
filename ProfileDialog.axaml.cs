@@ -38,7 +38,6 @@ public partial class ProfileDialog : Window
         var header = this.FindControl<Control>("DialogHeader");
         if (header != null) header.PointerPressed += (s, e) => BeginMoveDrag(e);
 
-        // Initialize memory slider
         var memorySlider = this.FindControl<Slider>("MemorySlider");
         if (memorySlider != null)
         {

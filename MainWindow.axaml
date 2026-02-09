@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="https://github.com/projektanker/icons.avalonia"
         mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
         x:Class="JustLauncher.MainWindow"
         Title="JustLauncher"
@@ -10,10 +11,36 @@
         SystemDecorations="None"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
-        Background="#23272A"
+        Background="{DynamicResource WindowBackground}"
         TransparencyLevelHint="AcrylicBlur">
 
     <Window.Styles>
+        <Style Selector="Button.SidebarBtn">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryText}"/>
+            <Setter Property="Padding" Value="15,10"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Margin" Value="10,2"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                    <BrushTransition Property="Foreground" Duration="0:0:0.2"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.SidebarBtn i|Icon">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.SidebarBtn:hover">
+            <Setter Property="Background" Value="{DynamicResource HoverBackground}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
+        </Style>
+        <!-- TitleBar Buttons -->
         <Style Selector="Button.TitleBar">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Width" Value="45"/>
@@ -21,54 +48,87 @@
             <Setter Property="VerticalAlignment" Value="Stretch"/>
             <Setter Property="Padding" Value="0"/>
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
         <Style Selector="Button.TitleBar:hover">
-            <Setter Property="Background" Value="#40444B"/>
+            <Setter Property="Background" Value="{DynamicResource HoverBackground}"/>
         </Style>
         <Style Selector="Button.TitleBar.Close:hover">
             <Setter Property="Background" Value="#ED4245"/>
         </Style>
-        <Style Selector="Button.Nav">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#8E9297"/>
-            <Setter Property="Padding" Value="20,10"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-        </Style>
-        <Style Selector="Button.Nav:hover">
-            <Setter Property="Background" Value="#393C43"/>
-            <Setter Property="Foreground" Value="White"/>
-        </Style>
     </Window.Styles>
 
-    <Border x:Name="MainBorder" Background="#23272A" CornerRadius="10">
+    <Panel>
+        <!-- Background Tint -->
+        <Border Background="{DynamicResource WindowBackground}" IsHitTestVisible="False"/>
+
         <Grid RowDefinitions="32,*">
             <!-- Custom Title Bar -->
-            <Grid Grid.Row="0" x:Name="TitleBar" Background="#1E2124" ColumnDefinitions="*,Auto">
-                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="15,0">
-                    <TextBlock Text="🚀" FontSize="16" Foreground="White" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                    <TextBlock Text="JustLauncher" FontSize="14" Foreground="White" VerticalAlignment="Center" FontWeight="Medium"/>
+            <Grid Grid.Row="0" x:Name="TitleBar" Background="Transparent" ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
+                    <TextBlock Text="JustLauncher" FontSize="12" Foreground="{DynamicResource SecondaryText}" VerticalAlignment="Center"/>
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button x:Name="MinimizeButton" Content="—" Classes="TitleBar"/>
-                    <Button x:Name="MaximizeButton" Content="▢" Classes="TitleBar"/>
-                    <Button x:Name="CloseButton" Content="✕" Classes="TitleBar Close"/>
+                    <Button x:Name="MinimizeButton" Content="—" Classes="TitleBar" Foreground="{DynamicResource PrimaryText}"/>
+                    <Button x:Name="MaximizeButton" Content="▢" Classes="TitleBar" Foreground="{DynamicResource PrimaryText}"/>
+                    <Button x:Name="CloseButton" Content="✕" Classes="TitleBar Close" Foreground="{DynamicResource PrimaryText}"/>
                 </StackPanel>
             </Grid>
 
             <!-- Main Content Area -->
-            <Grid Grid.Row="1" ColumnDefinitions="180,*">
-                <StackPanel Grid.Column="0" Background="#2C2F33" VerticalAlignment="Stretch">
-                    <TextBlock Text="JustLauncher" FontSize="24" Foreground="White" Margin="0,30,0,30" HorizontalAlignment="Center"/>
-                    <Button x:Name="PlayButton" Content="Play" Classes="Nav" Margin="10,5" HorizontalAlignment="Stretch"/>
-                    <Button x:Name="ConsoleButton" Content="Console" Classes="Nav" Margin="10,5" HorizontalAlignment="Stretch"/>
-                    <Button x:Name="AccountsButton" Content="Accounts" Classes="Nav" Margin="10,5" HorizontalAlignment="Stretch"/>
-                    <Button x:Name="SettingsButton" Content="Settings" Classes="Nav" Margin="10,5" HorizontalAlignment="Stretch"/>
-                </StackPanel>
+            <Grid Grid.Row="1" ColumnDefinitions="220,*">
+                <!-- Sidebar -->
+                <Grid Grid.Column="0" RowDefinitions="Auto,*,Auto" Background="{DynamicResource TitleBarBackground}">
+                    <!-- Logo Area -->
+                    <StackPanel Grid.Row="0" Margin="20,30,20,30">
+                        <i:Icon Value="fa-solid fa-rocket" FontSize="40" HorizontalAlignment="Center" Margin="0,0,0,10" Foreground="{DynamicResource AccentBrush}"/>
+                        <TextBlock Text="JustLauncher" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource PrimaryText}" HorizontalAlignment="Center"/>
+                    </StackPanel>
 
-                <ContentControl x:Name="MainContent" Grid.Column="1"/>
+                    <!-- Navigation Items -->
+                    <StackPanel Grid.Row="1" Spacing="5">
+                        <Button x:Name="PlayButton" Classes="SidebarBtn">
+                            <StackPanel Orientation="Horizontal" Spacing="15">
+                                <i:Icon Value="fa-solid fa-gamepad" />
+                                <TextBlock Text="Play" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="AccountsButton" Classes="SidebarBtn">
+                            <StackPanel Orientation="Horizontal" Spacing="15">
+                                <i:Icon Value="fa-solid fa-users" />
+                                <TextBlock Text="Accounts" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="SettingsButton" Classes="SidebarBtn">
+                            <StackPanel Orientation="Horizontal" Spacing="15">
+                                <i:Icon Value="fa-solid fa-cog" />
+                                <TextBlock Text="Settings" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="ConsoleButton" Classes="SidebarBtn">
+                            <StackPanel Orientation="Horizontal" Spacing="15">
+                                <i:Icon Value="fa-solid fa-terminal" />
+                                <TextBlock Text="Console" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                    
+                    <!-- Bottom Actions -->
+                    <StackPanel Grid.Row="2" Margin="0,0,0,20">
+                        <Button x:Name="InfoButton" Classes="SidebarBtn">
+                            <StackPanel Orientation="Horizontal" Spacing="15">
+                                <i:Icon Value="fa-solid fa-info-circle" />
+                                <TextBlock Text="About" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Page Content -->
+                <ContentControl x:Name="MainContent" Grid.Column="1" Margin="0"/>
             </Grid>
         </Grid>
-    </Border>
+    </Panel>
 </Window>

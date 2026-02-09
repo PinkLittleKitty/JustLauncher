@@ -6,16 +6,16 @@
         SystemDecorations="None"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
-        Background="#23272A">
+        Background="{DynamicResource WindowBackground}">
     
     <Grid Margin="30" RowDefinitions="Auto,*,Auto">
         <!-- Header -->
         <Grid Grid.Row="0" x:Name="DialogHeader" Margin="0,0,0,30" ColumnDefinitions="*,Auto" Background="Transparent">
             <StackPanel>
-                <TextBlock x:Name="DialogTitle" Text="Create New Installation" FontSize="24" FontWeight="Bold" Foreground="White"/>
-                <TextBlock Text="Configure your Minecraft installation settings" FontSize="14" Foreground="Gray" Margin="0,5,0,0"/>
+                <TextBlock x:Name="DialogTitle" Text="Create New Installation" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource PrimaryText}"/>
+                <TextBlock Text="Configure your Minecraft installation settings" FontSize="14" Foreground="{DynamicResource SecondaryText}" Margin="0,5,0,0"/>
             </StackPanel>
-            <Button x:Name="CloseButton" Grid.Column="1" Content="✕" Background="Transparent" Foreground="#999" Padding="10"/>
+            <Button x:Name="CloseButton" Grid.Column="1" Content="✕" Background="Transparent" Foreground="{DynamicResource SecondaryText}" Padding="10"/>
         </Grid>
 
         <!-- Form -->
@@ -24,17 +24,17 @@
                 <!-- Left Column -->
                 <StackPanel Grid.Column="0" Spacing="20">
                     <StackPanel Spacing="8">
-                        <TextBlock Text="Installation Name" Foreground="White" FontWeight="SemiBold"/>
+                        <TextBlock Text="Installation Name" Foreground="{DynamicResource PrimaryText}" FontWeight="SemiBold"/>
                         <TextBox x:Name="NameTextBox"/>
                     </StackPanel>
 
                     <StackPanel Spacing="8">
-                        <TextBlock Text="Minecraft Version" Foreground="White" FontWeight="SemiBold"/>
+                        <TextBlock Text="Minecraft Version" Foreground="{DynamicResource PrimaryText}" FontWeight="SemiBold"/>
                         <ComboBox x:Name="VersionComboBox" HorizontalAlignment="Stretch"/>
                     </StackPanel>
 
                     <StackPanel Spacing="8">
-                        <TextBlock Text="Mod Loader" Foreground="White" FontWeight="SemiBold"/>
+                        <TextBlock Text="Mod Loader" Foreground="{DynamicResource PrimaryText}" FontWeight="SemiBold"/>
                         <ComboBox x:Name="ModLoaderComboBox" HorizontalAlignment="Stretch">
                             <ComboBoxItem Content="None" Tag="none" IsSelected="True"/>
                             <ComboBoxItem Content="Fabric" Tag="fabric"/>
@@ -46,7 +46,7 @@
                 <!-- Right Column -->
                 <StackPanel Grid.Column="2" Spacing="20">
                     <StackPanel Spacing="8">
-                        <TextBlock Text="Game Directory" Foreground="White" FontWeight="SemiBold"/>
+                        <TextBlock Text="Game Directory" Foreground="{DynamicResource PrimaryText}" FontWeight="SemiBold"/>
                         <Grid ColumnDefinitions="*,Auto">
                             <TextBox x:Name="GameDirectoryTextBox"/>
                             <Button x:Name="BrowseGameDirectoryButton" Grid.Column="1" Content="📁" Margin="5,0,0,0"/>
@@ -54,15 +54,15 @@
                     </StackPanel>
 
                     <StackPanel Spacing="8">
-                        <TextBlock Text="JVM Arguments" Foreground="White" FontWeight="SemiBold"/>
+                        <TextBlock Text="JVM Arguments" Foreground="{DynamicResource PrimaryText}" FontWeight="SemiBold"/>
                         <TextBox x:Name="JavaArgsTextBox" Text="-Xmx2G -Xms1G"/>
                     </StackPanel>
 
                     <StackPanel Spacing="8">
-                        <TextBlock Text="Memory Allocation" Foreground="White" FontWeight="SemiBold"/>
+                        <TextBlock Text="Memory Allocation" Foreground="{DynamicResource PrimaryText}" FontWeight="SemiBold"/>
                         <Slider x:Name="MemorySlider" Minimum="1" Maximum="32" Value="4" SmallChange="1" LargeChange="2" 
                                 PropertyChanged="MemorySlider_PropertyChanged"/>
-                        <TextBlock x:Name="MemoryLabel" Text="2 GB" Foreground="#00C851" HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="MemoryLabel" Text="2 GB" Foreground="{DynamicResource SuccessBrush}" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </StackPanel>
             </Grid>

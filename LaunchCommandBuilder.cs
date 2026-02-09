@@ -69,24 +69,49 @@ public static class LaunchCommandBuilder
         args.Add(versionInfo.MainClass);
 
         // Game Arguments
-        args.Add("--username");
-        args.Add(account.Username);
-        args.Add("--version");
-        args.Add(installation.Version);
-        args.Add("--gameDir");
-        args.Add(EscapePath(installation.GameDirectory));
-        args.Add("--assetsDir");
-        args.Add(EscapePath(Path.Combine(mcDir, "assets")));
-        args.Add("--assetIndex");
-        args.Add(versionInfo.AssetIndex.Id);
-        args.Add("--uuid");
-        args.Add(account.Id.Replace("-", ""));
-        args.Add("--accessToken");
-        args.Add("0"); // Offline token
-        args.Add("--userType");
-        args.Add("legacy");
-        args.Add("--versionType");
-        args.Add(versionInfo.Type);
+        if (!string.IsNullOrEmpty(versionInfo.MinecraftArguments))
+        {
+            // Legacy argument string template
+            string gameArgs = versionInfo.MinecraftArguments;
+            gameArgs = gameArgs.Replace("${auth_player_name}", account.Username);
+            gameArgs = gameArgs.Replace("${version_name}", installation.Version);
+            gameArgs = gameArgs.Replace("${game_directory}", EscapePath(installation.GameDirectory));
+            gameArgs = gameArgs.Replace("${assets_root}", EscapePath(Path.Combine(mcDir, "assets")));
+            gameArgs = gameArgs.Replace("${assets_index_name}", versionInfo.AssetIndex.Id);
+            gameArgs = gameArgs.Replace("${auth_uuid}", account.Id.Replace("-", ""));
+            gameArgs = gameArgs.Replace("${auth_access_token}", "0");
+            gameArgs = gameArgs.Replace("${user_type}", "legacy");
+            gameArgs = gameArgs.Replace("${version_type}", versionInfo.Type);
+            gameArgs = gameArgs.Replace("${user_properties}", "{}");
+
+            args.Add(gameArgs);
+        }
+        else
+        {
+            // Modern hardcoded fallback (for versions without arguments list or template)
+            args.Add("--username");
+            args.Add(account.Username);
+            args.Add("--version");
+            args.Add(installation.Version);
+            args.Add("--gameDir");
+            args.Add(EscapePath(installation.GameDirectory));
+            args.Add("--assetsDir");
+            args.Add(EscapePath(Path.Combine(mcDir, "assets")));
+            args.Add("--assetIndex");
+            args.Add(versionInfo.AssetIndex.Id);
+            args.Add("--uuid");
+            args.Add(account.Id.Replace("-", ""));
+            args.Add("--accessToken");
+            args.Add("0");
+            args.Add("--userType");
+            args.Add("legacy");
+            args.Add("--versionType");
+            args.Add(versionInfo.Type);
+            
+            // Helpful for some older versions that might not have the template but still need this
+            args.Add("--userProperties");
+            args.Add("{}");
+        }
 
         return string.Join(" ", args);
     }

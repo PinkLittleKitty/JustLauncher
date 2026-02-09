@@ -48,9 +48,9 @@ public partial class SakiStickman : UserControl
         AvaloniaXamlLoader.Load(this);
     }
 
-    public void UpdateSkin()
+    public async void UpdateSkin()
     {
-        var settings = ConfigManager.LoadSettings();
+        var settings = await ConfigManager.LoadSettingsAsync();
         var head = this.FindControl<FaceTracker>("SakiHead");
         if (head != null) head.Username = settings.SakiSkin;
     }

@@ -77,14 +77,14 @@ public partial class HomePage : UserControl
         if (passContainer != null) passContainer.IsVisible = type == "ElyBy";
     }
 
-    private void LoginButton_Click(object? sender, RoutedEventArgs e)
+    private async void LoginButton_Click(object? sender, RoutedEventArgs e)
     {
         var box = this.FindControl<TextBox>("UsernameTextBox");
         string username = box?.Text ?? "";
         
         if (string.IsNullOrWhiteSpace(username)) return;
 
-        var config = ConfigManager.LoadAccounts();
+        var config = await ConfigManager.LoadAccountsAsync();
         
         var account = config.Accounts.FirstOrDefault(a => a.Username == username && a.AccountType == _currentType);
         
@@ -102,7 +102,7 @@ public partial class HomePage : UserControl
         foreach (var acc in config.Accounts) acc.IsActive = (acc.Id == account.Id);
         config.SelectedAccountId = account.Id;
         
-        ConfigManager.SaveAccounts(config);
+        await ConfigManager.SaveAccountsAsync(config);
 
         if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {

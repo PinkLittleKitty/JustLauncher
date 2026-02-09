@@ -17,12 +17,12 @@ public static class ConfigManager
         if (!Directory.Exists(MinecraftDir)) Directory.CreateDirectory(MinecraftDir);
     }
 
-    public static AccountsConfig LoadAccounts()
+    public static async Task<AccountsConfig> LoadAccountsAsync()
     {
         if (!File.Exists(AccountsPath)) return new AccountsConfig();
         try
         {
-            string json = File.ReadAllText(AccountsPath);
+            string json = await File.ReadAllTextAsync(AccountsPath);
             return JsonSerializer.Deserialize<AccountsConfig>(json) ?? new AccountsConfig();
         }
         catch (Exception ex)
@@ -32,12 +32,12 @@ public static class ConfigManager
         }
     }
 
-    public static void SaveAccounts(AccountsConfig config)
+    public static async Task SaveAccountsAsync(AccountsConfig config)
     {
         try
         {
             string json = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(AccountsPath, json);
+            await File.WriteAllTextAsync(AccountsPath, json);
         }
         catch (Exception ex)
         {
@@ -46,12 +46,12 @@ public static class ConfigManager
         }
     }
 
-    public static InstallationsConfig LoadInstallations()
+    public static async Task<InstallationsConfig> LoadInstallationsAsync()
     {
         if (!File.Exists(InstallationsPath)) return new InstallationsConfig();
         try
         {
-            string json = File.ReadAllText(InstallationsPath);
+            string json = await File.ReadAllTextAsync(InstallationsPath);
             return JsonSerializer.Deserialize<InstallationsConfig>(json) ?? new InstallationsConfig();
         }
         catch (Exception ex)
@@ -61,12 +61,12 @@ public static class ConfigManager
         }
     }
 
-    public static void SaveInstallations(InstallationsConfig config)
+    public static async Task SaveInstallationsAsync(InstallationsConfig config)
     {
         try
         {
             string json = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(InstallationsPath, json);
+            await File.WriteAllTextAsync(InstallationsPath, json);
         }
         catch (Exception ex)
         {
@@ -75,12 +75,12 @@ public static class ConfigManager
         }
     }
 
-    public static LauncherSettings LoadSettings()
+    public static async Task<LauncherSettings> LoadSettingsAsync()
     {
         if (!File.Exists(SettingsPath)) return new LauncherSettings();
         try
         {
-            string json = File.ReadAllText(SettingsPath);
+            string json = await File.ReadAllTextAsync(SettingsPath);
             return JsonSerializer.Deserialize<LauncherSettings>(json) ?? new LauncherSettings();
         }
         catch (Exception ex)
@@ -90,12 +90,12 @@ public static class ConfigManager
         }
     }
 
-    public static void SaveSettings(LauncherSettings settings)
+    public static async Task SaveSettingsAsync(LauncherSettings settings)
     {
         try
         {
             string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(SettingsPath, json);
+            await File.WriteAllTextAsync(SettingsPath, json);
         }
         catch (Exception ex)
         {

@@ -31,10 +31,10 @@ public partial class InstallationDialog : UserControl
         var nameBox = this.FindControl<TextBox>("NameTextBox");
         if (nameBox != null)
         {
-            nameBox.TextChanged += (s, e) =>
+            nameBox.TextChanged += async (s, e) =>
             {
                  var name = nameBox.Text;
-                 var settings = ConfigManager.LoadSettings();
+                 var settings = await ConfigManager.LoadSettingsAsync();
                  if (settings.UseSeparateGameDir && !string.IsNullOrWhiteSpace(name))
                  {
                      var dirBox = this.FindControl<TextBox>("GameDirectoryTextBox");

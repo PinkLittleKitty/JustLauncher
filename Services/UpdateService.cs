@@ -19,7 +19,7 @@ public class UpdateService
     {
         try
         {
-            var settings = ConfigManager.LoadSettings();
+            var settings = await ConfigManager.LoadSettingsAsync();
             var now = DateTime.UtcNow;
             
             if (!force && settings.LastUpdateCheck.Date == now.Date)
@@ -47,7 +47,7 @@ public class UpdateService
             }
 
             settings.LastUpdateCheck = now;
-            ConfigManager.SaveSettings(settings);
+            await ConfigManager.SaveSettingsAsync(settings);
 
             var latestVersion = release.TagName.TrimStart('v');
             var currentVersion = AppVersion.Version;

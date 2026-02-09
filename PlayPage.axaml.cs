@@ -66,9 +66,9 @@ namespace JustLauncher
             if (addBtn != null) addBtn.Click += AddProfileButton_Click;
         }
 
-        private void LoadInstallations()
+        private async void LoadInstallations()
         {
-            installationsConfig = ConfigManager.LoadInstallations();
+            installationsConfig = await ConfigManager.LoadInstallationsAsync();
             RefreshInstallations();
         }
 
@@ -126,24 +126,24 @@ namespace JustLauncher
                     installationsConfig.Installations.Add(result.Result);
                 }
 
-                ConfigManager.SaveInstallations(installationsConfig);
+                await ConfigManager.SaveInstallationsAsync(installationsConfig);
                 RefreshInstallations();
             }
             else if (result != null && result.DeleteRequested && selected != null)
             {
                 installationsConfig.Installations.RemoveAll(i => i.Id == selected.Id);
-                ConfigManager.SaveInstallations(installationsConfig);
+                await ConfigManager.SaveInstallationsAsync(installationsConfig);
                 RefreshInstallations();
             }
         }
 
-        private void ProfileComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        private async void ProfileComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             if (sender is ComboBox combo && combo.SelectedItem is Installation installation)
             {
-                var config = ConfigManager.LoadInstallations();
+                var config = await ConfigManager.LoadInstallationsAsync();
                 config.SelectedInstallationId = installation.Id;
-                ConfigManager.SaveInstallations(config);
+                await ConfigManager.SaveInstallationsAsync(config);
                 
                 UpdateMainWindowState(installation);
             }
@@ -157,7 +157,7 @@ namespace JustLauncher
             if (result != null && result.Result != null)
             {
                 installationsConfig.Installations.Add(result.Result);
-                ConfigManager.SaveInstallations(installationsConfig);
+                await ConfigManager.SaveInstallationsAsync(installationsConfig);
                 RefreshInstallations();
                 
                 var combo = this.FindControl<ComboBox>("ProfileComboBox");
@@ -287,7 +287,7 @@ namespace JustLauncher
 
                 if (string.IsNullOrEmpty(javaPathToUse))
                 {
-                    var globalSettings = ConfigManager.LoadSettings();
+                    var globalSettings = await ConfigManager.LoadSettingsAsync();
                     if (!string.IsNullOrEmpty(globalSettings.JavaPath))
                     {
                         if (File.Exists(globalSettings.JavaPath))
@@ -376,8 +376,8 @@ namespace JustLauncher
                 await _minecraftService.ExtractNativesAsync(info, installation.Version);
 
                 Log("Starting game...");
-                var settings = ConfigManager.LoadSettings();
-                var accountsConfig = ConfigManager.LoadAccounts();
+                var settings = await ConfigManager.LoadSettingsAsync();
+                var accountsConfig = await ConfigManager.LoadAccountsAsync();
                 var account = accountsConfig.Accounts.FirstOrDefault(a => a.IsActive) ?? accountsConfig.Accounts.FirstOrDefault();
                 
                 if (account == null) throw new Exception("No account selected");

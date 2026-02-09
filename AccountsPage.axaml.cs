@@ -41,12 +41,12 @@ public partial class AccountsPage : UserControl
         }
     }
 
-    private void LoadAccounts()
+    private async void LoadAccounts()
     {
         var panel = this.FindControl<ItemsControl>("AccountsPanel");
         var countText = this.FindControl<TextBlock>("AccountCountText");
 
-        _config = ConfigManager.LoadAccounts();
+        _config = await ConfigManager.LoadAccountsAsync();
 
         foreach (var acc in _config.Accounts)
         {
@@ -75,7 +75,7 @@ public partial class AccountsPage : UserControl
             {
                 _config.SelectedAccountId = result.Id;
             }
-            ConfigManager.SaveAccounts(_config);
+            await ConfigManager.SaveAccountsAsync(_config);
             Controls.FaceTracker.NotifyAccountChanged();
             LoadAccounts();
         }
@@ -83,12 +83,12 @@ public partial class AccountsPage : UserControl
 
     private void RefreshButton_Click(object? sender, RoutedEventArgs e) => LoadAccounts();
 
-    private void SetActiveAccount(Account? account)
+    private async void SetActiveAccount(Account? account)
     {
         if (account == null) return;
         foreach (var acc in _config.Accounts) acc.IsActive = (acc.Id == account.Id);
         _config.SelectedAccountId = account.Id;
-        ConfigManager.SaveAccounts(_config);
+        await ConfigManager.SaveAccountsAsync(_config);
         Controls.FaceTracker.NotifyAccountChanged();
         LoadAccounts();
     }
@@ -105,18 +105,18 @@ public partial class AccountsPage : UserControl
             {
                 existing.Username = result.Username;
                 existing.AccountType = result.AccountType;
-                ConfigManager.SaveAccounts(_config);
+                await ConfigManager.SaveAccountsAsync(_config);
                 LoadAccounts();
             }
         }
     }
 
-    private void DeleteAccount(Account? account)
+    private async void DeleteAccount(Account? account)
     {
         if (account == null) return;
         _config.Accounts.RemoveAll(a => a.Id == account.Id);
         if (_config.SelectedAccountId == account.Id) _config.SelectedAccountId = _config.Accounts.FirstOrDefault()?.Id ?? "";
-        ConfigManager.SaveAccounts(_config);
+        await ConfigManager.SaveAccountsAsync(_config);
         Controls.FaceTracker.NotifyAccountChanged();
         LoadAccounts();
     }

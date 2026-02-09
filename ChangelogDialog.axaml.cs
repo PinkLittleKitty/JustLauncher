@@ -74,13 +74,13 @@ public partial class ChangelogDialog : Window
         return formatted;
     }
 
-    private void SkipVersionButton_Click(object? sender, RoutedEventArgs e)
+    private async void SkipVersionButton_Click(object? sender, RoutedEventArgs e)
     {
         if (_updateInfo == null) return;
 
-        var settings = ConfigManager.LoadSettings();
+        var settings = await ConfigManager.LoadSettingsAsync();
         settings.SkippedVersion = _updateInfo.Version;
-        ConfigManager.SaveSettings(settings);
+        await ConfigManager.SaveSettingsAsync(settings);
 
         Close();
     }

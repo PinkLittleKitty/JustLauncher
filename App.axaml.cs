@@ -20,14 +20,14 @@ public partial class App : Application
         Resources.Add("AccountActiveStatusConverter", new AccountActiveStatusConverter());
     }
 
-    public override void OnFrameworkInitializationCompleted()
+    public override async void OnFrameworkInitializationCompleted()
     {
         IconProvider.Current
             .Register<FontAwesomeIconProvider>();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var settings = ConfigManager.LoadSettings();
+            var settings = await ConfigManager.LoadSettingsAsync();
             
             Services.LocalizationService.Instance.ChangeLanguage(settings.Language);
             

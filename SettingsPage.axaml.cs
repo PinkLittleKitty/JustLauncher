@@ -88,9 +88,9 @@ public partial class SettingsPage : UserControl
         }
     }
 
-    private void LoadSettings()
+    private async void LoadSettings()
     {
-        _settings = ConfigManager.LoadSettings();
+        _settings = await ConfigManager.LoadSettingsAsync();
 
         LoadJavaVersionsAsync();
 
@@ -142,17 +142,17 @@ public partial class SettingsPage : UserControl
         UpdateLastCheckedText();
     }
     
-    private void OnLanguageChanged(object? sender, SelectionChangedEventArgs e)
+    private async void OnLanguageChanged(object? sender, SelectionChangedEventArgs e)
     {
         if (sender is ComboBox combo && combo.SelectedItem is LanguageInfo langInfo)
         {
             LocalizationService.Instance.ChangeLanguage(langInfo.Code);
             _settings.Language = langInfo.Code;
-            ConfigManager.SaveSettings(_settings);
+            await ConfigManager.SaveSettingsAsync(_settings);
         }
     }
 
-    private void SaveButton_Click(object? sender, RoutedEventArgs e)
+    private async void SaveButton_Click(object? sender, RoutedEventArgs e)
     {
         var javaCombo = this.FindControl<ComboBox>("JavaVersionComboBox");
         var slider = this.FindControl<Slider>("MemorySlider");
@@ -189,7 +189,7 @@ public partial class SettingsPage : UserControl
             }
         }
 
-        ConfigManager.SaveSettings(_settings);
+        await ConfigManager.SaveSettingsAsync(_settings);
         MainWindow.NotifySakiSettingsChanged();
         
         if (Avalonia.Application.Current != null)
@@ -309,7 +309,7 @@ public partial class SettingsPage : UserControl
             var service = new UpdateService();
             var info = await service.CheckForUpdatesAsync(true);
             
-            _settings = ConfigManager.LoadSettings();
+            _settings = await ConfigManager.LoadSettingsAsync();
             UpdateLastCheckedText();
 
             if (info != null && info.IsNewer)

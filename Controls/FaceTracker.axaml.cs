@@ -79,13 +79,13 @@ public partial class FaceTracker : UserControl
     }
 
 
-    private void UpdateActiveUserFace()
+    private async void UpdateActiveUserFace()
     {
         string username = Username ?? "Steve";
         
         if (string.IsNullOrEmpty(username))
         {
-            var accounts = ConfigManager.LoadAccounts();
+            var accounts = await ConfigManager.LoadAccountsAsync();
             var active = accounts.Accounts.FirstOrDefault(a => a.IsActive) ?? 
                          accounts.Accounts.FirstOrDefault(a => a.Id == accounts.SelectedAccountId) ?? 
                          accounts.Accounts.FirstOrDefault();
@@ -95,7 +95,7 @@ public partial class FaceTracker : UserControl
         
         if (_faceImage != null)
         {
-            var accounts = ConfigManager.LoadAccounts();
+            var accounts = await ConfigManager.LoadAccountsAsync();
             var active = accounts.Accounts.FirstOrDefault(a => a.Username == username) ??
                          accounts.Accounts.FirstOrDefault(a => a.IsActive) ?? 
                          accounts.Accounts.FirstOrDefault(a => a.Id == accounts.SelectedAccountId) ?? 

@@ -5,6 +5,7 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 using JustLauncher.Services;
 
@@ -26,7 +27,12 @@ public partial class MainWindow : Window
             this.FindControl<ContentControl>("OverlayContentHost")!
         );
 
-        var accountsConfig = ConfigManager.LoadAccounts();
+        _ = InitializeAsync();
+    }
+
+    private async Task InitializeAsync()
+    {
+        var accountsConfig = await ConfigManager.LoadAccountsAsync();
         var activeAccount = accountsConfig.Accounts.FirstOrDefault(a => a.IsActive) 
                           ?? accountsConfig.Accounts.FirstOrDefault(a => a.Id == accountsConfig.SelectedAccountId)
                           ?? accountsConfig.Accounts.FirstOrDefault();
@@ -57,9 +63,9 @@ public partial class MainWindow : Window
         }
     }
 
-    public void UpdateSakiVisibility()
+    public async void UpdateSakiVisibility()
     {
-        var settings = ConfigManager.LoadSettings();
+        var settings = await ConfigManager.LoadSettingsAsync();
         var stickman = this.FindControl<Control>("SakiStickman");
         if (stickman != null)
         {
@@ -118,9 +124,9 @@ public partial class MainWindow : Window
         if (titleBar != null) titleBar.PointerPressed += TitleBar_PointerPressed;
     }
 
-    private void PlayButton_Click(object? sender, RoutedEventArgs e)
+    private async void PlayButton_Click(object? sender, RoutedEventArgs e)
     {
-        var accountsConfig = ConfigManager.LoadAccounts();
+        var accountsConfig = await ConfigManager.LoadAccountsAsync();
         var activeAccount = accountsConfig.Accounts.FirstOrDefault(a => a.IsActive) 
                           ?? accountsConfig.Accounts.FirstOrDefault(a => a.Id == accountsConfig.SelectedAccountId)
                           ?? accountsConfig.Accounts.FirstOrDefault();
@@ -148,10 +154,10 @@ public partial class MainWindow : Window
         if (content != null) content.Content = new SettingsPage();
     }
 
-    private void ModsButton_Click(object? sender, RoutedEventArgs e)
+    private async void ModsButton_Click(object? sender, RoutedEventArgs e)
     {
         var content = this.FindControl<ContentControl>("MainContent");
-        var installations = ConfigManager.LoadInstallations();
+        var installations = await ConfigManager.LoadInstallationsAsync();
         var selected = installations.Installations.FirstOrDefault(i => i.Id == installations.SelectedInstallationId);
         if (content != null && selected != null) content.Content = new ModsPage(selected);
     }

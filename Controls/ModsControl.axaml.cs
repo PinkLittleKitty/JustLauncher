@@ -110,10 +110,9 @@ public partial class ModsControl : UserControl
     {
         if (sender is ListBox list && list.SelectedItem is ModInfo mod)
         {
-            // Toggle mod
             _modManager.ToggleMod(mod);
             await LoadModsAsync();
-            list.SelectedItem = null; // Deselect
+            list.SelectedItem = null;
         }
     }
 }

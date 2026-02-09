@@ -75,21 +75,22 @@ public class MinecraftService
             child.AssetIndex = parent.AssetIndex;
         }
 
+        if (child.Downloads == null || child.Downloads.Client == null || string.IsNullOrEmpty(child.Downloads.Client.Url))
+        {
+            child.Downloads = parent.Downloads;
+        }
+
         if (child.JavaVersion == null || child.JavaVersion.MajorVersion == 0)
         {
             child.JavaVersion = parent.JavaVersion;
         }
-
-        // Merge arguments
+        
         if (parent.Arguments != null)
         {
             if (child.Arguments == null) child.Arguments = new Arguments();
             child.Arguments.Game.InsertRange(0, parent.Arguments.Game);
             child.Arguments.Jvm.InsertRange(0, parent.Arguments.Jvm);
         }
-
-        // If child doesn't specify libraries, it might rely entirely on parent (unlikely for Fabric)
-        // But we added parent libraries to child already.
     }
 
     public async Task DownloadFileAsync(string url, string path, Action<long, long>? progressCallback = null)
@@ -97,22 +98,47 @@ public class MinecraftService
         string? directory = Path.GetDirectoryName(path);
         if (directory != null && !Directory.Exists(directory)) Directory.CreateDirectory(directory);
 
-        using var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
-        response.EnsureSuccessStatusCode();
-
-        long totalBytes = response.Content.Headers.ContentLength ?? -1L;
-        using var source = await response.Content.ReadAsStreamAsync();
-        using var destination = File.Create(path);
-
-        byte[] buffer = new byte[8192];
-        long totalRead = 0;
-        int bytesRead;
-
-        while ((bytesRead = await source.ReadAsync(buffer, 0, buffer.Length)) > 0)
+        string tempPath = path + ".tmp";
+        try
         {
-            await destination.WriteAsync(buffer, 0, bytesRead);
-            totalRead += bytesRead;
-            progressCallback?.Invoke(totalRead, totalBytes);
+            using var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+
+            long totalBytes = response.Content.Headers.ContentLength ?? -1L;
+            using var source = await response.Content.ReadAsStreamAsync();
+            using (var destination = File.Create(tempPath))
+            {
+                byte[] buffer = new byte[8192];
+                long totalRead = 0;
+                int bytesRead;
+
+                while ((bytesRead = await source.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                {
+                    await destination.WriteAsync(buffer, 0, bytesRead);
+                    totalRead += bytesRead;
+                    progressCallback?.Invoke(totalRead, totalBytes);
+                }
+            }
+
+            if (File.Exists(path)) File.Delete(path);
+            File.Move(tempPath, path);
+        }
+        finally
+        {
+            if (File.Exists(tempPath)) File.Delete(tempPath);
+        }
+    }
+
+    public async Task DownloadVersionJarAsync(VersionInfo info, string versionId)
+    {
+        if (info.Downloads?.Client != null && !string.IsNullOrEmpty(info.Downloads.Client.Url))
+        {
+            string path = Path.Combine(_baseDir, "versions", versionId, $"{versionId}.jar");
+            if (!File.Exists(path) || new FileInfo(path).Length == 0)
+            {
+                ConsoleService.Instance.Log($"Downloading client jar for {versionId}...");
+                await DownloadFileAsync(info.Downloads.Client.Url, path);
+            }
         }
     }
 
@@ -124,18 +150,48 @@ public class MinecraftService
         int completed = 0;
         foreach (var lib in libraries)
         {
-            if (lib.Downloads.Artifact != null && !string.IsNullOrEmpty(lib.Downloads.Artifact.Url))
+            string libPath = lib.GetPath();
+            string fullPath = Path.Combine(_baseDir, "libraries", libPath);
+
+            if (!File.Exists(fullPath) || new FileInfo(fullPath).Length == 0)
             {
-                string path = Path.Combine(_baseDir, "libraries", lib.Downloads.Artifact.Path);
-                if (!File.Exists(path))
+                string? url = null;
+                if (lib.Downloads?.Artifact != null && !string.IsNullOrEmpty(lib.Downloads.Artifact.Url))
                 {
-                    await DownloadFileAsync(lib.Downloads.Artifact.Url, path);
+                    url = lib.Downloads.Artifact.Url;
+                }
+                else if (!string.IsNullOrEmpty(lib.Url))
+                {
+                    url = lib.Url.TrimEnd('/') + "/" + libPath;
+                }
+                else
+                {
+                    if (lib.Name.Contains("forge") || lib.Name.Contains("minecraftforge"))
+                    {
+                        url = "https://maven.minecraftforge.net/" + libPath;
+                    }
+                    else
+                    {
+                        url = "https://libraries.minecraft.net/" + libPath;
+                    }
+                }
+
+                if (url != null)
+                {
+                    try
+                    {
+                        await DownloadFileAsync(url, fullPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        ConsoleService.Instance.Log($"[ERROR] Failed to download library {lib.Name}: {ex.Message}");
+                    }
                 }
             }
 
             if (lib.Natives != null && lib.Natives.TryGetValue(currentOs, out string? legacyClassifier))
             {
-                if (lib.Downloads.Classifiers != null && lib.Downloads.Classifiers.TryGetValue(legacyClassifier, out var nativeArtifact))
+                if (lib.Downloads?.Classifiers != null && lib.Downloads.Classifiers.TryGetValue(legacyClassifier, out var nativeArtifact))
                 {
                     string path = Path.Combine(_baseDir, "libraries", nativeArtifact.Path);
                     if (!File.Exists(path))
@@ -146,7 +202,7 @@ public class MinecraftService
                 }
             }
 
-            if (lib.Downloads.Classifiers != null)
+            if (lib.Downloads?.Classifiers != null)
             {
                 foreach (var classifier in lib.Downloads.Classifiers)
                 {

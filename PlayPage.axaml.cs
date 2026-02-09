@@ -361,20 +361,12 @@ namespace JustLauncher
                     Dispatcher.UIThread.Post(() => { if (progressBar != null) progressBar.Value = (double)done / total * 100; });
                 });
 
-                if (statusText != null) 
-                {
-                    Dispatcher.UIThread.Post(() => statusText.Text = "Downloading version jar...");
-                }
+                Log("Checking and downloading game JAR...");
+                string jarVersion = installation.Version;
+                if (!string.IsNullOrEmpty(installation.BaseVersion)) jarVersion = installation.BaseVersion;
+                else if (!string.IsNullOrEmpty(info.InheritsFrom)) jarVersion = info.InheritsFrom;
                 
-                string mcDir = PlatformManager.GetMinecraftDirectory();
-                string jarPath = Path.Combine(mcDir, "versions", installation.Version, installation.Version + ".jar");
-                if (!File.Exists(jarPath))
-                {
-                    await _minecraftService.DownloadFileAsync(info.Downloads.Client.Url, jarPath, (done, total) => 
-                    {
-                        Dispatcher.UIThread.Post(() => { if (progressBar != null) progressBar.Value = (double)done / total * 100; });
-                    });
-                }
+                await _minecraftService.DownloadVersionJarAsync(info, jarVersion);
 
                 Dispatcher.UIThread.Post(() => { if (statusText != null) statusText.Text = "Downloading assets..."; });
                 await _minecraftService.DownloadAssetsAsync(info, (done, total) => 
@@ -407,18 +399,22 @@ namespace JustLauncher
                 }
 
                 Log("Building launch arguments...");
-                string args = LaunchCommandBuilder.BuildArguments(installation, account, info, settings);
+                var args = LaunchCommandBuilder.BuildArguments(installation, account, info, settings);
                 
                 var startInfo = new ProcessStartInfo
                 {
                     FileName = javaPathToUse,
-                    Arguments = args,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
                     WorkingDirectory = string.IsNullOrEmpty(installation.GameDirectory) ? PlatformManager.GetMinecraftDirectory() : installation.GameDirectory
                 };
+
+                foreach (var arg in args)
+                {
+                    startInfo.ArgumentList.Add(arg);
+                }
 
                 Log($"Launching process: {startInfo.FileName}");
                 Log($"Arguments (hidden for security): [FILTERED]");

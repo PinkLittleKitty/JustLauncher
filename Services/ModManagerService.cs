@@ -30,7 +30,7 @@ public class ModManagerService
             {
                 FileName = fileName,
                 Path = file,
-                Name = fileName, // Default
+                Name = fileName,
                 IsEnabled = isEnabled
             };
 

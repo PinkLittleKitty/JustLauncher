@@ -79,12 +79,30 @@ namespace JustLauncher
     {
         [JsonPropertyName("name")]
         public string Name { get; set; } = default!;
+        [JsonPropertyName("url")]
+        public string? Url { get; set; }
         [JsonPropertyName("downloads")]
         public LibraryDownloads Downloads { get; set; } = new();
         [JsonPropertyName("rules")]
         public List<Rule> Rules { get; set; } = new();
         [JsonPropertyName("natives")]
         public Dictionary<string, string>? Natives { get; set; }
+
+        public string GetPath()
+        {
+            if (Downloads?.Artifact != null && !string.IsNullOrEmpty(Downloads.Artifact.Path))
+                return Downloads.Artifact.Path;
+
+            var parts = Name.Split(':');
+            if (parts.Length < 3) return Name.Replace(':', '/');
+
+            var group = parts[0].Replace('.', '/');
+            var artifact = parts[1];
+            var version = parts[2];
+            var classifier = parts.Length > 3 ? "-" + parts[3] : "";
+
+            return $"{group}/{artifact}/{version}/{artifact}-{version}{classifier}.jar";
+        }
 
         public bool IsAllowed(string currentOs)
         {
@@ -131,6 +149,8 @@ namespace JustLauncher
         public string Action { get; set; } = default!;
         [JsonPropertyName("os")]
         public Os? Os { get; set; }
+        [JsonPropertyName("features")]
+        public Dictionary<string, bool>? Features { get; set; }
     }
 
     public class Os

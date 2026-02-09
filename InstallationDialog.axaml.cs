@@ -109,7 +109,7 @@ public partial class InstallationDialog : UserControl
         if (loaderCombo != null) loaderCombo.SelectionChanged += LoaderCombo_SelectionChanged;
 
         var versionCombo = this.FindControl<ComboBox>("VersionComboBox");
-        if (versionCombo != null) versionCombo.SelectionChanged += (s, e) => UpdateLoaderVersions();
+        if (versionCombo != null) versionCombo.SelectionChanged += async (s, e) => await UpdateLoaderVersions();
 
         
     }

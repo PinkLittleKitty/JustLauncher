@@ -84,8 +84,10 @@ namespace JustLauncher
                 combo.ItemsSource = installationsConfig.Installations.ToList();
                 if (installationsConfig.Installations.Count > 0)
                 {
-                    combo.SelectedIndex = 0;
-                    UpdateMainWindowState(installationsConfig.Installations[0]);
+                    var selected = installationsConfig.Installations.FirstOrDefault(i => i.Id == installationsConfig.SelectedInstallationId) 
+                                   ?? installationsConfig.Installations[0];
+                    combo.SelectedItem = selected;
+                    UpdateMainWindowState(selected);
                 }
             }
         }
@@ -141,6 +143,10 @@ namespace JustLauncher
         {
             if (sender is ComboBox combo && combo.SelectedItem is Installation installation)
             {
+                var config = ConfigManager.LoadInstallations();
+                config.SelectedInstallationId = installation.Id;
+                ConfigManager.SaveInstallations(config);
+                
                 UpdateMainWindowState(installation);
             }
         }
@@ -217,16 +223,23 @@ namespace JustLauncher
                      
                      if (!File.Exists(jsonPath))
                      {
-
-                          var potentialDirs = Directory.GetDirectories(Path.Combine(minecraftDirectory, "versions"))
-                                              .Select(Path.GetFileName)
-                                              .Where(n => n.Contains("forge") && n.Contains(installation.ModLoaderVersion))
-                                              .ToList();
-                          
-                          if (potentialDirs.Any())
+                          var versionsPath = Path.Combine(minecraftDirectory, "versions");
+                          if (Directory.Exists(versionsPath))
                           {
-                              forgeId = potentialDirs.First();
-                              jsonPath = Path.Combine(minecraftDirectory, "versions", forgeId, $"{forgeId}.json");
+                              var potentialDirs = Directory.GetDirectories(versionsPath)
+                                                  .Select(Path.GetFileName)
+                                                  .Where(n => n != null && n.Contains("forge") && !string.IsNullOrEmpty(installation.ModLoaderVersion) && n.Contains(installation.ModLoaderVersion))
+                                                  .ToList();
+                              
+                              if (potentialDirs.Any())
+                              {
+                                  var firstDir = potentialDirs.First();
+                                  if (firstDir != null)
+                                  {
+                                      forgeId = firstDir;
+                                      jsonPath = Path.Combine(minecraftDirectory, "versions", forgeId, $"{forgeId}.json");
+                                  }
+                              }
                           }
                      }
 

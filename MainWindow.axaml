@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="https://github.com/projektanker/icons.avalonia"
+        xmlns:controls="clr-namespace:JustLauncher.Controls"
         mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
         x:Class="JustLauncher.MainWindow"
         Title="JustLauncher"
@@ -82,8 +83,8 @@
                 <!-- Sidebar -->
                 <Grid Grid.Column="0" RowDefinitions="Auto,*,Auto" Background="{DynamicResource TitleBarBackground}">
                     <!-- Logo Area -->
-                    <StackPanel Grid.Row="0" Margin="20,30,20,30">
-                        <i:Icon Value="fa-solid fa-rocket" FontSize="40" HorizontalAlignment="Center" Margin="0,0,0,10" Foreground="{DynamicResource AccentBrush}"/>
+                    <StackPanel Grid.Row="0" Margin="20,30,20,20">
+                        <controls:FaceTracker HorizontalAlignment="Center" Margin="0,0,0,15"/>
                         <TextBlock Text="JustLauncher" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource PrimaryText}" HorizontalAlignment="Center"/>
                     </StackPanel>
 

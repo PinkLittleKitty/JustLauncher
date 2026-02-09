@@ -90,7 +90,6 @@ namespace JustLauncher
             {
                 if (selected != null)
                 {
-                    // Update existing
                     var index = installationsConfig.Installations.FindIndex(i => i.Id == selected.Id);
                     if (index >= 0)
                     {
@@ -99,7 +98,6 @@ namespace JustLauncher
                 }
                 else
                 {
-                    // Add new
                     installationsConfig.Installations.Add(dialog.Result);
                 }
 

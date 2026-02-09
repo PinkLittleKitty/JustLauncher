@@ -8,13 +8,19 @@ namespace JustLauncher.Converters
     {
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
+            bool isActive = value is bool b && b;
+            string param = parameter as string ?? "";
+
+            if (param == "active_icon") return isActive ? "fa-solid fa-check-circle" : "fa-solid fa-user-check";
+            if (param == "active_text") return isActive ? "SELECTED" : "USE ACCOUNT";
+
             if (value is string type)
             {
                 return type switch
                 {
                     "Microsoft" => "fa-brands fa-microsoft",
                     "Mojang" => "fa-solid fa-cube",
-                    "Cracked" => "fa-solid fa-user-secret",
+                    "Offline" => "fa-solid fa-user-secret",
                     _ => "fa-solid fa-user"
                 };
             }

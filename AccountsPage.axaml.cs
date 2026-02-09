@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.VisualTree;
 using System.Linq;
 
 namespace JustLauncher;
@@ -30,12 +31,12 @@ public partial class AccountsPage : UserControl
         {
             panel.AddHandler(Button.ClickEvent, (s, e) =>
             {
-                if (e.Source is Button btn)
-                {
-                    if (btn.Name == "UseAccountButton") SetActiveAccount(btn.Tag as Account);
-                    else if (btn.Name == "EditAccountButton") EditAccount(btn.Tag as Account);
-                    else if (btn.Name == "DeleteAccountButton") DeleteAccount(btn.Tag as Account);
-                }
+                var btn = (e.Source as Control)?.FindAncestorOfType<Button>(true);
+                if (btn == null) return;
+
+                if (btn.Name == "UseAccountButton") SetActiveAccount(btn.Tag as Account);
+                else if (btn.Name == "EditAccountButton") EditAccount(btn.Tag as Account);
+                else if (btn.Name == "DeleteAccountButton") DeleteAccount(btn.Tag as Account);
             });
         }
     }
@@ -46,6 +47,12 @@ public partial class AccountsPage : UserControl
         var countText = this.FindControl<TextBlock>("AccountCountText");
 
         _config = ConfigManager.LoadAccounts();
+
+        // Sync IsActive with SelectedAccountId to ensure single source of truth
+        foreach (var acc in _config.Accounts)
+        {
+            acc.IsActive = acc.Id == _config.SelectedAccountId;
+        }
 
         if (panel != null)
         {
@@ -63,8 +70,12 @@ public partial class AccountsPage : UserControl
         if (result != null)
         {
             _config.Accounts.Add(result);
-            if (string.IsNullOrEmpty(_config.SelectedAccountId)) _config.SelectedAccountId = result.Id;
+            if (string.IsNullOrEmpty(_config.SelectedAccountId) || _config.Accounts.Count == 1)
+            {
+                _config.SelectedAccountId = result.Id;
+            }
             ConfigManager.SaveAccounts(_config);
+            Controls.FaceTracker.NotifyAccountChanged();
             LoadAccounts();
         }
     }
@@ -77,6 +88,7 @@ public partial class AccountsPage : UserControl
         foreach (var acc in _config.Accounts) acc.IsActive = (acc.Id == account.Id);
         _config.SelectedAccountId = account.Id;
         ConfigManager.SaveAccounts(_config);
+        Controls.FaceTracker.NotifyAccountChanged();
         LoadAccounts();
     }
 
@@ -106,6 +118,7 @@ public partial class AccountsPage : UserControl
         _config.Accounts.RemoveAll(a => a.Id == account.Id);
         if (_config.SelectedAccountId == account.Id) _config.SelectedAccountId = _config.Accounts.FirstOrDefault()?.Id ?? "";
         ConfigManager.SaveAccounts(_config);
+        Controls.FaceTracker.NotifyAccountChanged();
         LoadAccounts();
     }
 }

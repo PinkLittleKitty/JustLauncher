@@ -36,24 +36,6 @@ public partial class AboutDialog : UserControl
 
     private void OpenUrl(string url)
     {
-        try
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                Process.Start("xdg-open", url);
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                Process.Start("open", url);
-            }
-        }
-        catch
-        {
-            // Silently fail if URL opening is not supported
-        }
+        PlatformManager.OpenBrowser(url);
     }
 }

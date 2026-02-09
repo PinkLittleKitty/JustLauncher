@@ -11,10 +11,10 @@ namespace JustLauncher.Services;
 
 public class ModManagerService
 {
-    public async Task<List<ModInfo>> GetModsAsync(string gameDirectory)
+    public async Task<List<ModInfo>> GetModsAsync(string modsDirectory)
     {
-        var modsDir = Path.Combine(gameDirectory, "mods");
-        if (!Directory.Exists(modsDir)) Directory.CreateDirectory(modsDir);
+        if (!Directory.Exists(modsDirectory)) Directory.CreateDirectory(modsDirectory);
+        var modsDir = modsDirectory;
 
         var mods = new List<ModInfo>();
 

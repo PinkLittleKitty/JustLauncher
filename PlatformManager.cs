@@ -115,16 +115,44 @@ public static class PlatformManager
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                Process.Start("xdg-open", url);
+                var psi = new ProcessStartInfo("xdg-open");
+                psi.ArgumentList.Add(url);
+                Process.Start(psi);
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                Process.Start("open", url);
+                var psi = new ProcessStartInfo("open");
+                psi.ArgumentList.Add(url);
+                Process.Start(psi);
             }
         }
-        catch
+        catch { }
+    }
+
+    public static void OpenFolder(string folderPath)
+    {
+        try
         {
+            if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Process.Start("explorer.exe", folderPath);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                var psi = new ProcessStartInfo("xdg-open");
+                psi.ArgumentList.Add(folderPath);
+                Process.Start(psi);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                var psi = new ProcessStartInfo("open");
+                psi.ArgumentList.Add(folderPath);
+                Process.Start(psi);
+            }
         }
+        catch { }
     }
 
     public static string GetJavaExecutable()

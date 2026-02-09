@@ -100,12 +100,15 @@ public class ForgeService
             var psi = new ProcessStartInfo
             {
                 FileName = javaPath,
-                Arguments = $"-jar \"{installerPath}\" --installClient \"{gameDir}\"",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
+            psi.ArgumentList.Add("-jar");
+            psi.ArgumentList.Add(installerPath);
+            psi.ArgumentList.Add("--installClient");
+            psi.ArgumentList.Add(gameDir);
             
             using var process = Process.Start(psi);
             if (process == null) return null;

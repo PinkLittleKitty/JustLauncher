@@ -59,7 +59,6 @@ public partial class ChangelogDialog : Window
             return Services.LocalizationService.Instance["Update_NoChangelog"];
         }
 
-        // Simple markdown formatting - convert to plain text with basic formatting
         var formatted = markdown
             .Replace("### ", "• ")
             .Replace("## ", "\n")
@@ -75,7 +74,6 @@ public partial class ChangelogDialog : Window
     {
         if (_updateInfo == null) return;
 
-        // Save skipped version to settings
         var settings = ConfigManager.LoadSettings();
         settings.SkippedVersion = _updateInfo.Version;
         ConfigManager.SaveSettings(settings);
@@ -89,13 +87,7 @@ public partial class ChangelogDialog : Window
 
         try
         {
-            // Open download URL in default browser
-            var psi = new ProcessStartInfo
-            {
-                FileName = _updateInfo.HtmlUrl,
-                UseShellExecute = true
-            };
-            Process.Start(psi);
+            PlatformManager.OpenBrowser(_updateInfo.HtmlUrl);
         }
         catch
         {

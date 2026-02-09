@@ -315,10 +315,13 @@ public class JavaManager
                 var startInfo = new ProcessStartInfo
                 {
                     FileName = "tar",
-                    Arguments = $"-xzf \"{archivePath}\" -C \"{destination}\"",
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
+                startInfo.ArgumentList.Add("-xzf");
+                startInfo.ArgumentList.Add(archivePath);
+                startInfo.ArgumentList.Add("-C");
+                startInfo.ArgumentList.Add(destination);
                 
                 if (PlatformManager.IsWindows())
                 {}

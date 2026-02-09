@@ -70,11 +70,7 @@ public partial class ModsControl : UserControl
     private void OpenModsFolderButton_Click(object? sender, RoutedEventArgs e)
     {
         string modsDir = GetModsDirectory();
-        if (!Directory.Exists(modsDir)) Directory.CreateDirectory(modsDir);
-        
-        if (PlatformManager.IsWindows()) Process.Start("explorer", modsDir);
-        else if (PlatformManager.IsLinux()) Process.Start("xdg-open", modsDir);
-        else if (PlatformManager.IsMac()) Process.Start("open", modsDir);
+        PlatformManager.OpenFolder(modsDir);
     }
     
     private async Task AddModButton_Click()

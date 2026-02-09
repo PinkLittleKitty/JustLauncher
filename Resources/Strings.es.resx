@@ -75,13 +75,22 @@
   <data name="Nav_About" xml:space="preserve">
     <value>Acerca de</value>
   </data>
+  <data name="Nav_Mods" xml:space="preserve">
+    <value>Mods</value>
+  </data>
   
   <!-- Common -->
   <data name="Common_Close" xml:space="preserve">
     <value>Cerrar</value>
   </data>
   <data name="Common_Cancel" xml:space="preserve">
-    <value>Cancelar</value>
+    <value>CANCELAR</value>
+  </data>
+  <data name="Common_General" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="Common_Remove" xml:space="preserve">
+    <value>ELIMINAR</value>
   </data>
   <data name="Common_Save" xml:space="preserve">
     <value>Guardar</value>
@@ -266,6 +275,24 @@
   <data name="Message_InvalidJavaVersion" xml:space="preserve">
     <value>Versión de Java inválida. Esta versión de Minecraft requiere Java {0}, pero se encontró Java {1}.</value>
   </data>
+  <data name="Message_AccountAdded" xml:space="preserve">
+    <value>¡Cuenta agregada con éxito!</value>
+  </data>
+  <data name="Message_AccountSwitched" xml:space="preserve">
+    <value>Cambiado a la cuenta {0}.</value>
+  </data>
+  <data name="Message_AccountUpdated" xml:space="preserve">
+    <value>¡Cuenta actualizada con éxito!</value>
+  </data>
+  <data name="Message_AccountDeleted" xml:space="preserve">
+    <value>Cuenta eliminada.</value>
+  </data>
+  <data name="Message_SettingsSaved" xml:space="preserve">
+    <value>¡Configuración guardada con éxito!</value>
+  </data>
+  <data name="Message_GameLaunched" xml:space="preserve">
+    <value>¡Juego iniciado con éxito!</value>
+  </data>
   
   <!-- Settings Page (Additional) -->
   <data name="Settings_Theme" xml:space="preserve">
@@ -373,6 +400,18 @@
   <data name="Installation_MemoryAllocation" xml:space="preserve">
     <value>ASIGNACIÓN DE MEMORIA</value>
   </data>
+  <data name="Installation_LoaderVersion" xml:space="preserve">
+    <value>VERSIÓN DEL CARGADOR</value>
+  </data>
+  <data name="Installation_DefaultDirectory" xml:space="preserve">
+    <value>Directorio predeterminado</value>
+  </data>
+  <data name="Installation_UseGlobalSetting" xml:space="preserve">
+    <value>Usar configuración global</value>
+  </data>
+  <data name="Installation_SaveInstallation" xml:space="preserve">
+    <value>GUARDAR INSTALACIÓN</value>
+  </data>
   
   <!-- Profile Dialog -->
   <data name="Profile_Settings" xml:space="preserve">
@@ -436,6 +475,12 @@
   <data name="Common_Fabric" xml:space="preserve">
     <value>Fabric</value>
   </data>
+  <data name="Common_Never" xml:space="preserve">
+    <value>Nunca</value>
+  </data>
+  <data name="Settings_AutoDetect" xml:space="preserve">
+    <value>Detección automática</value>
+  </data>
   
   <!-- Console Page -->
   <data name="Console_Title" xml:space="preserve">
@@ -452,6 +497,30 @@
   </data>
   <data name="Console_Active" xml:space="preserve">
     <value>CONSOLA ACTIVA</value>
+  </data>
+  <data name="Console_CopyTooltip" xml:space="preserve">
+    <value>Copiar al portapapeles</value>
+  </data>
+  <data name="Console_ClearTooltip" xml:space="preserve">
+    <value>Limpiar consola</value>
+  </data>
+  <data name="Home_Back" xml:space="preserve">
+    <value>VOLVER</value>
+  </data>
+  <data name="Home_EnterCredentials" xml:space="preserve">
+    <value>Ingresar credenciales</value>
+  </data>
+  <data name="Home_CredentialsDescription" xml:space="preserve">
+    <value>Proporcione sus datos para continuar</value>
+  </data>
+  <data name="Home_GetStarted" xml:space="preserve">
+    <value>COMENZAR</value>
+  </data>
+  <data name="Home_YourName" xml:space="preserve">
+    <value>Tu nombre</value>
+  </data>
+  <data name="Home_YourSecret" xml:space="preserve">
+    <value>Tu secreto</value>
   </data>
   
   <!-- Account Dialog -->
@@ -490,6 +559,12 @@
   </data>
   <data name="AccountDialog_Password" xml:space="preserve">
     <value>CONTRASEÑA</value>
+  </data>
+  <data name="Account_PlayerNamePlaceholder" xml:space="preserve">
+    <value>Tu nombre de jugador</value>
+  </data>
+  <data name="Account_PasswordPlaceholder" xml:space="preserve">
+    <value>Tu contraseña</value>
   </data>
   <data name="AccountDialog_OfflineInfo" xml:space="preserve">
     <value>Las cuentas sin conexión funcionan en servidores crackeados y experimentos LAN.</value>

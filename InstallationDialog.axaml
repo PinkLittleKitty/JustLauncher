@@ -30,14 +30,14 @@
             <!-- Form -->
             <!-- Form -->
             <TabControl Grid.Row="1" Margin="0,0,0,32">
-                <TabItem Header="General" FontSize="16" Height="40">
+                <TabItem Header="{loc:Localize Key=Common_General}" FontSize="16" Height="40">
                     <ScrollViewer Margin="0,20,0,0">
                         <Grid ColumnDefinitions="*,32,*">
                             <!-- Left Column -->
                             <StackPanel Grid.Column="0" Spacing="24">
                                 <StackPanel Spacing="10">
                                     <TextBlock Text="{loc:Localize Key=Installation_InstallationName}" Classes="PageDescription" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
-                                    <TextBox x:Name="NameTextBox" Watermark="e.g. Latest Release" Padding="12"/>
+                                    <TextBox x:Name="NameTextBox" Watermark="{loc:Localize Key=Installation_DefaultDirectory}" Padding="12"/>
                                 </StackPanel>
 
                                 <StackPanel Spacing="10">
@@ -48,14 +48,14 @@
                                 <StackPanel Spacing="10">
                                     <TextBlock Text="{loc:Localize Key=Installation_ModLoader}" Classes="PageDescription" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
                                     <ComboBox x:Name="ModLoaderComboBox" HorizontalAlignment="Stretch">
-                                        <ComboBoxItem Content="None" Tag="Vanilla"/>
-                                        <ComboBoxItem Content="Fabric" Tag="Fabric"/>
-                                        <ComboBoxItem Content="Forge" Tag="Forge"/>
+                                        <ComboBoxItem Content="{loc:Localize Key=Common_None}" Tag="Vanilla"/>
+                                        <ComboBoxItem Content="{loc:Localize Key=Common_Fabric}" Tag="Fabric"/>
+                                        <ComboBoxItem Content="{loc:Localize Key=Common_Forge}" Tag="Forge"/>
                                     </ComboBox>
                                 </StackPanel>
 
                                 <StackPanel x:Name="ModLoaderVersionPanel" Spacing="10" IsVisible="False">
-                                    <TextBlock Text="LOADER VERSION" Classes="PageDescription" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
+                                    <TextBlock Text="{loc:Localize Key=Installation_LoaderVersion}" Classes="PageDescription" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
                                     <ComboBox x:Name="ModLoaderVersionComboBox" HorizontalAlignment="Stretch"/>
                                 </StackPanel>
                             </StackPanel>
@@ -65,7 +65,7 @@
                                 <StackPanel Spacing="10">
                                     <TextBlock Text="{loc:Localize Key=Installation_GameDirectory}" Classes="PageDescription" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
                                     <Grid ColumnDefinitions="*,8">
-                                        <TextBox x:Name="GameDirectoryTextBox" Watermark="Default Directory" Padding="12"/>
+                                        <TextBox x:Name="GameDirectoryTextBox" Watermark="{loc:Localize Key=Installation_DefaultDirectory}" Padding="12"/>
                                         <Button x:Name="BrowseGameDirectoryButton" Grid.Column="1" Classes="Secondary" Padding="8" IsVisible="False">
                                             <i:Icon Value="fa-solid fa-folder-open"/>
                                         </Button>
@@ -84,7 +84,7 @@
                                             <StackPanel Spacing="5">
                                                 <TextBlock Text="{loc:Localize Key=Settings_JavaExecutablePath}" Foreground="{DynamicResource SecondaryText}" FontSize="12"/>
                                                 <Grid ColumnDefinitions="*,Auto">
-                                                    <ComboBox x:Name="JavaVersionComboBox" HorizontalAlignment="Stretch" Margin="0,0,5,0" PlaceholderText="Use Global Setting"/>
+                                                    <ComboBox x:Name="JavaVersionComboBox" HorizontalAlignment="Stretch" Margin="0,0,5,0" PlaceholderText="{loc:Localize Key=Installation_UseGlobalSetting}"/>
                                                     <Button x:Name="BrowseJavaButton" Content="..." Width="30"/>
                                                 </Grid>
                                             </StackPanel>
@@ -112,17 +112,17 @@
                         </Grid>
                     </ScrollViewer>
                 </TabItem>
-                <TabItem Header="Mods" x:Name="ModsTab" FontSize="16" IsEnabled="False">
+                <TabItem Header="{loc:Localize Key=Nav_Mods}" x:Name="ModsTab" FontSize="16" IsEnabled="False">
                     <controls:ModsControl x:Name="ModsControl"/>
                 </TabItem>
             </TabControl>
 
             <!-- Buttons -->
             <Grid Grid.Row="2">
-                <Button x:Name="RemoveButton" Content="REMOVE" Classes="Danger" Padding="20,10" HorizontalAlignment="Left" IsVisible="False"/>
+                <Button x:Name="RemoveButton" Content="{loc:Localize Key=Common_Remove}" Classes="Danger" Padding="20,10" HorizontalAlignment="Left" IsVisible="False"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
-                    <Button x:Name="CancelButton" Content="CANCEL" Classes="Secondary" MinWidth="100"/>
-                    <Button x:Name="CreateButton" Content="SAVE INSTALLATION" Classes="Primary" MinWidth="180"/>
+                    <Button x:Name="CancelButton" Content="{loc:Localize Key=Common_Cancel}" Classes="Secondary" MinWidth="100"/>
+                    <Button x:Name="CreateButton" Content="{loc:Localize Key=Installation_SaveInstallation}" Classes="Primary" MinWidth="180"/>
                 </StackPanel>
             </Grid>
         </Grid>

@@ -81,8 +81,9 @@ public partial class SettingsPage : UserControl
         if (textBlock != null)
         {
             var template = LocalizationService.Instance["Update_LastChecked"];
+            var neverStr = LocalizationService.Instance["Common_Never"];
             var timeStr = _settings.LastUpdateCheck == DateTime.MinValue 
-                ? "Never" 
+                ? neverStr 
                 : _settings.LastUpdateCheck.ToLocalTime().ToString("g");
             textBlock.Text = string.Format(template, timeStr);
         }
@@ -207,6 +208,10 @@ public partial class SettingsPage : UserControl
                     break;
             }
         }
+
+        Services.NotificationService.Instance.ShowSuccess(
+            Services.LocalizationService.Instance["Message_SuccessTitle"],
+            Services.LocalizationService.Instance["Message_SettingsSaved"]);
     }
 
     private async void BrowseJavaButton_Click(object? sender, RoutedEventArgs e)

@@ -33,8 +33,8 @@
     </UserControl.Styles>
 
     <ScrollViewer VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-        <StackPanel Spacing="32" MaxWidth="900" HorizontalAlignment="Left" Margin="40,40,40,80">
-            <TextBlock Text="{loc:Localize Key=Settings_Title}" Classes="PageHeader"/>
+        <StackPanel Spacing="32" MaxWidth="900" HorizontalAlignment="Center" Margin="0,40,0,80">
+            <TextBlock Text="{loc:Localize Key=Settings_Title}" Classes="PageHeader" HorizontalAlignment="Left"/>
 
             <!-- General Settings -->
             <StackPanel>

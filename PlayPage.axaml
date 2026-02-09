@@ -42,23 +42,10 @@
 
     <Grid>
         <!-- Background Layer -->
-        <Border>
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-                    <GradientStop Offset="0" Color="#1E2124"/>
-                    <GradientStop Offset="0.5" Color="#2C2F33"/>
-                    <GradientStop Offset="1" Color="#23272A"/>
-                </LinearGradientBrush>
-            </Border.Background>
-        </Border>
-
-        <!-- Decorative "Minecraft" Background Element -->
-        <Canvas Opacity="0.03" IsHitTestVisible="False">
-            <TextBlock Text="{loc:Localize Key=Play_Minecraft}" FontSize="140" FontWeight="Black" Foreground="White" 
-                       Canvas.Left="-50" Canvas.Top="50" />
-            <TextBlock Text="{loc:Localize Key=Play_Minecraft}" FontSize="140" FontWeight="Black" Foreground="White" 
-                       Canvas.Right="-50" Canvas.Bottom="100" />
-        </Canvas>
+        <Panel>
+            <Image Source="/Assets/MineBG.png" Stretch="UniformToFill" />
+            <Border Background="#6E1E1E20" /> <!-- Halved Overlay Opacity -->
+        </Panel>
 
         <!-- Main Content -->
         <Grid RowDefinitions="*,180">

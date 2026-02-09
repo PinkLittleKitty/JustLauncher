@@ -78,6 +78,10 @@ public partial class AccountsPage : UserControl
             await ConfigManager.SaveAccountsAsync(_config);
             Controls.FaceTracker.NotifyAccountChanged();
             LoadAccounts();
+            
+            Services.NotificationService.Instance.ShowSuccess(
+                Services.LocalizationService.Instance["Message_SuccessTitle"],
+                Services.LocalizationService.Instance["Message_AccountAdded"]);
         }
     }
 
@@ -91,12 +95,16 @@ public partial class AccountsPage : UserControl
         await ConfigManager.SaveAccountsAsync(_config);
         Controls.FaceTracker.NotifyAccountChanged();
         LoadAccounts();
+        
+        Services.NotificationService.Instance.ShowInfo(
+            Services.LocalizationService.Instance["Message_SuccessTitle"],
+            Services.LocalizationService.Instance["Message_AccountSwitched"]);
     }
 
     private async void EditAccount(Account? account)
     {
         if (account == null) return;
-        var result = await Services.OverlayService.ShowDialog<Account>(new AccountDialog());
+        var result = await Services.OverlayService.ShowDialog<Account>(new AccountDialog()); // Assuming we reuse AccountDialog for edit
         
         if (result != null)
         {
@@ -107,6 +115,10 @@ public partial class AccountsPage : UserControl
                 existing.AccountType = result.AccountType;
                 await ConfigManager.SaveAccountsAsync(_config);
                 LoadAccounts();
+                
+                Services.NotificationService.Instance.ShowSuccess(
+                    Services.LocalizationService.Instance["Message_SuccessTitle"],
+                    Services.LocalizationService.Instance["Message_AccountUpdated"]);
             }
         }
     }
@@ -119,5 +131,9 @@ public partial class AccountsPage : UserControl
         await ConfigManager.SaveAccountsAsync(_config);
         Controls.FaceTracker.NotifyAccountChanged();
         LoadAccounts();
+        
+        Services.NotificationService.Instance.ShowWarning(
+            Services.LocalizationService.Instance["Message_WarningTitle"],
+            Services.LocalizationService.Instance["Message_AccountDeleted"]);
     }
 }

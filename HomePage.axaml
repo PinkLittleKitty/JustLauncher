@@ -60,26 +60,26 @@
                         <Border x:Name="Step2BackBtn" HorizontalAlignment="Left" Background="Transparent" Cursor="Hand">
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <i:Icon Value="fa-solid fa-arrow-left" FontSize="14" Foreground="{DynamicResource SecondaryText}"/>
-                                <TextBlock Text="BACK" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource SecondaryText}" VerticalAlignment="Center"/>
+                                <TextBlock Text="{loc:Localize Key=Home_Back}" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource SecondaryText}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Border>
-                        <TextBlock x:Name="Step2Header" Text="Enter Credentials" FontSize="28" FontWeight="Black" HorizontalAlignment="Center" Margin="0,12,0,0"/>
-                        <TextBlock x:Name="Step2Subheader" Text="Provide your details to continue" FontSize="14" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="Step2Header" Text="{loc:Localize Key=Home_EnterCredentials}" FontSize="28" FontWeight="Black" HorizontalAlignment="Center" Margin="0,12,0,0"/>
+                        <TextBlock x:Name="Step2Subheader" Text="{loc:Localize Key=Home_CredentialsDescription}" FontSize="14" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center"/>
                     </StackPanel>
 
                     <StackPanel Spacing="24">
                         <StackPanel Spacing="10">
-                            <TextBlock x:Name="FieldLabel" Text="USERNAME" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource SecondaryText}" LetterSpacing="1"/>
-                            <TextBox x:Name="UsernameTextBox" Padding="16" CornerRadius="12" Watermark="Your name"/>
+                            <TextBlock x:Name="FieldLabel" Text="{loc:Localize Key=AccountDialog_Username}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource SecondaryText}" LetterSpacing="1"/>
+                            <TextBox x:Name="UsernameTextBox" Padding="16" CornerRadius="12" Watermark="{loc:Localize Key=Home_YourName}"/>
                         </StackPanel>
 
                         <StackPanel x:Name="PasswordContainer" Spacing="10" IsVisible="False">
-                            <TextBlock Text="PASSWORD" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource SecondaryText}" LetterSpacing="1"/>
-                            <TextBox x:Name="PasswordTextBox" PasswordChar="*" Padding="16" CornerRadius="12" Watermark="Your secret"/>
+                            <TextBlock Text="{loc:Localize Key=AccountDialog_Password}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource SecondaryText}" LetterSpacing="1"/>
+                            <TextBox x:Name="PasswordTextBox" PasswordChar="*" Padding="16" CornerRadius="12" Watermark="{loc:Localize Key=Home_YourSecret}"/>
                         </StackPanel>
                     </StackPanel>
 
-                    <Button x:Name="FinalLoginBtn" Content="GET STARTED" Classes="Primary" Height="54" HorizontalAlignment="Stretch" FontSize="16" FontWeight="Bold" CornerRadius="16"/>
+                    <Button x:Name="FinalLoginBtn" Content="{loc:Localize Key=Home_GetStarted}" Classes="Primary" Height="54" HorizontalAlignment="Stretch" FontSize="16" FontWeight="Bold" CornerRadius="16"/>
                 </StackPanel>
             </Border>
         </Border>

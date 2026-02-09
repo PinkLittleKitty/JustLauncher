@@ -1,0 +1,56 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="80"
+             x:Class="JustLauncher.Controls.NotificationItem">
+
+    <UserControl.Styles>
+        <Style Selector="Border.NotifyContainer">
+            <Setter Property="Background" Value="{DynamicResource ContentBackground}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="BoxShadow" Value="0 4 12 0 #40000000"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.3"/>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.4" Easing="BackEaseOut"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        
+        <Style Selector="Border.Info">
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+        </Style>
+        <Style Selector="Border.Success">
+            <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}"/>
+        </Style>
+        <Style Selector="Border.Warning">
+            <Setter Property="BorderBrush" Value="#FFA500"/>
+        </Style>
+        <Style Selector="Border.Error">
+            <Setter Property="BorderBrush" Value="#ED4245"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Border Name="Container" Classes="NotifyContainer" Width="320" Opacity="0" RenderTransform="translateX(50px)">
+        <Grid ColumnDefinitions="Auto,*,Auto" Margin="15">
+            <!-- Icon -->
+            <i:Icon Name="TypeIcon" Value="fa-solid fa-info-circle" FontSize="20" VerticalAlignment="Top" Margin="0,2,12,0"/>
+
+            <!-- Content -->
+            <StackPanel Grid.Column="1" Spacing="2">
+                <TextBlock Name="TitleText" Text="Notification Title" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource PrimaryText}"/>
+                <TextBlock Name="MessageText" Text="Description goes here..." FontSize="12" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap"/>
+            </StackPanel>
+
+            <!-- Close Button -->
+            <Button Grid.Column="2" Name="CloseButton" Classes="TitleBar" Width="24" Height="24" HorizontalAlignment="Right" VerticalAlignment="Top">
+                <i:Icon Value="fa-solid fa-times" FontSize="12"/>
+            </Button>
+        </Grid>
+    </Border>
+</UserControl>

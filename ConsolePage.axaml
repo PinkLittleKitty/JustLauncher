@@ -20,13 +20,13 @@
             </StackPanel>
             
             <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="12">
-                <Button x:Name="CopyConsoleButton" Classes="Secondary" ToolTip.Tip="Copy to Clipboard">
+                <Button x:Name="CopyConsoleButton" Classes="Secondary" ToolTip.Tip="{loc:Localize Key=Console_CopyTooltip}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <i:Icon Value="fa-solid fa-copy"/>
                         <TextBlock Text="{loc:Localize Key=Console_CopyLog}"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="ClearConsoleButton" Classes="Danger" ToolTip.Tip="Clear Console">
+                <Button x:Name="ClearConsoleButton" Classes="Danger" ToolTip.Tip="{loc:Localize Key=Console_ClearTooltip}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <i:Icon Value="fa-solid fa-trash-alt"/>
                         <TextBlock Text="{loc:Localize Key=Console_Clear}"/>

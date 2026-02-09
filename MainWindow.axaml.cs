@@ -153,6 +153,38 @@ public partial class MainWindow : Window
 
         var titleBar = this.FindControl<Control>("TitleBar");
         if (titleBar != null) titleBar.PointerPressed += TitleBar_PointerPressed;
+
+        var notifyHost = this.FindControl<StackPanel>("NotificationHost");
+        if (notifyHost != null)
+        {
+            NotificationService.Instance.ActiveNotifications.CollectionChanged += (s, e) =>
+            {
+                if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add && e.NewItems != null)
+                {
+                    foreach (Models.NotificationModel model in e.NewItems)
+                    {
+                        var item = new Controls.NotificationItem();
+                        item.Initialize(model);
+                        notifyHost.Children.Add(item);
+                    }
+                }
+                else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove && e.OldItems != null)
+                {
+                    foreach (Models.NotificationModel model in e.OldItems)
+                    {
+                        var existing = notifyHost.Children.OfType<Controls.NotificationItem>()
+                            .FirstOrDefault(i => i.GetType().GetField("_model", 
+                                System.Reflection.BindingFlags.NonPublic | 
+                                System.Reflection.BindingFlags.Instance)?.GetValue(i) == model);
+                        
+                        if (existing != null)
+                        {
+                            notifyHost.Children.Remove(existing);
+                        }
+                    }
+                }
+            };
+        }
     }
 
     private async void PlayButton_Click(object? sender, RoutedEventArgs e)

@@ -349,7 +349,7 @@ namespace JustLauncher
                 {
                     Dispatcher.UIThread.Post(() => 
                     {
-                        statusText.Text = "Downloading libraries...";
+                        statusText.Text = Services.LocalizationService.Instance["Play_StatusDownloading"];
                         if (progressBar != null) progressBar.IsIndeterminate = false;
                     });
                 }
@@ -428,8 +428,12 @@ namespace JustLauncher
                 
                 Dispatcher.UIThread.Post(() => 
                 {
-                    if (statusText != null) statusText.Text = "Game launched!";
+                    if (statusText != null) statusText.Text = Services.LocalizationService.Instance["Play_StatusReady"]; // Using existing key if possible, or new one
                     if (progressBar != null) progressBar.IsVisible = false;
+                    
+                    Services.NotificationService.Instance.ShowSuccess(
+                        Services.LocalizationService.Instance["Message_SuccessTitle"],
+                        Services.LocalizationService.Instance["Message_GameLaunched"]);
                 });
                 Log("Game started successfully.");
             }
@@ -438,8 +442,12 @@ namespace JustLauncher
                 Log($"CRITICAL ERROR: {ex.Message}");
                 Dispatcher.UIThread.Post(() => 
                 {
-                    if (statusText != null) statusText.Text = $"Error: {ex.Message}";
+                    if (statusText != null) statusText.Text = string.Format(Services.LocalizationService.Instance["Message_ErrorTitle"] + ": {0}", ex.Message);
                     if (progressBar != null) progressBar.IsVisible = false;
+                    
+                    Services.NotificationService.Instance.ShowError(
+                        Services.LocalizationService.Instance["Message_ErrorTitle"],
+                        ex.Message);
                 });
             }
         }

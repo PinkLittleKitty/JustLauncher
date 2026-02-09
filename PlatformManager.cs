@@ -75,6 +75,12 @@ public static class PlatformManager
         return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".minecraft");
     }
 
+    public static string GetLauncherDirectory()
+    {
+        string minecraftDir = GetMinecraftDirectory();
+        return Path.Combine(minecraftDir, ".justlauncher");
+    }
+
     public static string GetJavaExecutableName()
     {
         return RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "java.exe" : "java";

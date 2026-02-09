@@ -7,14 +7,45 @@ namespace JustLauncher;
 
 public static class ConfigManager
 {
-    private static readonly string MinecraftDir = PlatformManager.GetMinecraftDirectory();
-    private static readonly string AccountsPath = Path.Combine(MinecraftDir, "launcher_accounts.json");
-    private static readonly string InstallationsPath = Path.Combine(MinecraftDir, "launcher_installations.json");
-    private static readonly string SettingsPath = Path.Combine(MinecraftDir, "launcher_settings.json");
+    private static readonly string LauncherDir = PlatformManager.GetLauncherDirectory();
+    private static readonly string AccountsPath = Path.Combine(LauncherDir, "launcher_accounts.json");
+    private static readonly string InstallationsPath = Path.Combine(LauncherDir, "launcher_installations.json");
+    private static readonly string SettingsPath = Path.Combine(LauncherDir, "launcher_settings.json");
 
     static ConfigManager()
     {
-        if (!Directory.Exists(MinecraftDir)) Directory.CreateDirectory(MinecraftDir);
+        if (!Directory.Exists(LauncherDir)) Directory.CreateDirectory(LauncherDir);
+        
+        MigrateOldConfigFiles();
+    }
+
+    private static void MigrateOldConfigFiles()
+    {
+        string oldDir = PlatformManager.GetMinecraftDirectory();
+        
+        var filesToMigrate = new[]
+        {
+            "launcher_accounts.json",
+            "launcher_installations.json",
+            "launcher_settings.json"
+        };
+
+        foreach (var fileName in filesToMigrate)
+        {
+            string oldPath = Path.Combine(oldDir, fileName);
+            string newPath = Path.Combine(LauncherDir, fileName);
+            
+            if (File.Exists(oldPath) && !File.Exists(newPath))
+            {
+                try
+                {
+                    File.Move(oldPath, newPath);
+                }
+                catch
+                {
+                }
+            }
+        }
     }
 
     public static async Task<AccountsConfig> LoadAccountsAsync()

@@ -602,4 +602,148 @@
   <data name="Mods_CheckingUpdates" xml:space="preserve">
     <value>Checking for updates...</value>
   </data>
+  <data name="Onboarding_Welcome_Title" xml:space="preserve">
+    <value>Welcome to JustLauncher!</value>
+  </data>
+  <data name="Onboarding_Welcome_Subtitle" xml:space="preserve">
+    <value>A fast, lightweight Minecraft launcher</value>
+  </data>
+  <data name="Onboarding_Welcome_Feature1_Title" xml:space="preserve">
+    <value>Lightning-Fast Launches</value>
+  </data>
+  <data name="Onboarding_Welcome_Feature1_Desc" xml:space="preserve">
+    <value>Optimized for speed</value>
+  </data>
+  <data name="Onboarding_Welcome_Feature2_Title" xml:space="preserve">
+    <value>Mod Support</value>
+  </data>
+  <data name="Onboarding_Welcome_Feature2_Desc" xml:space="preserve">
+    <value>Fabric, Forge, and Vanilla</value>
+  </data>
+  <data name="Onboarding_Welcome_Feature3_Title" xml:space="preserve">
+    <value>Multi-Account Management</value>
+  </data>
+  <data name="Onboarding_Welcome_Feature3_Desc" xml:space="preserve">
+    <value>Switch accounts easily</value>
+  </data>
+  <data name="Onboarding_Welcome_Feature4_Title" xml:space="preserve">
+    <value>Custom Skins</value>
+  </data>
+  <data name="Onboarding_Welcome_Feature4_Desc" xml:space="preserve">
+    <value>For offline accounts</value>
+  </data>
+  <data name="Onboarding_GetStarted" xml:space="preserve">
+    <value>Get Started</value>
+  </data>
+  <data name="Onboarding_Skip" xml:space="preserve">
+    <value>Skip Setup</value>
+  </data>
+  <data name="Onboarding_Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Onboarding_Continue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="Onboarding_StepCount" xml:space="preserve">
+    <value>Step {0} of {1}</value>
+  </data>
+  <data name="Onboarding_Account_Title" xml:space="preserve">
+    <value>Set Up Your Account</value>
+  </data>
+  <data name="Onboarding_Account_Subtitle" xml:space="preserve">
+    <value>Choose how you want to play Minecraft</value>
+  </data>
+  <data name="Onboarding_Account_Recommended" xml:space="preserve">
+    <value>RECOMMENDED</value>
+  </data>
+  <data name="Onboarding_Account_Offline_Title" xml:space="preserve">
+    <value>Offline / Cracked</value>
+  </data>
+  <data name="Onboarding_Account_Offline_Desc" xml:space="preserve">
+    <value>Play without a Mojang account. Perfect for LAN and single-player.</value>
+  </data>
+  <data name="Onboarding_Account_Offline_Feature1" xml:space="preserve">
+    <value>Custom skins</value>
+  </data>
+  <data name="Onboarding_Account_Offline_Feature2" xml:space="preserve">
+    <value>Instant setup</value>
+  </data>
+  <data name="Onboarding_Account_Offline_Feature3" xml:space="preserve">
+    <value>No account required</value>
+  </data>
+  <data name="Onboarding_Account_ElyBy_Title" xml:space="preserve">
+    <value>Ely.by Account</value>
+  </data>
+  <data name="Onboarding_Account_ElyBy_Desc" xml:space="preserve">
+    <value>Use Ely.by authentication for multiplayer servers.</value>
+  </data>
+  <data name="Onboarding_Account_ElyBy_Feature1" xml:space="preserve">
+    <value>Multiplayer support</value>
+  </data>
+  <data name="Onboarding_Account_ElyBy_Feature2" xml:space="preserve">
+    <value>Skin synchronization</value>
+  </data>
+  <data name="Onboarding_Account_Microsoft_Title" xml:space="preserve">
+    <value>Microsoft Account</value>
+  </data>
+  <data name="Onboarding_Account_Microsoft_Desc" xml:space="preserve">
+    <value>Official Minecraft account with full multiplayer access.</value>
+  </data>
+  <data name="Onboarding_Account_Microsoft_ComingSoon" xml:space="preserve">
+    <value>COMING SOON</value>
+  </data>
+  <data name="Onboarding_Java_Title" xml:space="preserve">
+    <value>Java Setup</value>
+  </data>
+  <data name="Onboarding_Java_Subtitle" xml:space="preserve">
+    <value>Minecraft requires Java to run</value>
+  </data>
+  <data name="Onboarding_Java_Detected" xml:space="preserve">
+    <value>Java Detected</value>
+  </data>
+  <data name="Onboarding_Java_Browse" xml:space="preserve">
+    <value>Browse for Different Java</value>
+  </data>
+  <data name="Onboarding_Installation_Title" xml:space="preserve">
+    <value>Create Your First Installation</value>
+  </data>
+  <data name="Onboarding_Installation_Subtitle" xml:space="preserve">
+    <value>Choose a Minecraft version to get started</value>
+  </data>
+  <data name="Onboarding_Installation_NameLabel" xml:space="preserve">
+    <value>INSTALLATION NAME</value>
+  </data>
+  <data name="Onboarding_Installation_VersionLabel" xml:space="preserve">
+    <value>MINECRAFT VERSION</value>
+  </data>
+  <data name="Onboarding_Installation_ModLoaderLabel" xml:space="preserve">
+    <value>MOD LOADER (OPTIONAL)</value>
+  </data>
+  <data name="Onboarding_Installation_Create" xml:space="preserve">
+    <value>Create Installation</value>
+  </data>
+  <data name="Onboarding_Complete_Title" xml:space="preserve">
+    <value>You're All Set!</value>
+  </data>
+  <data name="Onboarding_Complete_Subtitle" xml:space="preserve">
+    <value>Your launcher is ready to go</value>
+  </data>
+  <data name="Onboarding_Complete_QuickTips" xml:space="preserve">
+    <value>QUICK TIPS</value>
+  </data>
+  <data name="Onboarding_Complete_Tip1" xml:space="preserve">
+    <value>Click the Play button to launch Minecraft</value>
+  </data>
+  <data name="Onboarding_Complete_Tip2" xml:space="preserve">
+    <value>Add more accounts in the Accounts tab</value>
+  </data>
+  <data name="Onboarding_Complete_Tip3" xml:space="preserve">
+    <value>Install mods from the Mods tab</value>
+  </data>
+  <data name="Onboarding_Complete_Tip4" xml:space="preserve">
+    <value>Customize settings in the Settings tab</value>
+  </data>
+  <data name="Onboarding_Complete_StartPlaying" xml:space="preserve">
+    <value>Start Playing</value>
+  </data>
 </root>

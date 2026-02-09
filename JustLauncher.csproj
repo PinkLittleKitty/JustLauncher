@@ -10,6 +10,7 @@
     <Title>JustLauncher</Title>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
+    <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
     
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>

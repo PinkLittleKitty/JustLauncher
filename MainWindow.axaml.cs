@@ -30,6 +30,37 @@ public partial class MainWindow : Window
         _ = InitializeAsync();
     }
 
+    protected override void OnOpened(EventArgs e)
+    {
+        base.OnOpened(e);
+        _ = CheckOnboardingAsync();
+    }
+
+    private async Task CheckOnboardingAsync()
+    {
+        try
+        {
+            ConsoleService.Instance.Log("[Onboarding] Checking first run status...");
+            var settings = await ConfigManager.LoadSettingsAsync();
+            ConsoleService.Instance.Log($"[Onboarding] IsFirstRun: {settings.IsFirstRun}");
+            
+            if (settings.IsFirstRun)
+            {
+                ConsoleService.Instance.Log("[Onboarding] Opening wizard...");
+                var wizard = new Dialogs.OnboardingWizard();
+                await wizard.ShowDialog(this);
+                ConsoleService.Instance.Log("[Onboarding] Wizard closed.");
+                
+                await InitializeAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            ConsoleService.Instance.Log($"[Onboarding] ERROR: {ex.Message}");
+            ConsoleService.Instance.Log(ex.StackTrace ?? "");
+        }
+    }
+
     private async Task InitializeAsync()
     {
         var accountsConfig = await ConfigManager.LoadAccountsAsync();

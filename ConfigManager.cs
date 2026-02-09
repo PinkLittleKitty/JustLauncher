@@ -166,4 +166,6 @@ public class LauncherSettings
     public bool CheckForUpdatesOnStartup { get; set; } = true;
     public DateTime LastUpdateCheck { get; set; } = DateTime.MinValue;
     public string SkippedVersion { get; set; } = string.Empty;
+    
+    public bool IsFirstRun { get; set; } = true;
 }

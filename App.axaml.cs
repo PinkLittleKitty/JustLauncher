@@ -61,7 +61,7 @@ public partial class App : Application
                 desktop.MainWindow = new MainWindow();
                 Console.WriteLine("[APP] MainWindow created, showing...");
 
-                if (settings.CheckForUpdatesOnStartup)
+                if (settings.CheckForUpdatesOnStartup && !settings.IsFirstRun)
                 {
                     _ = CheckForUpdatesAsync(desktop.MainWindow);
                 }

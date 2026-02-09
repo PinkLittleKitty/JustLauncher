@@ -602,4 +602,148 @@
   <data name="Mods_AlreadyInstalled" xml:space="preserve">
     <value>Instalado</value>
   </data>
+  <data name="Onboarding_Welcome_Title" xml:space="preserve">
+    <value>¡Bienvenido a JustLauncher!</value>
+  </data>
+  <data name="Onboarding_Welcome_Subtitle" xml:space="preserve">
+    <value>Un lanzador de Minecraft rápido y ligero</value>
+  </data>
+  <data name="Onboarding_Welcome_Feature1_Title" xml:space="preserve">
+    <value>Inicios Ultrarrápidos</value>
+  </data>
+  <data name="Onboarding_Welcome_Feature1_Desc" xml:space="preserve">
+    <value>Optimizado para la velocidad</value>
+  </data>
+  <data name="Onboarding_Welcome_Feature2_Title" xml:space="preserve">
+    <value>Soporte para Mods</value>
+  </data>
+  <data name="Onboarding_Welcome_Feature2_Desc" xml:space="preserve">
+    <value>Fabric, Forge y Vanilla</value>
+  </data>
+  <data name="Onboarding_Welcome_Feature3_Title" xml:space="preserve">
+    <value>Gestión de Varias Cuentas</value>
+  </data>
+  <data name="Onboarding_Welcome_Feature3_Desc" xml:space="preserve">
+    <value>Cambia de cuenta fácilmente</value>
+  </data>
+  <data name="Onboarding_Welcome_Feature4_Title" xml:space="preserve">
+    <value>Skins Personalizadas</value>
+  </data>
+  <data name="Onboarding_Welcome_Feature4_Desc" xml:space="preserve">
+    <value>Para cuentas sin conexión</value>
+  </data>
+  <data name="Onboarding_GetStarted" xml:space="preserve">
+    <value>Empezar</value>
+  </data>
+  <data name="Onboarding_Skip" xml:space="preserve">
+    <value>Omitir Configuración</value>
+  </data>
+  <data name="Onboarding_Back" xml:space="preserve">
+    <value>Atrás</value>
+  </data>
+  <data name="Onboarding_Continue" xml:space="preserve">
+    <value>Continuar</value>
+  </data>
+  <data name="Onboarding_StepCount" xml:space="preserve">
+    <value>Paso {0} de {1}</value>
+  </data>
+  <data name="Onboarding_Account_Title" xml:space="preserve">
+    <value>Configura tu Cuenta</value>
+  </data>
+  <data name="Onboarding_Account_Subtitle" xml:space="preserve">
+    <value>Elige cómo quieres jugar Minecraft</value>
+  </data>
+  <data name="Onboarding_Account_Recommended" xml:space="preserve">
+    <value>RECOMENDADO</value>
+  </data>
+  <data name="Onboarding_Account_Offline_Title" xml:space="preserve">
+    <value>Sin Conexión / Cracked</value>
+  </data>
+  <data name="Onboarding_Account_Offline_Desc" xml:space="preserve">
+    <value>Juega sin una cuenta de Mojang. Perfecto para LAN y un solo jugador.</value>
+  </data>
+  <data name="Onboarding_Account_Offline_Feature1" xml:space="preserve">
+    <value>Skins personalizadas</value>
+  </data>
+  <data name="Onboarding_Account_Offline_Feature2" xml:space="preserve">
+    <value>Configuración instantánea</value>
+  </data>
+  <data name="Onboarding_Account_Offline_Feature3" xml:space="preserve">
+    <value>No requiere cuenta</value>
+  </data>
+  <data name="Onboarding_Account_ElyBy_Title" xml:space="preserve">
+    <value>Cuenta Ely.by</value>
+  </data>
+  <data name="Onboarding_Account_ElyBy_Desc" xml:space="preserve">
+    <value>Usa la autenticación de Ely.by para servidores multijugador.</value>
+  </data>
+  <data name="Onboarding_Account_ElyBy_Feature1" xml:space="preserve">
+    <value>Soporte multijugador</value>
+  </data>
+  <data name="Onboarding_Account_ElyBy_Feature2" xml:space="preserve">
+    <value>Sincronización de skins</value>
+  </data>
+  <data name="Onboarding_Account_Microsoft_Title" xml:space="preserve">
+    <value>Cuenta de Microsoft</value>
+  </data>
+  <data name="Onboarding_Account_Microsoft_Desc" xml:space="preserve">
+    <value>Cuenta oficial de Minecraft con acceso multijugador completo.</value>
+  </data>
+  <data name="Onboarding_Account_Microsoft_ComingSoon" xml:space="preserve">
+    <value>PRÓXIMAMENTE</value>
+  </data>
+  <data name="Onboarding_Java_Title" xml:space="preserve">
+    <value>Configuración de Java</value>
+  </data>
+  <data name="Onboarding_Java_Subtitle" xml:space="preserve">
+    <value>Minecraft requiere Java para funcionar</value>
+  </data>
+  <data name="Onboarding_Java_Detected" xml:space="preserve">
+    <value>Java Detectado</value>
+  </data>
+  <data name="Onboarding_Java_Browse" xml:space="preserve">
+    <value>Buscar otro Java</value>
+  </data>
+  <data name="Onboarding_Installation_Title" xml:space="preserve">
+    <value>Crea tu Primera Instalación</value>
+  </data>
+  <data name="Onboarding_Installation_Subtitle" xml:space="preserve">
+    <value>Elige una versión de Minecraft para empezar</value>
+  </data>
+  <data name="Onboarding_Installation_NameLabel" xml:space="preserve">
+    <value>NOMBRE DE INSTALACIÓN</value>
+  </data>
+  <data name="Onboarding_Installation_VersionLabel" xml:space="preserve">
+    <value>VERSIÓN DE MINECRAFT</value>
+  </data>
+  <data name="Onboarding_Installation_ModLoaderLabel" xml:space="preserve">
+    <value>CARGADOR DE MODS (OPCIONAL)</value>
+  </data>
+  <data name="Onboarding_Installation_Create" xml:space="preserve">
+    <value>Crear Instalación</value>
+  </data>
+  <data name="Onboarding_Complete_Title" xml:space="preserve">
+    <value>¡Todo Listo!</value>
+  </data>
+  <data name="Onboarding_Complete_Subtitle" xml:space="preserve">
+    <value>Tu lanzador está listo para usar</value>
+  </data>
+  <data name="Onboarding_Complete_QuickTips" xml:space="preserve">
+    <value>CONSEJOS RÁPIDOS</value>
+  </data>
+  <data name="Onboarding_Complete_Tip1" xml:space="preserve">
+    <value>Haz clic en el botón Jugar para iniciar Minecraft</value>
+  </data>
+  <data name="Onboarding_Complete_Tip2" xml:space="preserve">
+    <value>Agrega más cuentas en la pestaña de Cuentas</value>
+  </data>
+  <data name="Onboarding_Complete_Tip3" xml:space="preserve">
+    <value>Instala mods desde la pestaña de Mods</value>
+  </data>
+  <data name="Onboarding_Complete_Tip4" xml:space="preserve">
+    <value>Personaliza los ajustes en la pestaña de Configuración</value>
+  </data>
+  <data name="Onboarding_Complete_StartPlaying" xml:space="preserve">
+    <value>Empezar a Jugar</value>
+  </data>
 </root>

@@ -81,6 +81,56 @@ public class ModManagerService
         return mods;
     }
 
+    public async Task CheckForUpdatesAsync(List<ModInfo> mods, string mcVersion, string loader)
+    {
+        var modrinth = new ModrinthService();
+        
+        foreach (var mod in mods)
+        {
+            if (!File.Exists(mod.Path)) continue;
+
+            try
+            {
+                string hash;
+                using (var stream = File.OpenRead(mod.Path))
+                {
+                    using (var sha1 = System.Security.Cryptography.SHA1.Create())
+                    {
+                        var hashBytes = sha1.ComputeHash(stream);
+                        hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+                    }
+                }
+
+                var currentVersion = await modrinth.GetVersionByHashAsync(hash);
+                if (currentVersion != null)
+                {
+                    mod.ProjectId = currentVersion.ProjectId;
+                    
+                    var versions = await modrinth.GetVersionsAsync(currentVersion.ProjectId, mcVersion, loader);
+                    if (versions.Count > 0)
+                    {
+                        var latest = versions.FirstOrDefault();
+                        if (latest != null && latest.Id != currentVersion.Id)
+                        {
+                            var latestFile = latest.Files.FirstOrDefault(f => f.Primary) ?? latest.Files.FirstOrDefault();
+                            if (latestFile != null)
+                            {
+                                mod.UpdateAvailable = true;
+                                mod.RemoteVersion = latest.VersionNumber; 
+                                mod.UpdateUrl = latestFile.Url;
+                                ConsoleService.Instance.Log($"[Mods] Update available for {mod.Name}: {currentVersion.VersionNumber} -> {latest.VersionNumber}");
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ConsoleService.Instance.Log($"[Mods] Failed to check for updates for {mod.FileName}: {ex.Message}");
+            }
+        }
+    }
+
     public void ToggleMod(ModInfo mod)
     {
         if (mod.IsEnabled)

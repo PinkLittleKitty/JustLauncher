@@ -593,4 +593,13 @@
   <data name="Mods_AlreadyInstalled" xml:space="preserve">
     <value>Installed</value>
   </data>
+  <data name="Mods_UpdateAvailable" xml:space="preserve">
+    <value>Update available: {0}</value>
+  </data>
+  <data name="Mods_Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="Mods_CheckingUpdates" xml:space="preserve">
+    <value>Checking for updates...</value>
+  </data>
 </root>

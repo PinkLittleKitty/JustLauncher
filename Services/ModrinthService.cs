@@ -57,30 +57,43 @@ public class ModrinthService
 
     public async Task<string?> GetDownloadUrlAsync(string projectId, string minecraftVersion, string loader)
     {
+        var versions = await GetVersionsAsync(projectId, minecraftVersion, loader);
+        var latest = versions.FirstOrDefault();
+        var file = latest?.Files.FirstOrDefault(f => f.Primary) ?? latest?.Files.FirstOrDefault();
+        
+        ConsoleService.Instance.Log($"[Modrinth] Found file: {file?.Url}");
+        return file?.Url;
+    }
+
+    public async Task<List<ModrinthVersion>> GetVersionsAsync(string projectId, string minecraftVersion, string loader)
+    {
         string url = $"{BaseUrl}/project/{projectId}/version?loaders=[\"{loader.ToLower()}\"]&game_versions=[\"{minecraftVersion}\"]";
 
         try
         {
-            ConsoleService.Instance.Log($"[Modrinth] Fetching version for {projectId} (Version: {minecraftVersion}, Loader: {loader})");
+            ConsoleService.Instance.Log($"[Modrinth] Fetching versions for {projectId} (Version: {minecraftVersion}, Loader: {loader})");
             string json = await _httpClient.GetStringAsync(url);
-            var versions = JsonSerializer.Deserialize<List<ModrinthVersion>>(json);
-            
-            if (versions == null || versions.Count == 0)
-            {
-                ConsoleService.Instance.Log($"[Modrinth] No versions found for {projectId} on {minecraftVersion}");
-                return null;
-            }
-
-            var latest = versions.FirstOrDefault();
-            var file = latest?.Files.FirstOrDefault(f => f.Primary) ?? latest?.Files.FirstOrDefault();
-            
-            ConsoleService.Instance.Log($"[Modrinth] Found file: {file?.Url}");
-            return file?.Url;
+            return JsonSerializer.Deserialize<List<ModrinthVersion>>(json) ?? new List<ModrinthVersion>();
         }
         catch (Exception ex)
         {
             ConsoleService.Instance.Log($"[Modrinth] Version error: {ex.Message}");
-            return null;
+            return new List<ModrinthVersion>();
+        }
+    }
+
+    public async Task<ModrinthVersion?> GetVersionByHashAsync(string sha1Hash)
+    {
+        string url = $"{BaseUrl}/version_file/{sha1Hash}?algorithm=sha1";
+        try
+        {
+            string json = await _httpClient.GetStringAsync(url);
+            return JsonSerializer.Deserialize<ModrinthVersion>(json);
+        }
+        catch (Exception ex)
+        {
+             ConsoleService.Instance.Log($"[Modrinth] Hash lookup error ({sha1Hash}): {ex.Message}");
+             return null;
         }
     }
 }

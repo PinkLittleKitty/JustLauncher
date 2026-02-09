@@ -280,6 +280,9 @@ namespace JustLauncher
         private bool _isEnabled;
         private double _downloadProgress;
         private bool _isDownloading;
+        private bool _updateAvailable;
+        private string? _remoteVersion;
+        private string? _updateUrl;
 
         public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
@@ -332,6 +335,24 @@ namespace JustLauncher
             get => _isDownloading;
             set { _isDownloading = value; OnPropertyChanged(); }
         }
+
+        public bool UpdateAvailable
+        {
+            get => _updateAvailable;
+            set { _updateAvailable = value; OnPropertyChanged(); }
+        }
+
+        public string? RemoteVersion
+        {
+            get => _remoteVersion;
+            set { _remoteVersion = value; OnPropertyChanged(); }
+        }
+
+        public string? UpdateUrl
+        {
+            get => _updateUrl;
+            set { _updateUrl = value; OnPropertyChanged(); }
+        }
     }
 
     public class ModrinthSearchResult
@@ -360,6 +381,10 @@ namespace JustLauncher
     {
         [JsonPropertyName("id")]
         public string Id { get; set; } = default!;
+        [JsonPropertyName("project_id")]
+        public string ProjectId { get; set; } = default!;
+        [JsonPropertyName("version_number")]
+        public string VersionNumber { get; set; } = default!;
         [JsonPropertyName("files")]
         public List<ModrinthFile> Files { get; set; } = new();
     }

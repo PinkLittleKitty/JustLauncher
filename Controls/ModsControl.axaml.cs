@@ -40,6 +40,9 @@ public partial class ModsControl : UserControl
         var refreshModsBtn = this.FindControl<Button>("RefreshModsButton");
         if (refreshModsBtn != null) refreshModsBtn.Click += async (s, e) => { await LoadModsAsync(); };
 
+        var checkUpdatesBtn = this.FindControl<Button>("CheckUpdatesButton");
+        if (checkUpdatesBtn != null) checkUpdatesBtn.Click += async (s, e) => { await CheckForUpdatesAsync(); };
+
         var searchBtn = this.FindControl<Button>("SearchButton");
         if (searchBtn != null) searchBtn.Click += async (s, e) => { await SearchModsAsync(); };
 
@@ -47,6 +50,13 @@ public partial class ModsControl : UserControl
         if (modsList != null)
         {
             modsList.SelectionChanged += ModsListBox_SelectionChanged;
+            modsList.AddHandler(Button.ClickEvent, async (object? sender, RoutedEventArgs e) =>
+            {
+                if (e.Source is Button btn && btn.Name == "UpdateSingleButton" && btn.Tag is ModInfo mod)
+                {
+                    await UpdateModAsync(mod, btn);
+                }
+            }, RoutingStrategies.Bubble);
         }
 
         var browseList = this.FindControl<ListBox>("BrowseListBox");
@@ -54,7 +64,7 @@ public partial class ModsControl : UserControl
         {
             browseList.AddHandler(Button.ClickEvent, async (object? sender, RoutedEventArgs e) =>
             {
-                if (e.Source is Button btn && btn.Name == "DownloadButton" && btn.Tag is ModInfo mod)
+                if (e.Source is Button btn && (btn.Name == "DownloadButton" || btn.Name == "UpdateBrowseButton") && btn.Tag is ModInfo mod)
                 {
                     await DownloadModAsync(mod, btn);
                 }
@@ -89,6 +99,25 @@ public partial class ModsControl : UserControl
         {
             modsList.ItemsSource = mods;
         }
+    }
+
+    private async Task CheckForUpdatesAsync()
+    {
+        if (_installation == null) return;
+        var modsList = this.FindControl<ListBox>("ModsListBox");
+        if (modsList == null || modsList.ItemsSource == null) return;
+
+        var mods = ((IEnumerable<ModInfo>)modsList.ItemsSource).ToList();
+        var checkBtn = this.FindControl<Button>("CheckUpdatesButton");
+        if (checkBtn != null) checkBtn.IsEnabled = false;
+
+        ConsoleService.Instance.Log($"[Mods] Checking for updates for {mods.Count} mods...");
+        
+        string loader = _installation.LoaderType.ToString().ToLower();
+        await _modManager.CheckForUpdatesAsync(mods, _installation.BaseVersion, loader);
+        
+        if (checkBtn != null) checkBtn.IsEnabled = true;
+        ConsoleService.Instance.Log("[Mods] Update check complete.");
     }
 
     private async Task SearchModsAsync()
@@ -131,6 +160,35 @@ public partial class ModsControl : UserControl
         }
     }
 
+    private async Task UpdateModAsync(ModInfo mod, Button btn)
+    {
+        if (string.IsNullOrEmpty(mod.UpdateUrl)) return;
+        
+        btn.IsEnabled = false;
+        btn.Content = "Updating...";
+
+        try
+        {
+            // Delete old file if it exists
+            if (File.Exists(mod.Path))
+            {
+                File.Delete(mod.Path);
+            }
+
+            // Reuse DownloadModAsync logic but with the update URL
+            mod.DownloadUrl = mod.UpdateUrl;
+            await DownloadModAsync(mod, btn);
+            
+            mod.UpdateAvailable = false;
+        }
+        catch (Exception ex)
+        {
+            ConsoleService.Instance.Log($"[Mods] Update failed for {mod.Name}: {ex.Message}");
+            btn.Content = "Retry";
+            btn.IsEnabled = true;
+        }
+    }
+
     private async Task DownloadModAsync(ModInfo mod, Button btn)
     {
         if (_installation == null) return;
@@ -169,6 +227,8 @@ public partial class ModsControl : UserControl
                 Avalonia.Threading.Dispatcher.UIThread.Post(async () => {
                     mod.IsDownloading = false;
                     mod.IsInstalled = true;
+                    // Reset UpdateUrl/UpdateAvailable if it was an update
+                    mod.UpdateAvailable = false;
                     await LoadModsAsync();
                 });
             }

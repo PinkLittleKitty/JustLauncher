@@ -14,6 +14,7 @@
                         <Button x:Name="AddModButton" Classes="Primary" Content="{loc:Localize Key=Common_Add}"/>
                         <Button x:Name="OpenModsFolderButton" Classes="Secondary" Content="Open Folder"/>
                         <Button x:Name="RefreshModsButton" Classes="Secondary" Content="Refresh"/>
+                        <Button x:Name="CheckUpdatesButton" Classes="Secondary" Content="{loc:Localize Key=Update_CheckNow}" CommandParameter="{Binding}"/>
                     </StackPanel>
                     <ListBox Grid.Row="1" x:Name="ModsListBox" Background="Transparent" BorderThickness="0">
                         <ListBox.ItemTemplate>
@@ -22,10 +23,20 @@
                                     <Grid ColumnDefinitions="Auto,*,Auto">
                                         <CheckBox IsChecked="{Binding IsEnabled}" VerticalAlignment="Center" Margin="0,0,10,0"/>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                                <Border CornerRadius="4" Background="{DynamicResource AccentBrush}" Padding="4,1" IsVisible="{Binding UpdateAvailable}">
+                                                    <TextBlock Text="UPDATE" FontSize="10" Foreground="White" FontWeight="Bold"/>
+                                                </Border>
+                                            </StackPanel>
                                             <TextBlock Text="{Binding Description}" FontSize="11" Foreground="{DynamicResource SecondaryText}" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding RemoteVersion, StringFormat='New version: {0}'}" FontSize="10" Foreground="{DynamicResource SuccessBrush}" IsVisible="{Binding UpdateAvailable}"/>
                                         </StackPanel>
-                                        <TextBlock Grid.Column="2" Text="{Binding Version}" VerticalAlignment="Center" Foreground="{DynamicResource SecondaryText}" FontSize="12" Margin="10,0,0,0"/>
+                                        <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="5" MinWidth="80">
+                                            <TextBlock Text="{Binding Version}" HorizontalAlignment="Right" Foreground="{DynamicResource SecondaryText}" FontSize="12"/>
+                                            <Button Content="{loc:Localize Key=Mods_Update}" Classes="Primary" FontSize="11" Padding="8,2" 
+                                                    HorizontalAlignment="Stretch" IsVisible="{Binding UpdateAvailable}" Tag="{Binding}" x:Name="UpdateSingleButton"/>
+                                        </StackPanel>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
@@ -54,13 +65,20 @@
                                         <Panel Grid.Column="2" VerticalAlignment="Center" MinWidth="100">
                                             <Button x:Name="DownloadButton" Content="{loc:Localize Key=Mods_Download}" 
                                                     Classes="Primary" HorizontalAlignment="Stretch" Tag="{Binding}" IsVisible="{Binding !IsInstalled}"/>
+                                            
+                                            <Button x:Name="UpdateBrowseButton" Content="{loc:Localize Key=Mods_Update}" 
+                                                    Classes="Success" HorizontalAlignment="Stretch" Tag="{Binding}" IsVisible="{Binding UpdateAvailable}"/>
+
                                             <StackPanel IsVisible="{Binding IsDownloading}" Spacing="5">
                                                 <TextBlock Text="{loc:Localize Key=Mods_Downloading}" FontSize="10" HorizontalAlignment="Center"/>
                                                 <ProgressBar Minimum="0" Maximum="100" Value="{Binding DownloadProgress}" Height="4"/>
                                             </StackPanel>
+
+                                            <TextBlock Text="{loc:Localize Key=Mods_AlreadyInstalled}" 
+                                                       IsVisible="{Binding IsInstalled}" 
+                                                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                       Foreground="{DynamicResource SuccessBrush}" FontWeight="Bold"/>
                                         </Panel>
-                                        <TextBlock Grid.Column="2" Text="{loc:Localize Key=Mods_AlreadyInstalled}" IsVisible="{Binding IsInstalled}" 
-                                                   VerticalAlignment="Center" Foreground="{DynamicResource SuccessBrush}" FontWeight="Bold"/>
                                     </Grid>
                                 </Border>
                             </DataTemplate>

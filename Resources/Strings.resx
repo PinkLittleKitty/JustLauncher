@@ -223,15 +223,17 @@
     <value>Clear</value>
   </data>
   
-  <!-- About Dialog -->
   <data name="About_Title" xml:space="preserve">
     <value>JustLauncher</value>
+  </data>
+  <data name="About_VersionFormat" xml:space="preserve">
+    <value>Version {0}</value>
   </data>
   <data name="About_Description" xml:space="preserve">
     <value>A modern, high-performance Minecraft launcher built with Avalonia.</value>
   </data>
   <data name="About_CreatedBy" xml:space="preserve">
-    <value>Created by JustNeki</value>
+    <value>By JustNeki</value>
   </data>
   <data name="About_GitHub" xml:space="preserve">
     <value>GitHub</value>
@@ -563,22 +565,6 @@
     <value>{0} Accounts Connected</value>
   </data>
   
-  <!-- About Dialog -->
-  <data name="About_Title" xml:space="preserve">
-    <value>JustLauncher</value>
-  </data>
-  <data name="About_Description" xml:space="preserve">
-    <value>A modern, high-performance Minecraft launcher built with Avalonia.</value>
-  </data>
-  <data name="About_CreatedBy" xml:space="preserve">
-    <value>Created by JustNeki</value>
-  </data>
-  <data name="About_GitHub" xml:space="preserve">
-    <value>GitHub</value>
-  </data>
-  <data name="About_Website" xml:space="preserve">
-    <value>Website</value>
-  </data>
   
   <!-- Play Page (Additional) -->
   <data name="Play_PlayButton" xml:space="preserve">

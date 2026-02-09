@@ -28,38 +28,38 @@
 
                 <StackPanel Spacing="4">
                     <TextBlock Text="{loc:Localize Key=About_Title}" FontSize="28" FontWeight="Black" Foreground="{DynamicResource PrimaryText}" HorizontalAlignment="Center"/>
-                    <TextBlock Text="{Binding Version, StringFormat='Version {0}'}" FontSize="14" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" Opacity="0.8"/>
+                    <TextBlock x:Name="VersionText" FontSize="14" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" Opacity="0.8"/>
                 </StackPanel>
 
                 <TextBlock Text="{loc:Localize Key=About_Description}" 
                            FontSize="13" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Opacity="0.7"/>
                 
-                <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
-                    <i:Icon Value="fa-solid fa-code" Foreground="{DynamicResource SuccessBrush}" VerticalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                    <i:Icon Value="fa-solid fa-code" FontSize="14" Foreground="{DynamicResource SuccessBrush}" VerticalAlignment="Center"/>
                     <TextBlock Text="{loc:Localize Key=About_CreatedBy}" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource PrimaryText}" VerticalAlignment="Center"/>
                 </StackPanel>
 
                 <!-- Social Links -->
-                <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center" Margin="0,8,0,0">
-                    <Button x:Name="GitHubButton" Classes="Secondary" Padding="10,8" CornerRadius="8" ToolTip.Tip="View on GitHub">
+                <WrapPanel HorizontalAlignment="Center" Margin="0,8,0,0">
+                    <Button x:Name="GitHubButton" Classes="Secondary" Padding="12,8" Margin="4" CornerRadius="8" ToolTip.Tip="View on GitHub">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <i:Icon Value="fa-brands fa-github" FontSize="16"/>
                             <TextBlock Text="{loc:Localize Key=About_GitHub}" FontSize="12" FontWeight="Medium"/>
                         </StackPanel>
                     </Button>
-                    <Button x:Name="WebsiteButton" Classes="Secondary" Padding="10,8" CornerRadius="8" ToolTip.Tip="Visit Website">
+                    <Button x:Name="WebsiteButton" Classes="Secondary" Padding="12,8" Margin="4" CornerRadius="8" ToolTip.Tip="Visit Website">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <i:Icon Value="fa-solid fa-globe" FontSize="16"/>
                             <TextBlock Text="{loc:Localize Key=About_Website}" FontSize="12" FontWeight="Medium"/>
                         </StackPanel>
                     </Button>
-                    <Button x:Name="ChangelogButton" Classes="Secondary" Padding="10,8" CornerRadius="8" ToolTip.Tip="View Changelog">
+                    <Button x:Name="ChangelogButton" Classes="Secondary" Padding="12,8" Margin="4" CornerRadius="8" ToolTip.Tip="View Changelog">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <i:Icon Value="fa-solid fa-list-ul" FontSize="16"/>
                             <TextBlock Text="{loc:Localize Key=Update_ViewChangelog}" FontSize="12" FontWeight="Medium"/>
                         </StackPanel>
                     </Button>
-                </StackPanel>
+                </WrapPanel>
             </StackPanel>
 
             <!-- Footer -->

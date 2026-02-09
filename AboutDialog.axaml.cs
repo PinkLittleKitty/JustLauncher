@@ -1,21 +1,35 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using JustLauncher.Services;
+using JustLauncher.Models;
+using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace JustLauncher;
 
 public partial class AboutDialog : UserControl
 {
-    public string Version => AppVersion.Version;
-    public string Copyright => AppVersion.Copyright;
-    
     public AboutDialog()
     {
         InitializeComponent();
-        DataContext = this;
+        UpdateVersionText();
+        LocalizationService.Instance.LanguageChanged += (s, e) => UpdateVersionText();
     }
+
+    private void UpdateVersionText()
+    {
+        var versionText = this.FindControl<TextBlock>("VersionText");
+        if (versionText != null)
+        {
+            var format = LocalizationService.Instance["About_VersionFormat"];
+            versionText.Text = string.Format(format, AppVersion.Version);
+        }
+    }
+    
+    public string Version => AppVersion.Version;
+    public string Copyright => AppVersion.Copyright;
 
     private void InitializeComponent()
     {
@@ -31,7 +45,25 @@ public partial class AboutDialog : UserControl
         if (websiteBtn != null) websiteBtn.Click += (s, e) => OpenUrl("https://justneki.com");
 
         var changelogBtn = this.FindControl<Button>("ChangelogButton");
-        if (changelogBtn != null) changelogBtn.Click += (s, e) => OpenUrl("https://github.com/PinkLittleKitty/JustLauncher/releases");
+        if (changelogBtn != null) changelogBtn.Click += ChangelogButton_Click;
+    }
+
+    private async void ChangelogButton_Click(object? sender, RoutedEventArgs e)
+    {
+        var updateService = new UpdateService();
+        var updateInfo = await updateService.CheckForUpdatesAsync(true);
+        if (updateInfo != null)
+        {
+            var dialog = new ChangelogDialog(updateInfo);
+            if (MainWindow.Instance != null)
+            {
+                await dialog.ShowDialog(MainWindow.Instance);
+            }
+            else
+            {
+                dialog.Show();
+            }
+        }
     }
 
     private void OpenUrl(string url)

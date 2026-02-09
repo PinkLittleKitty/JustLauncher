@@ -584,4 +584,54 @@
   <data name="Play_PlayButton" xml:space="preserve">
     <value>PLAY</value>
   </data>
+  
+  <!-- Update Checker -->
+  <data name="Update_NewVersionAvailable" xml:space="preserve">
+    <value>New Version Available</value>
+  </data>
+  <data name="Update_CurrentVersion" xml:space="preserve">
+    <value>Current:</value>
+  </data>
+  <data name="Update_LatestVersion" xml:space="preserve">
+    <value>Latest:</value>
+  </data>
+  <data name="Update_Changelog" xml:space="preserve">
+    <value>What's New</value>
+  </data>
+  <data name="Update_Download" xml:space="preserve">
+    <value>Download Update</value>
+  </data>
+  <data name="Update_SkipVersion" xml:space="preserve">
+    <value>Skip This Version</value>
+  </data>
+  <data name="Update_RemindLater" xml:space="preserve">
+    <value>Remind Me Later</value>
+  </data>
+  <data name="Update_CheckNow" xml:space="preserve">
+    <value>Check for Updates</value>
+  </data>
+  <data name="Update_Checking" xml:space="preserve">
+    <value>Checking for updates...</value>
+  </data>
+  <data name="Update_UpToDate" xml:space="preserve">
+    <value>You're up to date!</value>
+  </data>
+  <data name="Update_CheckFailed" xml:space="preserve">
+    <value>Failed to check for updates</value>
+  </data>
+  <data name="Update_LastChecked" xml:space="preserve">
+    <value>Last checked: {0}</value>
+  </data>
+  <data name="Update_NoChangelog" xml:space="preserve">
+    <value>No changelog available for this version.</value>
+  </data>
+  <data name="Update_CheckOnStartup" xml:space="preserve">
+    <value>Check for Updates on Startup</value>
+  </data>
+  <data name="Update_CheckOnStartupDescription" xml:space="preserve">
+    <value>Automatically check for new versions when the launcher starts.</value>
+  </data>
+  <data name="Update_ViewChangelog" xml:space="preserve">
+    <value>View Changelog</value>
+  </data>
 </root>

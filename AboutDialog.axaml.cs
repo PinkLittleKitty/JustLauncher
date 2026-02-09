@@ -29,6 +29,9 @@ public partial class AboutDialog : UserControl
 
         var websiteBtn = this.FindControl<Button>("WebsiteButton");
         if (websiteBtn != null) websiteBtn.Click += (s, e) => OpenUrl("https://justneki.com");
+
+        var changelogBtn = this.FindControl<Button>("ChangelogButton");
+        if (changelogBtn != null) changelogBtn.Click += (s, e) => OpenUrl("https://github.com/PinkLittleKitty/JustLauncher/releases");
     }
 
     private void OpenUrl(string url)

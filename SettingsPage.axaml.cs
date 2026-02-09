@@ -5,6 +5,8 @@ using System;
 using System.Linq;
 using Avalonia.Platform.Storage;
 using JustLauncher.Services;
+using JustLauncher.Models;
+using Avalonia.Threading;
 
 namespace JustLauncher;
 
@@ -33,6 +35,9 @@ public partial class SettingsPage : UserControl
         {
             slider.PropertyChanged += MemorySlider_PropertyChanged;
         }
+
+        var checkUpdatesBtn = this.FindControl<Button>("CheckUpdatesButton");
+        if (checkUpdatesBtn != null) checkUpdatesBtn.Click += CheckUpdatesButton_Click;
     }
 
     private void MemorySlider_PropertyChanged(object? sender, Avalonia.AvaloniaPropertyChangedEventArgs e)
@@ -49,6 +54,19 @@ public partial class SettingsPage : UserControl
         if (valueText != null)
         {
             valueText.Text = $"{(int)value} GB";
+        }
+    }
+
+    private void UpdateLastCheckedText()
+    {
+        var textBlock = this.FindControl<TextBlock>("LastCheckedText");
+        if (textBlock != null)
+        {
+            var template = LocalizationService.Instance["Update_LastChecked"];
+            var timeStr = _settings.LastUpdateCheck == DateTime.MinValue 
+                ? "Never" 
+                : _settings.LastUpdateCheck.ToLocalTime().ToString("g");
+            textBlock.Text = string.Format(template, timeStr);
         }
     }
 
@@ -87,7 +105,6 @@ public partial class SettingsPage : UserControl
             }
         }
         
-        // Load language settings
         var langCombo = this.FindControl<ComboBox>("LanguageComboBox");
         if (langCombo != null)
         {
@@ -101,6 +118,11 @@ public partial class SettingsPage : UserControl
                 langCombo.SelectedItem = currentLang;
             }
         }
+
+        var updateToggle = this.FindControl<ToggleSwitch>("CheckUpdatesToggle");
+        if (updateToggle != null) updateToggle.IsChecked = _settings.CheckForUpdatesOnStartup;
+
+        UpdateLastCheckedText();
     }
     
     private void OnLanguageChanged(object? sender, SelectionChangedEventArgs e)
@@ -122,6 +144,7 @@ public partial class SettingsPage : UserControl
         var sakiToggle = this.FindControl<ToggleSwitch>("SakiToggle");
         var sakiBox = this.FindControl<TextBox>("SakiSkinTextBox");
         var themeCombo = this.FindControl<ComboBox>("ThemeComboBox");
+        var updateToggle = this.FindControl<ToggleSwitch>("CheckUpdatesToggle");
 
         _settings.JavaPath = pathBox?.Text ?? "";
         _settings.MemoryAllocationGb = slider?.Value ?? 2.0;
@@ -129,6 +152,7 @@ public partial class SettingsPage : UserControl
         _settings.UseSeparateGameDir = separateDirToggle?.IsChecked ?? false;
         _settings.IsSakiEnabled = sakiToggle?.IsChecked ?? false;
         _settings.SakiSkin = sakiBox?.Text ?? "Steve";
+        _settings.CheckForUpdatesOnStartup = updateToggle?.IsChecked ?? true;
         
         if (themeCombo != null)
         {
@@ -175,6 +199,50 @@ public partial class SettingsPage : UserControl
         {
             var pathBox = this.FindControl<TextBox>("JavaPathTextBox");
             if (pathBox != null) pathBox.Text = result[0].Path.LocalPath;
+        }
+    }
+
+    private async void CheckUpdatesButton_Click(object? sender, RoutedEventArgs e)
+    {
+        var btn = sender as Button;
+        if (btn == null) return;
+
+        var originalContent = btn.Content;
+        btn.IsEnabled = false;
+        btn.Content = LocalizationService.Instance["Update_Checking"];
+
+        try
+        {
+            var service = new UpdateService();
+            var info = await service.CheckForUpdatesAsync(true);
+            
+            _settings = ConfigManager.LoadSettings();
+            UpdateLastCheckedText();
+
+            if (info != null && info.IsNewer)
+            {
+                var topLevel = TopLevel.GetTopLevel(this) as Window;
+                if (topLevel != null)
+                {
+                    var dialog = new ChangelogDialog(info);
+                    await dialog.ShowDialog(topLevel);
+                }
+            }
+            else
+            {
+                btn.Content = LocalizationService.Instance["Update_UpToDate"];
+                await System.Threading.Tasks.Task.Delay(2000);
+            }
+        }
+        catch
+        {
+            btn.Content = LocalizationService.Instance["Update_CheckFailed"];
+            await System.Threading.Tasks.Task.Delay(2000);
+        }
+        finally
+        {
+            btn.Content = LocalizationService.Instance["Update_CheckNow"];
+            btn.IsEnabled = true;
         }
     }
 }

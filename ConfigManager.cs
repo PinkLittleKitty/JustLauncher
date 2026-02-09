@@ -80,4 +80,8 @@ public class LauncherSettings
     public bool DarkMode { get; set; } = true;
     public bool IsSakiEnabled { get; set; } = false;
     public string SakiSkin { get; set; } = "Steve";
+    
+    public bool CheckForUpdatesOnStartup { get; set; } = true;
+    public DateTime LastUpdateCheck { get; set; } = DateTime.MinValue;
+    public string SkippedVersion { get; set; } = string.Empty;
 }

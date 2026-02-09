@@ -584,4 +584,54 @@
   <data name="Play_PlayButton" xml:space="preserve">
     <value>JUGAR</value>
   </data>
+  
+  <!-- Update Checker -->
+  <data name="Update_NewVersionAvailable" xml:space="preserve">
+    <value>Nueva Versión Disponible</value>
+  </data>
+  <data name="Update_CurrentVersion" xml:space="preserve">
+    <value>Actual:</value>
+  </data>
+  <data name="Update_LatestVersion" xml:space="preserve">
+    <value>Última:</value>
+  </data>
+  <data name="Update_Changelog" xml:space="preserve">
+    <value>Novedades</value>
+  </data>
+  <data name="Update_Download" xml:space="preserve">
+    <value>Descargar Actualización</value>
+  </data>
+  <data name="Update_SkipVersion" xml:space="preserve">
+    <value>Omitir Esta Versión</value>
+  </data>
+  <data name="Update_RemindLater" xml:space="preserve">
+    <value>Recordar Más Tarde</value>
+  </data>
+  <data name="Update_CheckNow" xml:space="preserve">
+    <value>Buscar Actualizaciones</value>
+  </data>
+  <data name="Update_Checking" xml:space="preserve">
+    <value>Buscando actualizaciones...</value>
+  </data>
+  <data name="Update_UpToDate" xml:space="preserve">
+    <value>¡Estás actualizado!</value>
+  </data>
+  <data name="Update_CheckFailed" xml:space="preserve">
+    <value>Error al buscar actualizaciones</value>
+  </data>
+  <data name="Update_LastChecked" xml:space="preserve">
+    <value>Última comprobación: {0}</value>
+  </data>
+  <data name="Update_NoChangelog" xml:space="preserve">
+    <value>No hay registro de cambios disponible para esta versión.</value>
+  </data>
+  <data name="Update_CheckOnStartup" xml:space="preserve">
+    <value>Buscar actualizaciones al iniciar</value>
+  </data>
+  <data name="Update_CheckOnStartupDescription" xml:space="preserve">
+    <value>Buscar nuevas versiones automáticamente cuando se inicia el lanzador.</value>
+  </data>
+  <data name="Update_ViewChangelog" xml:space="preserve">
+    <value>Ver Novedades</value>
+  </data>
 </root>

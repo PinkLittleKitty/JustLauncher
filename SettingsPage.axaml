@@ -92,6 +92,33 @@
                     </StackPanel>
                 </Border>
             </StackPanel>
+            
+            <!-- Application Updates -->
+            <StackPanel>
+                <TextBlock Text="{loc:Localize Key=Update_CheckNow}" Classes="SettingsHeader"/>
+                <Border Classes="Card" Padding="24">
+                    <StackPanel Spacing="20">
+                        <!-- Check on Startup -->
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="{loc:Localize Key=Update_CheckOnStartup}" Classes="OptionTitle"/>
+                                <TextBlock Text="{loc:Localize Key=Update_CheckOnStartupDescription}" Classes="OptionDescription"/>
+                            </StackPanel>
+                            <ToggleSwitch Grid.Column="1" x:Name="CheckUpdatesToggle" OnContent="{loc:Localize Key=Common_On}" OffContent="{loc:Localize Key=Common_Off}"/>
+                        </Grid>
+                        
+                        <Separator Height="1" Background="{DynamicResource BorderBrush}"/>
+                        
+                        <!-- Check Now Button & Last Checked -->
+                        <Grid ColumnDefinitions="*,Auto">
+                             <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock x:Name="LastCheckedText" Text="{loc:Localize Key=Update_LastChecked}" Classes="OptionDescription"/>
+                             </StackPanel>
+                             <Button Grid.Column="1" x:Name="CheckUpdatesButton" Content="{loc:Localize Key=Update_CheckNow}" Classes="Primary"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
 
             <!-- Java Settings -->
             <StackPanel>

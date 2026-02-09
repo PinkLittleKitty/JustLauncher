@@ -53,6 +53,12 @@
                             <TextBlock Text="{loc:Localize Key=About_Website}" FontSize="12" FontWeight="Medium"/>
                         </StackPanel>
                     </Button>
+                    <Button x:Name="ChangelogButton" Classes="Secondary" Padding="10,8" CornerRadius="8" ToolTip.Tip="View Changelog">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <i:Icon Value="fa-solid fa-list-ul" FontSize="16"/>
+                            <TextBlock Text="{loc:Localize Key=Update_ViewChangelog}" FontSize="12" FontWeight="Medium"/>
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </StackPanel>
 

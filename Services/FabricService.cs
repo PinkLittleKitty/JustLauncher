@@ -19,7 +19,11 @@ namespace JustLauncher.Services
                 var response = await HttpClientManager.Instance.GetStringAsync($"{META_URL}/versions/game");
                 return JsonSerializer.Deserialize<List<FabricGameVersion>>(response) ?? new List<FabricGameVersion>();
             }
-            catch { return new List<FabricGameVersion>(); }
+            catch (Exception ex)
+            {
+                ConsoleService.Instance.Log($"[Fabric] Error fetching game versions: {ex.Message}");
+                return new List<FabricGameVersion>();
+            }
         }
 
         public async Task<List<FabricLoaderVersion>> GetLoaderVersionsAsync(string gameVersion)
@@ -29,7 +33,11 @@ namespace JustLauncher.Services
                 var response = await HttpClientManager.Instance.GetStringAsync($"{META_URL}/versions/loader/{gameVersion}");
                 return JsonSerializer.Deserialize<List<FabricLoaderVersion>>(response) ?? new List<FabricLoaderVersion>();
             }
-            catch { return new List<FabricLoaderVersion>(); }
+            catch (Exception ex)
+            {
+                ConsoleService.Instance.Log($"[Fabric] Error fetching loader versions: {ex.Message}");
+                return new List<FabricLoaderVersion>();
+            }
         }
 
         public async Task<string?> InstallFabricAsync(string gameVersion, string loaderVersion)

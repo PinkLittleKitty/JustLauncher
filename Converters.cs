@@ -93,7 +93,11 @@ namespace JustLauncher
                 { 
                     return new Avalonia.Media.Imaging.Bitmap(Avalonia.Platform.AssetLoader.Open(new Uri("avares://JustLauncher/Assets/grass_block.png"))); 
                 } 
-                catch { return null; }
+                catch (Exception ex)
+                {
+                    ConsoleService.Instance.Log($"[AsyncImage] Error loading placeholder: {ex.Message}");
+                    return null;
+                }
             }
             return null;
         }

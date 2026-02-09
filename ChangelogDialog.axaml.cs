@@ -41,7 +41,11 @@ public partial class ChangelogDialog : Window
 
     private void LoadChangelog()
     {
-        if (_updateInfo == null) return;
+        if (_updateInfo == null)
+        {
+            ConsoleService.Instance.Log("[ChangelogDialog] Warning: UpdateInfo is null");
+            return;
+        }
 
         var currentVersionText = this.FindControl<TextBlock>("CurrentVersionText");
         var latestVersionText = this.FindControl<TextBlock>("LatestVersionText");

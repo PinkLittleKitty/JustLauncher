@@ -2,11 +2,11 @@
 
 > A fast, lightweight, and modern cross-platform Minecraft launcher built with .NET 8 and Avalonia UI.
 
-![JustLauncher](Assets/logo.png)
+![JustLauncher](Assets/JustLogo.png)
 
 ## Features
 
-- **Cross-Platform**: Runs natively on Windows, Linux, and macOS.
+- **Cross-Platform**: Runs natively on Windows, Linux, and macOS (Not tested).
 - **Modern UI**: Clean, responsive interface powered by Avalonia UI.
 - **Instance Management**: Create and manage multiple isolated Minecraft instances with custom settings.
 - **Smart Java Management**:
@@ -15,11 +15,10 @@
   - Per-instance Java version and memory configuration.
 - **Account Support**: 
   - Offline Mode (Crack).
-  - Microsoft Account Login (OAuth).
+  - Microsoft Account Login (OAuth). (WIP)
 - **Update System**: Automatic update checking and in-app changelog viewer.
 - **Customization**:
   - Light/Dark Mode.
-  - "Saki Mode" assistant.
   - Custom themes and backgrounds.
 
 ## Prerequisites

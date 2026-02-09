@@ -13,9 +13,43 @@ public static class LaunchCommandBuilder
         var args = new List<string>();
         string mcDir = PlatformManager.GetMinecraftDirectory();
 
-        // JVM Arguments
+        // JVM Arguments - Optimized for Minecraft Performance
+        // Based on Aikar's flags: https://mcflags.emc.gs
+        
+        // Memory allocation
         args.Add($"-Xmx{(int)settings.MemoryAllocationGb}G");
         args.Add($"-Xms{(int)settings.MemoryAllocationGb}G");
+        
+        // G1GC Garbage Collector - Optimized for low pause times
+        args.Add("-XX:+UseG1GC");
+        args.Add("-XX:+ParallelRefProcEnabled");
+        args.Add("-XX:MaxGCPauseMillis=200");
+        args.Add("-XX:+UnlockExperimentalVMOptions");
+        args.Add("-XX:+DisableExplicitGC");
+        args.Add("-XX:+AlwaysPreTouch");
+        args.Add("-XX:G1NewSizePercent=30");
+        args.Add("-XX:G1MaxNewSizePercent=40");
+        args.Add("-XX:G1HeapRegionSize=8M");
+        args.Add("-XX:G1ReservePercent=20");
+        args.Add("-XX:G1HeapWastePercent=5");
+        args.Add("-XX:G1MixedGCCountTarget=4");
+        args.Add("-XX:InitiatingHeapOccupancyPercent=15");
+        args.Add("-XX:G1MixedGCLiveThresholdPercent=90");
+        args.Add("-XX:G1RSetUpdatingPauseTimePercent=5");
+        args.Add("-XX:SurvivorRatio=32");
+        args.Add("-XX:+PerfDisableSharedMem");
+        args.Add("-XX:MaxTenuringThreshold=1");
+        
+        // Aikar's flags metadata
+        args.Add("-Dusing.aikars.flags=https://mcflags.emc.gs");
+        args.Add("-Daikars.new.flags=true");
+        
+        // Platform-specific optimizations
+        if (PlatformManager.IsWindows())
+        {
+            // Intel GPU driver optimization trick for Windows
+            args.Add("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump");
+        }
         
         string nativesDir = Path.Combine(mcDir, "versions", installation.Version, "natives");
         args.Add("-Djava.library.path=" + EscapePath(nativesDir));

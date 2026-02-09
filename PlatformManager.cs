@@ -2,6 +2,9 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Linq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace JustLauncher;
 
@@ -13,6 +16,11 @@ public static class PlatformManager
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) return "osx";
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return "linux";
         return "windows";
+    }
+
+    public static bool IsWindows()
+    {
+        return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
     }
 
     public static bool IsArchitectureMatch(string classifier, string currentOs)
@@ -123,52 +131,93 @@ public static class PlatformManager
 
     public static async System.Threading.Tasks.Task<(string? version, string? path)> FindJavaInstallationAsync(int requiredMajorVersion)
     {
-        // First, try the PATH
-        var pathVersion = await GetJavaVersionFromPathAsync(GetJavaExecutableName());
-        if (pathVersion != null)
+        var candidates = new System.Collections.Generic.List<(string version, string path, int major)>();
+
+        // Helper to check a potential java path
+        async Task CheckCandidate(string javaPath)
         {
-            int major = ExtractMajorVersion(pathVersion);
-            if (major >= requiredMajorVersion)
+            if (!File.Exists(javaPath)) return;
+            
+            // Avoid duplicates
+            if (candidates.Any(c => c.path == javaPath)) return;
+
+            var version = await GetJavaVersionFromPathAsync(javaPath);
+            if (version != null)
             {
-                return (pathVersion, GetJavaExecutableName());
+                int major = ExtractMajorVersion(version);
+                candidates.Add((version, javaPath, major));
             }
         }
 
-        // Search common installation directories
-        var searchPaths = GetCommonJavaSearchPaths();
+        // 1. Check PATH
+        var pathVersion = await GetJavaVersionFromPathAsync(GetJavaExecutableName());
+        if (pathVersion != null)
+        {
+            // Resolve full path for PATH java if possible (Linux `which`, Windows `where` logic is complex, 
+            // so we might just use the executable name if we can't find it, but let's try to resolve it if it's an absolute path)
+            // For now, we store it as is, but we want to prefer absolute paths if found later.
+            candidates.Add((pathVersion, GetJavaExecutableName(), ExtractMajorVersion(pathVersion)));
+        }
+
+        // 2. Search common installation directories
+        var searchPaths = new System.Collections.Generic.List<string>(GetCommonJavaSearchPaths());
+        
+        // Add more paths (SDKMAN, .jdks for IntelliJ)
+        string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            searchPaths.Add(Path.Combine(home, ".sdkman", "candidates", "java"));
+            searchPaths.Add(Path.Combine(home, ".jdks"));
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            searchPaths.Add(Path.Combine(home, ".jdks"));
+            // Add other common drives if needed, but Program Files is usually enough
+        }
+
         foreach (var basePath in searchPaths)
         {
             if (!Directory.Exists(basePath)) continue;
 
             try
             {
-                // Look for Java installations in subdirectories
                 var dirs = Directory.GetDirectories(basePath);
                 foreach (var dir in dirs)
                 {
-                    var javaExe = Path.Combine(dir, "bin", GetJavaExecutableName());
-                    if (File.Exists(javaExe))
+                    // Standard bin/java layout
+                    await CheckCandidate(Path.Combine(dir, "bin", GetJavaExecutableName()));
+                    
+                    // MacOS content layout
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                     {
-                        var version = await GetJavaVersionFromPathAsync(javaExe);
-                        if (version != null)
-                        {
-                            int major = ExtractMajorVersion(version);
-                            if (major >= requiredMajorVersion)
-                            {
-                                return (version, javaExe);
-                            }
-                        }
+                        await CheckCandidate(Path.Combine(dir, "Contents", "Home", "bin", "java"));
                     }
                 }
             }
-            catch
-            {
-                // Ignore errors when searching directories
-            }
+            catch { /* Ignore access errors */ }
         }
 
-        // Return the PATH version even if it doesn't meet requirements
-        return (pathVersion, pathVersion != null ? GetJavaExecutableName() : null);
+        // 3. Selection Logic
+        
+        // Filter for compatible versions
+        var compatible = candidates.Where(c => c.major >= requiredMajorVersion).ToList();
+
+        if (compatible.Any())
+        {
+            // Pick the highest version available
+            var best = compatible.OrderByDescending(c => c.major).First();
+            return (best.version, best.path);
+        }
+
+        // If no compatible version found, return the highest available one (even if incompatible)
+        // This allows the UI to say "Detected: Java 17" instead of nothing.
+        if (candidates.Any())
+        {
+            var bestStart = candidates.OrderByDescending(c => c.major).First();
+            return (bestStart.version, bestStart.path);
+        }
+
+        return (null, null);
     }
 
     public static int ExtractMajorVersion(string versionString)

@@ -75,7 +75,7 @@ public class LauncherSettings
     public string JavaPath { get; set; } = string.Empty;
     public double MemoryAllocationGb { get; set; } = 2.0;
     public bool CloseOnLaunch { get; set; } = false;
-    public bool UseSeparateGameDir { get; set; } = false;
+    public bool UseSeparateGameDir { get; set; } = true;
     public string Theme { get; set; } = "System";
     public bool DarkMode { get; set; } = true;
     public bool IsSakiEnabled { get; set; } = false;

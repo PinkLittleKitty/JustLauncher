@@ -199,6 +199,12 @@ namespace JustLauncher
                 
                 if (account == null) throw new Exception("No account selected");
 
+                if (!string.IsNullOrEmpty(installation.GameDirectory) && !Directory.Exists(installation.GameDirectory))
+                {
+                    Log($"Creating game directory: {installation.GameDirectory}");
+                    Directory.CreateDirectory(installation.GameDirectory);
+                }
+
                 string args = LaunchCommandBuilder.BuildArguments(installation, account, info, settings);
                 
                 var startInfo = new ProcessStartInfo

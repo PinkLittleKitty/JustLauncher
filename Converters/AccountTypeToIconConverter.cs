@@ -21,6 +21,7 @@ namespace JustLauncher.Converters
                     "Microsoft" => "fa-brands fa-microsoft",
                     "Mojang" => "fa-solid fa-cube",
                     "Offline" => "fa-solid fa-user-secret",
+                    "ElyBy" => "fa-solid fa-globe",
                     _ => "fa-solid fa-user"
                 };
             }

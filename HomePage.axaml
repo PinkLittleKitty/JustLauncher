@@ -1,19 +1,83 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="JustLauncher.HomePage"
-             Background="#23272A">
-    <Grid Margin="40">
-        <Border Background="#2C2F33" Padding="30" CornerRadius="10">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="350">
-                <TextBlock Text="Welcome to JustLauncher" FontSize="24" Foreground="White" Margin="0,0,0,20" HorizontalAlignment="Center"/>
-                <TextBlock Text="Choose Account Type:" Foreground="White" Margin="0,0,0,10"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
-                    <RadioButton x:Name="OfflineRadio" Content="Offline" IsChecked="True" Margin="0,0,20,0" Foreground="White"/>
-                </StackPanel>
-                <TextBlock Text="Username:" Foreground="White" Margin="0,0,0,5"/>
-                <TextBox x:Name="UsernameTextBox" Width="200" Margin="0,0,0,20"/>
-                <Button Content="Continue" x:Name="LoginButton" Width="120" Height="35" HorizontalAlignment="Center"/>
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             x:Class="JustLauncher.HomePage">
+    
+    <Grid>
+        <!-- Background -->
+        <Border Background="{DynamicResource WindowBackground}"/>
+
+        <!-- Step 1: Selection Cards -->
+        <StackPanel x:Name="Step1Container" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="40">
+            <StackPanel Spacing="12" HorizontalAlignment="Center">
+                <Border Background="{DynamicResource SuccessBrush}" Width="80" Height="80" CornerRadius="20" HorizontalAlignment="Center" BoxShadow="0 8 24 0 #40000000">
+                    <i:Icon Value="fa-solid fa-rocket" Foreground="White" FontSize="32" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <TextBlock Text="SET UP YOUR ACCOUNT" Classes="PageHeader" FontSize="36" LetterSpacing="2" HorizontalAlignment="Center"/>
+                <TextBlock Text="Choose an authentication method to start your journey." Classes="PageDescription" FontSize="16" HorizontalAlignment="Center" Opacity="0.7"/>
             </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Spacing="24" HorizontalAlignment="Center">
+                <Button x:Name="OfflineCard" Classes="Secondary" Padding="0" CornerRadius="20" Tag="Offline">
+                    <Border Width="300" Height="380" Background="{DynamicResource ContentBackground}" CornerRadius="24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                        <Grid RowDefinitions="*,Auto,Auto" Margin="32">
+                            <i:Icon Value="fa-solid fa-user-slash" FontSize="64" Foreground="{DynamicResource SuccessBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Row="1" Text="OFFLINE" FontSize="20" FontWeight="Black" Margin="0,0,0,8" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Row="2" Text="No account required. Best for LAN and local worlds." FontSize="13" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap" TextAlignment="Center" Opacity="0.8"/>
+                        </Grid>
+                    </Border>
+                </Button>
+
+                <Button x:Name="ElyByCard" Classes="Secondary" Padding="0" CornerRadius="20" Tag="ElyBy">
+                    <Border Width="300" Height="380" Background="{DynamicResource ContentBackground}" CornerRadius="24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                        <Grid RowDefinitions="*,Auto,Auto" Margin="32">
+                            <i:Icon Value="fa-solid fa-globe" FontSize="64" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Row="1" Text="ELY.BY" FontSize="20" FontWeight="Black" Margin="0,0,0,8" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Row="2" Text="Log in with Ely.by to sync skins and friends seamlessly." FontSize="13" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap" TextAlignment="Center" Opacity="0.8"/>
+                        </Grid>
+                    </Border>
+                </Button>
+
+                <Border Width="300" Height="380" Background="{DynamicResource WindowBackground}" CornerRadius="24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Opacity="0.6">
+                    <Grid RowDefinitions="*,Auto,Auto" Margin="32">
+                        <i:Icon Value="fa-brands fa-microsoft" FontSize="64" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="1" Text="MICROSOFT" FontSize="20" FontWeight="Black" Margin="0,0,0,8" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Row="2" Text="Coming Soon. Official Microsoft account support." FontSize="13" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap" TextAlignment="Center"/>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Step 2: Input Overlay -->
+        <Border x:Name="Step2Overlay" Background="#EE1E1E20" IsVisible="False">
+            <Border Background="{DynamicResource ContentBackground}" CornerRadius="28" Padding="48" Width="450" HorizontalAlignment="Center" VerticalAlignment="Center" BoxShadow="0 24 64 0 #AA000000">
+                <StackPanel Spacing="32">
+                    <StackPanel Spacing="12">
+                        <Border x:Name="Step2BackBtn" HorizontalAlignment="Left" Background="Transparent" Cursor="Hand">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <i:Icon Value="fa-solid fa-arrow-left" FontSize="14" Foreground="{DynamicResource SecondaryText}"/>
+                                <TextBlock Text="BACK" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource SecondaryText}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        <TextBlock x:Name="Step2Header" Text="Enter Credentials" FontSize="28" FontWeight="Black" HorizontalAlignment="Center" Margin="0,12,0,0"/>
+                        <TextBlock x:Name="Step2Subheader" Text="Provide your details to continue" FontSize="14" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="24">
+                        <StackPanel Spacing="10">
+                            <TextBlock x:Name="FieldLabel" Text="USERNAME" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource SecondaryText}" LetterSpacing="1"/>
+                            <TextBox x:Name="UsernameTextBox" Padding="16" CornerRadius="12" Watermark="Your name"/>
+                        </StackPanel>
+
+                        <StackPanel x:Name="PasswordContainer" Spacing="10" IsVisible="False">
+                            <TextBlock Text="PASSWORD" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource SecondaryText}" LetterSpacing="1"/>
+                            <TextBox x:Name="PasswordTextBox" PasswordChar="*" Padding="16" CornerRadius="12" Watermark="Your secret"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <Button x:Name="FinalLoginBtn" Content="GET STARTED" Classes="Primary" Height="54" HorizontalAlignment="Stretch" FontSize="16" FontWeight="Bold" CornerRadius="16"/>
+                </StackPanel>
+            </Border>
         </Border>
     </Grid>
 </UserControl>

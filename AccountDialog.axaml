@@ -3,62 +3,143 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
-             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="400"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="550"
              x:Class="JustLauncher.AccountDialog"
-             Width="500">
+             Width="600">
     
     <Border Background="{DynamicResource ContentBackground}" 
-            CornerRadius="16" 
+            CornerRadius="24" 
             BorderBrush="{DynamicResource BorderBrush}" 
             BorderThickness="1"
-            BoxShadow="0 8 24 0 #40000000"
+            BoxShadow="0 12 32 0 #50000000"
             Margin="20">
         <Grid Margin="32" RowDefinitions="Auto,*,Auto">
             <!-- Header -->
             <Grid Grid.Row="0" Margin="0,0,0,32" ColumnDefinitions="*,Auto">
                 <StackPanel>
-                    <TextBlock x:Name="DialogTitle" Text="Add New Account" Classes="PageHeader" FontSize="24"/>
-                    <TextBlock Text="Configure your Minecraft account settings" Classes="PageDescription" FontSize="13"/>
+                    <TextBlock x:Name="DialogTitle" Text="Add Minecraft Account" Classes="PageHeader" FontSize="24"/>
+                    <TextBlock x:Name="DialogSubtitle" Text="Choose how you want to play" Classes="PageDescription" FontSize="13"/>
                 </StackPanel>
-                <Button x:Name="CloseButton" Grid.Column="1" Classes="Secondary" Padding="8" VerticalAlignment="Top">
+                <Button x:Name="CloseButton" Grid.Column="1" Classes="Secondary" Padding="8" VerticalAlignment="Top" CornerRadius="20">
                     <i:Icon Value="fa-solid fa-times"/>
                 </Button>
             </Grid>
 
-            <!-- Form -->
-            <StackPanel Grid.Row="1" Spacing="24">
-                <StackPanel Spacing="10">
-                    <TextBlock Text="USERNAME" Foreground="{DynamicResource SecondaryText}" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
-                    <TextBox x:Name="UsernameTextBox" Watermark="e.g. JustNeki" Padding="12"/>
+            <!-- Steps Container -->
+            <Grid Grid.Row="1">
+                <!-- Step 1: Provider Selection -->
+                <StackPanel x:Name="Step1Container" Spacing="24">
+                    <TextBlock Text="STEP 1: SELECT PROVIDER" Classes="PageDescription" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
+                    
+                    <ListBox x:Name="AuthTypeListBox" Background="Transparent" BorderThickness="0" Padding="0">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="2" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="Padding" Value="8"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Template">
+                                    <ControlTemplate>
+                                        <Border x:Name="SelectionBorder" 
+                                                BorderThickness="2" 
+                                                BorderBrush="Transparent" 
+                                                CornerRadius="24"
+                                                Padding="{TemplateBinding Padding}"
+                                                Background="Transparent">
+                                            <ContentPresenter Content="{TemplateBinding Content}"
+                                                            ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter>
+                            </Style>
+                            <Style Selector="ListBoxItem:pointerover /template/ Border#SelectionBorder">
+                                <Setter Property="Background" Value="{DynamicResource HoverBackground}"/>
+                                <Setter Property="Opacity" Value="0.5"/>
+                            </Style>
+                            <Style Selector="ListBoxItem:selected /template/ Border#SelectionBorder">
+                                <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                                <Setter Property="Background" Value="{DynamicResource HoverBackground}"/>
+                                <Setter Property="Opacity" Value="1"/>
+                            </Style>
+                        </ListBox.Styles>
+
+                        <!-- Offline Card -->
+                        <ListBoxItem Tag="Offline">
+                            <Border Classes="Card" Padding="20" Height="140">
+                                <Grid RowDefinitions="*,Auto,Auto">
+                                    <i:Icon Value="fa-solid fa-user-slash" FontSize="32" Foreground="{DynamicResource SuccessBrush}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                    <TextBlock Grid.Row="1" Text="Offline Account" FontSize="16" FontWeight="Bold" Margin="0,12,0,4"/>
+                                    <TextBlock Grid.Row="2" Text="No authentication. Play locally." FontSize="11" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap" Opacity="0.7"/>
+                                </Grid>
+                            </Border>
+                        </ListBoxItem>
+
+                        <!-- Ely.by Card -->
+                        <ListBoxItem Tag="ElyBy">
+                            <Border Classes="Card" Padding="20" Height="140">
+                                <Grid RowDefinitions="*,Auto,Auto">
+                                    <i:Icon Value="fa-solid fa-globe" FontSize="32" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                    <TextBlock Grid.Row="1" Text="Ely.by Account" FontSize="16" FontWeight="Bold" Margin="0,12,0,4"/>
+                                    <TextBlock Grid.Row="2" Text="Sync skins and friends via Ely.by." FontSize="11" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap" Opacity="0.7"/>
+                                </Grid>
+                            </Border>
+                        </ListBoxItem>
+
+                        <!-- Microsoft Card (Inactive) -->
+                        <ListBoxItem Tag="Microsoft" IsEnabled="False">
+                            <Border Padding="20" Height="140" Background="{DynamicResource WindowBackground}" CornerRadius="12" Opacity="0.5" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                                <Grid RowDefinitions="*,Auto,Auto">
+                                    <i:Icon Value="fa-brands fa-microsoft" FontSize="32" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                    <TextBlock Grid.Row="1" Text="Microsoft" FontSize="16" FontWeight="Bold" Margin="0,12,0,4"/>
+                                    <TextBlock Grid.Row="2" Text="Official Microsoft (Coming Soon)" FontSize="10" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap"/>
+                                </Grid>
+                            </Border>
+                        </ListBoxItem>
+                    </ListBox>
                 </StackPanel>
 
-                <StackPanel Spacing="10">
-                    <TextBlock Text="ACCOUNT TYPE" Foreground="{DynamicResource SecondaryText}" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
-                    <ComboBox x:Name="AccountTypeComboBox" HorizontalAlignment="Stretch" SelectedIndex="0">
-                        <ComboBoxItem Content="Offline Account" Tag="Offline"/>
-                        <ComboBoxItem Content="Microsoft Account" Tag="Microsoft" IsEnabled="False"/>
-                        <ComboBoxItem Content="Mojang Account" Tag="Mojang" IsEnabled="False"/>
-                    </ComboBox>
-                </StackPanel>
-
-                <!-- Info Panel -->
-                <Border Background="{DynamicResource WindowBackground}" CornerRadius="12" Padding="20" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
-                    <StackPanel Spacing="8">
-                        <StackPanel Orientation="Horizontal" Spacing="10">
-                            <i:Icon Value="fa-solid fa-info-circle" Foreground="{DynamicResource SuccessBrush}"/>
-                            <TextBlock x:Name="InfoTitle" Text="Offline Account" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource SuccessBrush}"/>
+                <!-- Step 2: Credential Entry -->
+                <StackPanel x:Name="Step2Container" Spacing="24" IsVisible="False">
+                    <TextBlock Text="STEP 2: ACCOUNT DETAILS" Classes="PageDescription" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
+                    
+                    <!-- Form Area -->
+                    <StackPanel Spacing="24">
+                        <StackPanel Spacing="10">
+                            <TextBlock x:Name="FieldLabel" Text="USERNAME" Classes="PageDescription" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
+                            <TextBox x:Name="UsernameTextBox" Watermark="Your player name" Padding="14"/>
                         </StackPanel>
-                        <TextBlock x:Name="InfoText" Text="Offline accounts allow you to play Minecraft without authentication. You can use any username you want." 
-                                   FontSize="12" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap" Opacity="0.8"/>
-                    </StackPanel>
-                </Border>
-            </StackPanel>
 
-            <!-- Buttons -->
-            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12" Margin="0,32,0,0">
-                <Button x:Name="CancelButton" Content="CANCEL" Classes="Secondary" MinWidth="100"/>
-                <Button x:Name="SaveButton" Content="SAVE ACCOUNT" Classes="Primary" MinWidth="140"/>
-            </StackPanel>
+                        <StackPanel x:Name="PasswordContainer" Spacing="10" IsVisible="False">
+                            <TextBlock Text="PASSWORD" Classes="PageDescription" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
+                            <TextBox x:Name="PasswordTextBox" PasswordChar="*" Watermark="Your password" Padding="14"/>
+                        </StackPanel>
+
+                        <Border Background="{DynamicResource WindowBackground}" CornerRadius="16" Padding="20" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                            <StackPanel Spacing="8">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <i:Icon x:Name="Step2Icon" Value="fa-solid fa-info-circle" Foreground="{DynamicResource SuccessBrush}"/>
+                                    <TextBlock x:Name="Step2InfoTitle" Text="Offline Account" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource SuccessBrush}"/>
+                                </StackPanel>
+                                <TextBlock x:Name="Step2InfoBody" Text="Offline accounts work on cracked servers and LAN experiments." FontSize="12" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap" Opacity="0.8"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+
+            <!-- Footer -->
+            <Grid Grid.Row="2" ColumnDefinitions="Auto,*,Auto" Margin="0,32,0,0">
+                <Button x:Name="BackButton" Content="BACK" Classes="Secondary" MinWidth="100" IsVisible="False"/>
+                
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="12">
+                    <Button x:Name="CancelButton" Content="CANCEL" Classes="Secondary" MinWidth="100"/>
+                    <Button x:Name="NextButton" Content="NEXT" Classes="Primary" MinWidth="140"/>
+                    <Button x:Name="SaveButton" Content="LOGIN &amp; SAVE" Classes="Primary" MinWidth="160" IsVisible="False"/>
+                </StackPanel>
+            </Grid>
         </Grid>
     </Border>
 </UserControl>

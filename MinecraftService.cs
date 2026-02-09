@@ -44,6 +44,54 @@ public class MinecraftService
         return JsonSerializer.Deserialize<VersionInfo>(json) ?? new();
     }
 
+    public async Task<VersionInfo> GetVersionInfoFromLocalAsync(string versionId)
+    {
+        string jsonPath = Path.Combine(_baseDir, "versions", versionId, $"{versionId}.json");
+        if (!File.Exists(jsonPath)) throw new FileNotFoundException($"Version JSON not found: {jsonPath}");
+
+        string json = await File.ReadAllTextAsync(jsonPath);
+        var info = JsonSerializer.Deserialize<VersionInfo>(json) ?? new();
+
+        if (!string.IsNullOrEmpty(info.InheritsFrom))
+        {
+            var manifest = await GetVersionManifestAsync();
+            var parentVer = manifest.Versions.FirstOrDefault(v => v.Id == info.InheritsFrom);
+            if (parentVer != null)
+            {
+                var parentInfo = await GetVersionInfoAsync(parentVer.Url);
+                MergeVersionInfo(info, parentInfo);
+            }
+        }
+
+        return info;
+    }
+
+    private void MergeVersionInfo(VersionInfo child, VersionInfo parent)
+    {
+        child.Libraries.AddRange(parent.Libraries);
+        
+        if (child.AssetIndex == null || string.IsNullOrEmpty(child.AssetIndex.Id))
+        {
+            child.AssetIndex = parent.AssetIndex;
+        }
+
+        if (child.JavaVersion == null || child.JavaVersion.MajorVersion == 0)
+        {
+            child.JavaVersion = parent.JavaVersion;
+        }
+
+        // Merge arguments
+        if (parent.Arguments != null)
+        {
+            if (child.Arguments == null) child.Arguments = new Arguments();
+            child.Arguments.Game.InsertRange(0, parent.Arguments.Game);
+            child.Arguments.Jvm.InsertRange(0, parent.Arguments.Jvm);
+        }
+
+        // If child doesn't specify libraries, it might rely entirely on parent (unlikely for Fabric)
+        // But we added parent libraries to child already.
+    }
+
     public async Task DownloadFileAsync(string url, string path, Action<long, long>? progressCallback = null)
     {
         string? directory = Path.GetDirectoryName(path);

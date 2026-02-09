@@ -200,11 +200,19 @@ namespace JustLauncher
         public DateTime Created { get; set; } = DateTime.Now;
         public DateTime LastPlayed { get; set; }
         public bool IsModded { get; set; }
-        public string ModLoader { get; set; } = default!;
-        public string ModLoaderVersion { get; set; } = default!;
+        public ModLoaderType LoaderType { get; set; } = ModLoaderType.Vanilla;
+        public string? ModLoaderVersion { get; set; }
         public string BaseVersion { get; set; } = default!;
         public int PlayTime { get; set; }
         public bool IsInstalled { get; set; }
+    }
+
+    public enum ModLoaderType
+    {
+        Vanilla,
+        Fabric,
+        Forge,
+        NeoForge
     }
 
     public class InstallationsConfig
@@ -244,5 +252,17 @@ namespace JustLauncher
     {
         public List<Account> Accounts { get; set; } = new();
         public string SelectedAccountId { get; set; } = default!;
+    }
+
+    public class ModInfo
+    {
+        public string FileName { get; set; } = default!;
+        public string Name { get; set; } = default!;
+        public string Version { get; set; } = default!;
+        public string Description { get; set; } = default!;
+        public string Authors { get; set; } = default!;
+        public bool IsEnabled { get; set; } = true;
+        public string Path { get; set; } = default!;
+        public string? IconPath { get; set; }
     }
 }

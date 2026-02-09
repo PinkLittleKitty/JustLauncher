@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,6 +18,8 @@ public partial class InstallationDialog : UserControl
     public bool DeleteRequested { get; private set; }
     private readonly MinecraftService _minecraftService = new();
     private Installation? _existingInstallation;
+    private readonly FabricService _fabricService = new();
+    private readonly ModManagerService _modManager = new();
 
     public InstallationDialog()
     {
@@ -100,6 +103,21 @@ public partial class InstallationDialog : UserControl
         
         var memHigh = this.FindControl<Button>("MemHighBtn");
         if (memHigh != null) memHigh.Click += (s, e) => SetMemory(8);
+
+        var loaderCombo = this.FindControl<ComboBox>("ModLoaderComboBox");
+        if (loaderCombo != null) loaderCombo.SelectionChanged += LoaderCombo_SelectionChanged;
+
+        var versionCombo = this.FindControl<ComboBox>("VersionComboBox");
+        if (versionCombo != null) versionCombo.SelectionChanged += (s, e) => UpdateLoaderVersions();
+
+        var openModsBtn = this.FindControl<Button>("OpenModsFolderButton");
+        if (openModsBtn != null) openModsBtn.Click += OpenModsFolderButton_Click;
+
+        var refreshModsBtn = this.FindControl<Button>("RefreshModsButton");
+        if (refreshModsBtn != null) refreshModsBtn.Click += async (s, e) => await LoadModsAsync();
+        
+        // Add handler for checkbox clicks in the listbox
+        this.AddHandler(global::Avalonia.Controls.Primitives.ToggleButton.ClickEvent, ModCheckBox_Click, RoutingStrategies.Bubble);
     }
 
     private void SetMemory(double gb)
@@ -148,6 +166,62 @@ public partial class InstallationDialog : UserControl
     {
         await LoadVersionsAsync();
         await LoadJavaVersionsAsync();
+        await UpdateLoaderVersions(); // To set initial visibility
+        await LoadModsAsync();
+    }
+
+    private void ModCheckBox_Click(object? sender, RoutedEventArgs e)
+    {
+        if (e.Source is CheckBox checkBox && checkBox.DataContext is ModInfo mod)
+        {
+             _modManager.ToggleMod(mod);
+             // Reflect change immediately in UI if needed, binding might do it
+             // But ToggleMod renames file, so Path changes.
+        }
+    }
+
+    private async Task LoadModsAsync()
+    {
+        var modsTab = this.FindControl<TabItem>("ModsTab");
+        var modsList = this.FindControl<ListBox>("ModsListBox");
+        
+        if (modsTab == null || modsList == null) return;
+
+        var loaderType = GetSelectedLoaderType();
+        modsTab.IsEnabled = loaderType != ModLoaderType.Vanilla;
+
+        if (modsTab.IsEnabled)
+        {
+            var dirBox = this.FindControl<TextBox>("GameDirectoryTextBox");
+            string gameDir = dirBox?.Text ?? PlatformManager.GetMinecraftDirectory();
+            if (_existingInstallation != null && !string.IsNullOrEmpty(_existingInstallation.GameDirectory))
+            {
+                gameDir = _existingInstallation.GameDirectory;
+            }
+
+            if (Directory.Exists(gameDir))
+            {
+                var mods = await _modManager.GetModsAsync(gameDir);
+                modsList.ItemsSource = mods;
+            }
+            else
+            {
+                modsList.ItemsSource = new List<ModInfo>();
+            }
+        }
+    }
+    
+    private void OpenModsFolderButton_Click(object? sender, RoutedEventArgs e)
+    {
+        var dirBox = this.FindControl<TextBox>("GameDirectoryTextBox");
+        string gameDir = dirBox?.Text ?? PlatformManager.GetMinecraftDirectory();
+        string modsDir = Path.Combine(gameDir, "mods");
+        
+        if (!Directory.Exists(modsDir)) Directory.CreateDirectory(modsDir);
+        
+        if (PlatformManager.IsWindows()) Process.Start("explorer", modsDir);
+        else if (PlatformManager.IsLinux()) Process.Start("xdg-open", modsDir);
+        else if (PlatformManager.IsMac()) Process.Start("open", modsDir);
     }
 
     private async Task LoadJavaVersionsAsync()
@@ -241,6 +315,17 @@ public partial class InstallationDialog : UserControl
         
         var removeBtn = this.FindControl<Button>("RemoveButton");
         if (removeBtn != null) removeBtn.IsVisible = true;
+
+        var loaderCombo = this.FindControl<ComboBox>("ModLoaderComboBox");
+        if (loaderCombo != null)
+        {
+            loaderCombo.SelectedIndex = existing.LoaderType switch
+            {
+                ModLoaderType.Fabric => 1,
+                ModLoaderType.Forge => 2,
+                _ => 0
+            };
+        }
     }
 
     private void RemoveButton_Click(object? sender, RoutedEventArgs e)
@@ -266,7 +351,9 @@ public partial class InstallationDialog : UserControl
             JavaArgs = argsBox?.Text ?? "-Xmx2G",
             MemoryAllocationGb = memorySlider?.Value ?? 4.0,
             Icon = "grass_block",
-            JavaPath = GetSelectedJavaPath()
+            JavaPath = GetSelectedJavaPath(),
+            LoaderType = GetSelectedLoaderType(),
+            ModLoaderVersion = GetSelectedLoaderVersion()
         };
         OverlayService.Close(this);
     }
@@ -276,5 +363,85 @@ public partial class InstallationDialog : UserControl
         var combo = this.FindControl<ComboBox>("JavaVersionComboBox");
         if (combo?.SelectedItem is JavaInfo info) return info.Path;
         return "";
+    }
+
+    private ModLoaderType GetSelectedLoaderType()
+    {
+        var combo = this.FindControl<ComboBox>("ModLoaderComboBox");
+        var item = combo?.SelectedItem as ComboBoxItem;
+        var tag = item?.Tag?.ToString();
+        
+        return tag switch
+        {
+            "Fabric" => ModLoaderType.Fabric,
+            "Forge" => ModLoaderType.Forge,
+            _ => ModLoaderType.Vanilla
+        };
+    }
+
+    private string? GetSelectedLoaderVersion()
+    {
+        if (GetSelectedLoaderType() == ModLoaderType.Vanilla) return null;
+        var combo = this.FindControl<ComboBox>("ModLoaderVersionComboBox");
+        return combo?.SelectedItem?.ToString();
+    }
+
+    private async void LoaderCombo_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        await UpdateLoaderVersions();
+    }
+
+    private async Task UpdateLoaderVersions()
+    {
+        var loaderCombo = this.FindControl<ComboBox>("ModLoaderComboBox");
+        var versionCombo = this.FindControl<ComboBox>("VersionComboBox");
+        var loaderVersionPanel = this.FindControl<StackPanel>("ModLoaderVersionPanel");
+        var loaderVersionCombo = this.FindControl<ComboBox>("ModLoaderVersionComboBox");
+
+        if (loaderCombo == null || versionCombo == null || loaderVersionPanel == null || loaderVersionCombo == null) return;
+
+        var type = GetSelectedLoaderType();
+        loaderVersionPanel.IsVisible = type != ModLoaderType.Vanilla;
+
+        if (type == ModLoaderType.Fabric)
+        {
+            var gameVersion = versionCombo.SelectedItem?.ToString();
+            if (string.IsNullOrEmpty(gameVersion)) return;
+
+            loaderVersionCombo.ItemsSource = new[] { "Loading..." };
+            loaderVersionCombo.SelectedIndex = 0;
+            loaderVersionCombo.IsEnabled = false;
+
+            try
+            {
+                var versions = await _fabricService.GetLoaderVersionsAsync(gameVersion);
+                var items = versions.Select(v => v.Loader.Version).ToList();
+                
+                loaderVersionCombo.ItemsSource = items;
+                loaderVersionCombo.IsEnabled = true;
+
+                if (_existingInstallation != null && _existingInstallation.LoaderType == ModLoaderType.Fabric && !string.IsNullOrEmpty(_existingInstallation.ModLoaderVersion))
+                {
+                    var existing = items.FirstOrDefault(v => v == _existingInstallation.ModLoaderVersion);
+                    if (existing != null) loaderVersionCombo.SelectedItem = existing;
+                    else loaderVersionCombo.SelectedIndex = 0;
+                }
+                else if (items.Any())
+                {
+                    loaderVersionCombo.SelectedIndex = 0;
+                }
+            }
+            catch
+            {
+                loaderVersionCombo.ItemsSource = new[] { "Error loading versions" };
+            }
+        }
+        
+        // Also update Mods tab enable state
+        var modsTab = this.FindControl<TabItem>("ModsTab");
+        if (modsTab != null)
+        {
+            modsTab.IsEnabled = type != ModLoaderType.Vanilla;
+        }
     }
 }

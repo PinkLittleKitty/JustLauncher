@@ -281,7 +281,7 @@ public class JavaManager
         return paths;
     }
     
-    private async Task DownloadFileAsync(string url, string path, IProgress<double> progress)
+    private async Task DownloadFileAsync(string url, string path, IProgress<double>? progress)
     {
          using var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
          response.EnsureSuccessStatusCode();
@@ -324,8 +324,9 @@ public class JavaManager
                 {}
 
                 using var process = Process.Start(startInfo);
+                if (process == null) return false;
                 await process.WaitForExitAsync();
-                return process?.ExitCode == 0;
+                return process.ExitCode == 0;
             }
         }
         catch (Exception ex)

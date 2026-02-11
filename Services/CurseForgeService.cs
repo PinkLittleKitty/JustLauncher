@@ -14,11 +14,7 @@ public class CurseForgeService
     private const string BaseUrl = "https://api.curseforge.com/v1";
     private static readonly string ApiKey = ConfigProvider.Get("CURSEFORGE_API_KEY") ?? ""; 
 
-    public CurseForgeService()
-    {
-        // Note: CurseForge API key needs to be set per-request as it's service-specific
-        // HttpClient is now managed by HttpClientManager singleton
-    }
+    public CurseForgeService() { }
 
     private async Task<string> GetWithApiKeyAsync(string url)
     {

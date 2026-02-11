@@ -12,10 +12,7 @@ public class ModrinthService
 {
     private const string BaseUrl = "https://api.modrinth.com/v2";
 
-    public ModrinthService()
-    {
-        // HttpClient is now managed by HttpClientManager singleton
-    }
+    public ModrinthService() { }
 
     public async Task<List<ModInfo>> SearchModsAsync(string query, string minecraftVersion, string loader, int offset = 0)
     {

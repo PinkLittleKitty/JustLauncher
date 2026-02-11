@@ -157,6 +157,9 @@ public partial class MainWindow : Window
         var titleBar = this.FindControl<Control>("TitleBar");
         if (titleBar != null) titleBar.PointerPressed += TitleBar_PointerPressed;
 
+        UpdateTelemetry();
+        SetActiveNavItem("PlayButton");
+
         var notifyHost = this.FindControl<StackPanel>("NotificationHost");
         if (notifyHost != null)
         {
@@ -200,24 +203,28 @@ public partial class MainWindow : Window
         string username = activeAccount?.Username ?? "Player";
         var content = this.FindControl<ContentControl>("MainContent");
         if (content != null) content.Content = new PlayPage(username);
+        SetActiveNavItem("PlayButton");
     }
 
     private void AccountsButton_Click(object? sender, RoutedEventArgs e)
     {
         var content = this.FindControl<ContentControl>("MainContent");
         if (content != null) content.Content = new AccountsPage();
+        SetActiveNavItem("AccountsButton");
     }
 
     private void ConsoleButton_Click(object? sender, RoutedEventArgs e)
     {
         var content = this.FindControl<ContentControl>("MainContent");
         if (content != null) content.Content = new ConsolePage();
+        SetActiveNavItem("ConsoleButton");
     }
 
     private void SettingsButton_Click(object? sender, RoutedEventArgs e)
     {
         var content = this.FindControl<ContentControl>("MainContent");
         if (content != null) content.Content = new SettingsPage();
+        SetActiveNavItem("SettingsButton");
     }
 
     private async void ModsButton_Click(object? sender, RoutedEventArgs e)
@@ -226,6 +233,7 @@ public partial class MainWindow : Window
         var installations = await ConfigManager.LoadInstallationsAsync();
         var selected = installations.Installations.FirstOrDefault(i => i.Id == installations.SelectedInstallationId);
         if (content != null && selected != null) content.Content = new ModsPage(selected);
+        SetActiveNavItem("ModsButton");
     }
 
     private void TitleBar_PointerPressed(object? sender, PointerPressedEventArgs e)
@@ -280,6 +288,50 @@ public partial class MainWindow : Window
                     sidebarGrid.Classes.Add("Collapsed");
                     sidebarColumn.Width = new GridLength(72);
                 }
+            }
+        }
+    }
+
+    private async void UpdateTelemetry()
+    {
+        try
+        {
+            var javaVersionText = this.FindControl<TextBlock>("JavaVersionText");
+            var memoryText = this.FindControl<TextBlock>("MemoryAllocationText");
+
+            string? javaVer = await Task.Run(() => PlatformManager.GetJavaVersionAsync());
+            if (javaVersionText != null)
+            {
+                if (!string.IsNullOrEmpty(javaVer))
+                {
+                    int major = PlatformManager.ExtractMajorVersion(javaVer);
+                    javaVersionText.Text = $"Java {major}";
+                }
+                else
+                {
+                    javaVersionText.Text = "Java --";
+                }
+            }
+
+            var settings = await ConfigManager.LoadSettingsAsync();
+            if (memoryText != null)
+            {
+                memoryText.Text = $"{settings.MemoryAllocationGb:F1} GB";
+            }
+        }
+        catch { }
+    }
+
+    private void SetActiveNavItem(string buttonName)
+    {
+        string[] navButtons = { "PlayButton", "AccountsButton", "SettingsButton", "ConsoleButton", "ModsButton" };
+        foreach (var name in navButtons)
+        {
+            var btn = this.FindControl<Button>(name);
+            if (btn != null)
+            {
+                if (name == buttonName) btn.Classes.Add("Active");
+                else btn.Classes.Remove("Active");
             }
         }
     }

@@ -457,7 +457,7 @@ namespace JustLauncher
                 
                 Dispatcher.UIThread.Post(() => 
                 {
-                    if (statusText != null) statusText.Text = Services.LocalizationService.Instance["Play_StatusReady"]; // Using existing key if possible, or new one
+                    if (statusText != null) statusText.Text = Services.LocalizationService.Instance["Play_StatusReady"];
                     if (progressBar != null) progressBar.IsVisible = false;
                     
                     Services.NotificationService.Instance.ShowSuccess(

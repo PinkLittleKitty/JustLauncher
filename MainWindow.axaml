@@ -62,6 +62,19 @@
         <Style Selector="Button.SidebarBtn">
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
         </Style>
+
+        <Style Selector="Button.SidebarBtn.Active">
+            <Setter Property="Background" Value="#101418"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+            <Setter Property="BorderThickness" Value="4,0,0,0"/>
+        </Style>
+        <Style Selector="Button.SidebarBtn.Active TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        <Style Selector="Button.SidebarBtn.Active i|Icon">
+            <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+        </Style>
         <!-- TitleBar Buttons -->
         <Style Selector="Button.TitleBar">
             <Setter Property="Background" Value="Transparent"/>

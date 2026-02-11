@@ -104,7 +104,7 @@ public partial class AccountsPage : UserControl
     private async void EditAccount(Account? account)
     {
         if (account == null) return;
-        var result = await Services.OverlayService.ShowDialog<Account>(new AccountDialog()); // Assuming we reuse AccountDialog for edit
+        var result = await Services.OverlayService.ShowDialog<Account>(new AccountDialog());
         
         if (result != null)
         {

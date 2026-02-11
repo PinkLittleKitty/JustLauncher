@@ -10,10 +10,7 @@ public class UpdateService
 {
     private const string GITHUB_API_URL = "https://api.github.com/repos/PinkLittleKitty/JustLauncher/releases/latest";
 
-    public UpdateService()
-    {
-        // HttpClient is now managed by HttpClientManager singleton
-    }
+    public UpdateService() { }
 
     public async Task<UpdateInfo?> CheckForUpdatesAsync(bool force = false)
     {

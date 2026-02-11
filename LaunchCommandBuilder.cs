@@ -63,14 +63,25 @@ public static class LaunchCommandBuilder
         classpath.Add(Path.Combine(mcDir, "versions", jarVersion, jarVersion + ".jar"));
         placeholders["${classpath}"] = string.Join(Path.PathSeparator, classpath);
 
+        // Determine memory allocation
+        double ramGb = installation.MemoryAllocationGb > 0 
+            ? installation.MemoryAllocationGb 
+            : settings.MemoryAllocationGb;
+        if (ramGb <= 0) ramGb = 2.0; // Fail-safe default
+
+        string minRam = $"-Xms{(int)ramGb}G";
+        string maxRam = $"-Xmx{(int)ramGb}G";
+
+        // Add memory arguments first (or early enough)
+        args.Add(maxRam);
+        args.Add(minRam);
+
         if (versionInfo.Arguments?.Jvm != null && versionInfo.Arguments.Jvm.Count > 0)
         {
             ProcessArguments(versionInfo.Arguments.Jvm, args, placeholders, currentOs);
         }
         else
         {
-            args.Add($"-Xmx{(int)installation.MemoryAllocationGb}G");
-            args.Add($"-Xms{(int)installation.MemoryAllocationGb}G");
             args.Add("-Djava.library.path=" + placeholders["${nativedir}"]);
             args.Add("-cp");
             args.Add(placeholders["${classpath}"]);

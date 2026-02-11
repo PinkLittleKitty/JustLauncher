@@ -68,7 +68,10 @@ public partial class InstallationDialog : UserControl
                     if (argsBox != null)
                     {
                         int memoryGb = (int)memorySlider.Value;
-                        argsBox.Text = $"-Xmx{memoryGb}G -Xms{memoryGb}G";
+                        if (memoryGb > 0)
+                            argsBox.Text = $"-Xmx{memoryGb}G -Xms{memoryGb}G";
+                        else
+                            argsBox.Text = "";
                     }
                 }
             };
@@ -289,8 +292,8 @@ public partial class InstallationDialog : UserControl
             Version = versionCombo?.SelectedItem?.ToString() ?? "1.21.1",
             BaseVersion = versionCombo?.SelectedItem?.ToString() ?? "1.21.1",
             GameDirectory = dirBox?.Text ?? PlatformManager.GetMinecraftDirectory(),
-            JavaArgs = argsBox?.Text ?? "-Xmx2G",
-            MemoryAllocationGb = memorySlider?.Value ?? 4.0,
+            JavaArgs = argsBox?.Text ?? "",
+            MemoryAllocationGb = memorySlider?.Value ?? 0,
             Icon = "grass_block",
             JavaPath = GetSelectedJavaPath(),
             LoaderType = GetSelectedLoaderType(),

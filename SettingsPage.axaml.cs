@@ -147,8 +147,39 @@ public partial class SettingsPage : UserControl
     {
         if (sender is ComboBox combo && combo.SelectedItem is LanguageInfo langInfo)
         {
+            if (_settings.Language == langInfo.Code) return;
+            
             LocalizationService.Instance.ChangeLanguage(langInfo.Code);
             _settings.Language = langInfo.Code;
+            await ConfigManager.SaveSettingsAsync(_settings);
+        }
+    }
+
+    private async void OnThemeChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (sender is ComboBox combo)
+        {
+            string newTheme = combo.SelectedIndex switch
+            {
+                1 => "Light",
+                2 => "Dark",
+                _ => "System"
+            };
+
+            if (_settings.Theme == newTheme) return;
+
+            _settings.Theme = newTheme;
+            
+            if (Avalonia.Application.Current != null)
+            {
+                Avalonia.Application.Current.RequestedThemeVariant = newTheme switch
+                {
+                    "Light" => Avalonia.Styling.ThemeVariant.Light,
+                    "Dark" => Avalonia.Styling.ThemeVariant.Dark,
+                    _ => Avalonia.Styling.ThemeVariant.Default
+                };
+            }
+            
             await ConfigManager.SaveSettingsAsync(_settings);
         }
     }

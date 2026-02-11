@@ -1,14 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using System;
-using System.Collections.Generic;
-
-using System.Linq;
 using Avalonia.Platform.Storage;
 using JustLauncher.Services;
 using JustLauncher.Models;
-using Avalonia.Threading;
 
 namespace JustLauncher;
 

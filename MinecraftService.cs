@@ -349,7 +349,7 @@ public class MinecraftService
         if (!File.Exists(injectorPath))
         {
             ConsoleService.Instance.Log("Downloading authlib-injector...");
-            string url = "https://github.com/yushijinhun/authlib-injector/releases/download/v1.2.7/authlib-injector-1.2.7.jar";
+            string url = "https://github.com/yushijinhun/authlib-injector/releases/download/v1.2.9/authlib-injector-1.2.9.jar";
             await DownloadFileAsync(url, injectorPath);
         }
         

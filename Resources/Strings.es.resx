@@ -343,6 +343,15 @@
   <data name="Settings_SaveChanges" xml:space="preserve">
     <value>GUARDAR CAMBIOS</value>
   </data>
+  <data name="Settings_MemoryLow" xml:space="preserve">
+    <value>Bajo (2GB)</value>
+  </data>
+  <data name="Settings_MemoryMed" xml:space="preserve">
+    <value>Medio (4GB)</value>
+  </data>
+  <data name="Settings_MemoryHigh" xml:space="preserve">
+    <value>Alto (8GB)</value>
+  </data>
   
   <!-- Play Page (Additional) -->
   <data name="Play_WelcomeBack" xml:space="preserve">

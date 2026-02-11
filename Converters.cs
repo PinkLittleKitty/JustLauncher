@@ -79,6 +79,7 @@ namespace JustLauncher
         public static AsyncImageConverter Instance { get; } = new AsyncImageConverter();
         
         private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Avalonia.Media.Imaging.Bitmap> _cache = new();
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Task> _loadingTasks = new();
 
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
@@ -86,7 +87,6 @@ namespace JustLauncher
             {
                 if (_cache.TryGetValue(url, out var cached)) return cached;
 
-                // Return a placeholder and start loading
                 _ = LoadBitmapAsync(url, parameter as ModInfo);
                 
                 try 
@@ -106,14 +106,32 @@ namespace JustLauncher
         {
             if (_cache.ContainsKey(url)) return;
 
+            if (_loadingTasks.TryGetValue(url, out var existingTask))
+            {
+                await existingTask;
+                if (mod != null)
+                {
+                    Avalonia.Threading.Dispatcher.UIThread.Post(() => mod.NotifyIconChanged());
+                }
+                return;
+            }
+
+            var tcs = new TaskCompletionSource();
+            if (!_loadingTasks.TryAdd(url, tcs.Task)) return;
+
             try
             {
-                var response = await HttpClientManager.Instance.GetAsync(url);
-                if (response.IsSuccessStatusCode)
+                string? cachedPath = await ImageCacheService.GetCachedImageAsync(url);
+                if (!string.IsNullOrEmpty(cachedPath) && File.Exists(cachedPath))
                 {
-                    var stream = await response.Content.ReadAsStreamAsync();
-                    var bitmap = new Avalonia.Media.Imaging.Bitmap(stream);
-                    _cache[url] = bitmap;
+                    await Task.Run(() =>
+                    {
+                        using (var stream = File.OpenRead(cachedPath))
+                        {
+                            var bitmap = Avalonia.Media.Imaging.Bitmap.DecodeToWidth(stream, 80);
+                            _cache[url] = bitmap;
+                        }
+                    });
                     
                     if (mod != null)
                     {
@@ -121,7 +139,15 @@ namespace JustLauncher
                     }
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                ConsoleService.Instance.Log($"[AsyncImage] Error loading {url}: {ex.Message}");
+            }
+            finally
+            {
+                _loadingTasks.TryRemove(url, out _);
+                tcs.SetResult();
+            }
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => null;

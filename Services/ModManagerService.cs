@@ -84,6 +84,7 @@ public class ModManagerService
     public async Task CheckForUpdatesAsync(List<ModInfo> mods, string mcVersion, string loader)
     {
         var modrinth = new ModrinthService();
+        var curseForge = new CurseForgeService();
         
         foreach (var mod in mods)
         {
@@ -91,26 +92,54 @@ public class ModManagerService
 
             try
             {
-                string hash;
-                using (var stream = File.OpenRead(mod.Path))
+                if (string.IsNullOrEmpty(mod.ProjectId))
                 {
-                    using (var sha1 = System.Security.Cryptography.SHA1.Create())
+                    string hash;
+                    using (var stream = File.OpenRead(mod.Path))
                     {
-                        var hashBytes = sha1.ComputeHash(stream);
-                        hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+                        using (var sha1 = System.Security.Cryptography.SHA1.Create())
+                        {
+                            var hashBytes = sha1.ComputeHash(stream);
+                            hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+                        }
+                    }
+
+                    var currentVersion = await modrinth.GetVersionByHashAsync(hash);
+                    if (currentVersion != null)
+                    {
+                        mod.ProjectId = currentVersion.ProjectId;
                     }
                 }
 
-                var currentVersion = await modrinth.GetVersionByHashAsync(hash);
-                if (currentVersion != null)
+                if (!string.IsNullOrEmpty(mod.ProjectId))
                 {
-                    mod.ProjectId = currentVersion.ProjectId;
-                    
-                    var versions = await modrinth.GetVersionsAsync(currentVersion.ProjectId, mcVersion, loader);
+                    if (string.IsNullOrEmpty(mod.IconPath))
+                    {
+                        if (mod.ProjectId.All(char.IsDigit))
+                        {
+                            var cfMod = await curseForge.GetModAsync(mod.ProjectId);
+                            if (cfMod != null)
+                            {
+                                mod.IconPath = cfMod.Logo?.ThumbnailUrl;
+                                if (string.IsNullOrEmpty(mod.Description)) mod.Description = cfMod.Summary;
+                            }
+                        }
+                        else
+                        {
+                            var mrMod = await modrinth.GetProjectAsync(mod.ProjectId);
+                            if (mrMod != null)
+                            {
+                                mod.IconPath = mrMod.IconUrl;
+                                if (string.IsNullOrEmpty(mod.Description)) mod.Description = mrMod.Description;
+                            }
+                        }
+                    }
+
+                    var versions = await modrinth.GetVersionsAsync(mod.ProjectId, mcVersion, loader);
                     if (versions.Count > 0)
                     {
                         var latest = versions.FirstOrDefault();
-                        if (latest != null && latest.Id != currentVersion.Id)
+                        if (latest != null && latest.VersionNumber != mod.Version)
                         {
                             var latestFile = latest.Files.FirstOrDefault(f => f.Primary) ?? latest.Files.FirstOrDefault();
                             if (latestFile != null)
@@ -118,7 +147,6 @@ public class ModManagerService
                                 mod.UpdateAvailable = true;
                                 mod.RemoteVersion = latest.VersionNumber; 
                                 mod.UpdateUrl = latestFile.Url;
-                                ConsoleService.Instance.Log($"[Mods] Update available for {mod.Name}: {currentVersion.VersionNumber} -> {latest.VersionNumber}");
                             }
                         }
                     }

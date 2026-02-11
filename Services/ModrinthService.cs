@@ -80,6 +80,21 @@ public class ModrinthService
         }
     }
 
+    public async Task<ModrinthHit?> GetProjectAsync(string projectId)
+    {
+        string url = $"{BaseUrl}/project/{projectId}";
+        try
+        {
+            string json = await HttpClientManager.Instance.GetStringAsync(url);
+            return JsonSerializer.Deserialize<ModrinthHit>(json);
+        }
+        catch (Exception ex)
+        {
+            ConsoleService.Instance.Log($"[Modrinth] Project lookup error ({projectId}): {ex.Message}");
+            return null;
+        }
+    }
+
     public async Task<ModrinthVersion?> GetVersionByHashAsync(string sha1Hash)
     {
         string url = $"{BaseUrl}/version_file/{sha1Hash}?algorithm=sha1";

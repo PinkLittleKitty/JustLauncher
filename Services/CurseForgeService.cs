@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Linq;
 using JustLauncher;
@@ -91,4 +92,26 @@ public class CurseForgeService
             return null;
         }
     }
+
+    public async Task<CurseForgeMod?> GetModAsync(string projectId)
+    {
+        string url = $"{BaseUrl}/mods/{projectId}";
+        try
+        {
+            string json = await GetWithApiKeyAsync(url);
+            var result = JsonSerializer.Deserialize<CurseForgeModResponse>(json);
+            return result?.Data;
+        }
+        catch (Exception ex)
+        {
+            ConsoleService.Instance.Log($"[CurseForge] Mod lookup error ({projectId}): {ex.Message}");
+            return null;
+        }
+    }
+}
+
+public class CurseForgeModResponse
+{
+    [JsonPropertyName("data")]
+    public CurseForgeMod Data { get; set; } = default!;
 }

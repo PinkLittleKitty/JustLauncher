@@ -48,15 +48,9 @@
 
         <Grid RowDefinitions="*,180">
             
-            <!-- Hero Section -->
-            <StackPanel Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="0">
-                <i:Icon Value="fa-solid fa-gamepad" FontSize="140" Foreground="White" Opacity="0.05" HorizontalAlignment="Center" Margin="0,0,0,0">
-                    <i:Icon.RenderTransform>
-                        <TranslateTransform Y="40"/>
-                    </i:Icon.RenderTransform>
-                </i:Icon>
-                <TextBlock x:Name="WelcomeText" Text="Welcome back, JustNeki!" FontSize="36" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center"/>
-                <TextBlock Text="{loc:Localize Key=Play_ReadyForAdventure}" FontSize="18" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" Opacity="0.6" Margin="0,15,0,0"/>
+            <StackPanel Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10">
+                <TextBlock x:Name="WelcomeText" Text="Welcome back, JustNeki!" FontSize="42" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center"/>
+                <TextBlock Text="{loc:Localize Key=Play_ReadyForAdventure}" FontSize="20" Foreground="White" HorizontalAlignment="Center" Opacity="0.9" FontWeight="Medium"/>
             </StackPanel>
 
             <Border Grid.Row="1" Background="{DynamicResource WindowBackground}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="40,20">

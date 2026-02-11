@@ -5,6 +5,10 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using System;
 using System.Linq;
+using JustLauncher;
+using JustLauncher.Services;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace JustLauncher;
 
@@ -25,6 +29,9 @@ public partial class HomePage : UserControl
 
         var elyByBtn = this.FindControl<Button>("ElyByCard");
         if (elyByBtn != null) elyByBtn.Click += (s, e) => ShowStep2("ElyBy");
+
+        var msBtn = this.FindControl<Button>("MicrosoftCard");
+        if (msBtn != null) msBtn.Click += (s, e) => ShowStep2("Microsoft");
 
         var backBtn = this.FindControl<Control>("Step2BackBtn");
         if (backBtn != null) backBtn.PointerPressed += (s, e) => {
@@ -55,6 +62,13 @@ public partial class HomePage : UserControl
             else elyByBtn.Classes.Remove("Selected");
         }
 
+        var msBtn = this.FindControl<Button>("MicrosoftCard");
+        if (msBtn != null)
+        {
+            if (type == "Microsoft") msBtn.Classes.Add("Selected");
+            else msBtn.Classes.Remove("Selected");
+        }
+
         var overlay = this.FindControl<Border>("Step2Overlay");
         var header = this.FindControl<TextBlock>("Step2Header");
         var subheader = this.FindControl<TextBlock>("Step2Subheader");
@@ -76,26 +90,47 @@ public partial class HomePage : UserControl
         }
         if (passContainer != null) passContainer.IsVisible = type == "ElyBy";
     }
-
     private async void LoginButton_Click(object? sender, RoutedEventArgs e)
     {
+        if (_currentType == "Microsoft")
+        {
+            var dialog = new AccountDialog();
+            var msAccount = await OverlayService.ShowDialog<Account>(dialog);
+            if (msAccount != null)
+            {
+                await FinishLogin(msAccount);
+            }
+            return;
+        }
+
         var box = this.FindControl<TextBox>("UsernameTextBox");
         string username = box?.Text ?? "";
         
         if (string.IsNullOrWhiteSpace(username)) return;
 
+        var account = new Account 
+        { 
+            Username = username, 
+            AccountType = _currentType, 
+            IsActive = true 
+        };
+        await FinishLogin(account);
+    }
+
+    private async Task FinishLogin(Account account)
+    {
         var config = await ConfigManager.LoadAccountsAsync();
         
-        var account = config.Accounts.FirstOrDefault(a => a.Username == username && a.AccountType == _currentType);
-        
-        if (account == null)
+        var existing = config.Accounts.FirstOrDefault(a => a.Username == account.Username && a.AccountType == account.AccountType);
+        if (existing != null) 
         {
-            account = new Account 
-            { 
-                Username = username, 
-                AccountType = _currentType, 
-                IsActive = true 
-            };
+            existing.AccessToken = account.AccessToken;
+            existing.RefreshToken = account.RefreshToken;
+            existing.ExpiresAt = account.ExpiresAt;
+            account = existing;
+        }
+        else
+        {
             config.Accounts.Add(account);
         }
         
@@ -109,7 +144,7 @@ public partial class HomePage : UserControl
             if (desktop.MainWindow is MainWindow mainWindow)
             {
                 var content = mainWindow.FindControl<ContentControl>("MainContent");
-                if (content != null) content.Content = new PlayPage(username);
+                if (content != null) content.Content = new PlayPage(account.Username);
             }
         }
     }

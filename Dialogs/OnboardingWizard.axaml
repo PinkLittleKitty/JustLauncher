@@ -153,21 +153,23 @@
                             </Border>
                         </Button>
                         
-                        <!-- Microsoft Card (Coming Soon) -->
-                        <Border Width="280" Height="420" Background="{DynamicResource WindowBackground}" CornerRadius="16" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Opacity="0.5">
-                            <Grid RowDefinitions="Auto,*,Auto,Auto" Margin="28">
-                                <Border Grid.Row="0" Background="{DynamicResource SecondaryText}" CornerRadius="8" Padding="10,6" HorizontalAlignment="Center">
-                                    <TextBlock Text="{loc:Localize Onboarding_Account_Microsoft_ComingSoon}" FontSize="10" FontWeight="Black" Foreground="White" LetterSpacing="1"/>
-                                </Border>
-                                
-                                <i:Icon Grid.Row="1" Value="fa-brands fa-microsoft" FontSize="72" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                
-                                <StackPanel Grid.Row="2" Spacing="12">
-                                    <TextBlock Text="{loc:Localize Onboarding_Account_Microsoft_Title}" FontSize="22" FontWeight="Black" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{loc:Localize Onboarding_Account_Microsoft_Desc}" FontSize="13" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap" TextAlignment="Center"/>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
+                        <!-- Microsoft Card -->
+                        <Button x:Name="MicrosoftAccountCard" Classes="Secondary" Padding="0" CornerRadius="16" Tag="Microsoft">
+                            <Border Width="280" Height="420" Background="{DynamicResource ContentBackground}" CornerRadius="16" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                                <Grid RowDefinitions="Auto,*,Auto,Auto" Margin="28">
+                                    <Border Grid.Row="0" Background="{DynamicResource AccentBrush}" CornerRadius="8" Padding="10,6" HorizontalAlignment="Center">
+                                        <TextBlock Text="{loc:Localize Onboarding_Account_Microsoft_ComingSoon}" FontSize="10" FontWeight="Black" Foreground="White" LetterSpacing="1"/>
+                                    </Border>
+                                    
+                                    <i:Icon Grid.Row="1" Value="fa-brands fa-microsoft" FontSize="72" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    
+                                    <StackPanel Grid.Row="2" Spacing="12">
+                                        <TextBlock Text="{loc:Localize Onboarding_Account_Microsoft_Title}" FontSize="22" FontWeight="Black" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{loc:Localize Onboarding_Account_Microsoft_Desc}" FontSize="13" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap" TextAlignment="Center" Opacity="0.8"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </Button>
                     </StackPanel>
                 </StackPanel>
             </Grid>

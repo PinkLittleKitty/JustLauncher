@@ -368,7 +368,7 @@
     <value>MICROSOFT</value>
   </data>
   <data name="Home_MicrosoftDesc" xml:space="preserve">
-    <value>Coming Soon. Official Microsoft account support.</value>
+    <value>Official Microsoft account support.</value>
   </data>
   
   <!-- Installation Dialog (Additional) -->
@@ -548,7 +548,7 @@
     <value>Microsoft</value>
   </data>
   <data name="AccountDialog_MicrosoftDesc" xml:space="preserve">
-    <value>Official Microsoft (Coming Soon)</value>
+    <value>Official Microsoft account.</value>
   </data>
   <data name="AccountDialog_Username" xml:space="preserve">
     <value>USERNAME</value>
@@ -768,7 +768,7 @@
     <value>Official Minecraft account with full multiplayer access.</value>
   </data>
   <data name="Onboarding_Account_Microsoft_ComingSoon" xml:space="preserve">
-    <value>COMING SOON</value>
+    <value>OFFICIAL</value>
   </data>
   <data name="Onboarding_Java_Title" xml:space="preserve">
     <value>Java Setup</value>

@@ -383,6 +383,35 @@ namespace JustLauncher
                 if (account == null) throw new Exception("No account selected");
                 Log($"Using account: {account.Username} ({account.AccountType})");
 
+                if (account.AccountType == "Microsoft" && !string.IsNullOrEmpty(account.RefreshToken))
+                {
+                    bool needsRefresh = !account.ExpiresAt.HasValue || account.ExpiresAt.Value <= DateTime.Now.AddMinutes(5);
+                    if (needsRefresh)
+                    {
+                        Log("Microsoft token expired or expiring soon. Refreshing...");
+                        Dispatcher.UIThread.Post(() => { if (statusText != null) statusText.Text = "Refreshing Microsoft account..."; });
+                        
+                        var refreshResp = await Services.MicrosoftAuthService.Instance.RefreshTokenAsync(account.RefreshToken);
+                        if (refreshResp != null)
+                        {
+                            var xboxResp = await Services.MicrosoftAuthService.Instance.AuthenticateWithXboxAsync(refreshResp.AccessToken);
+                            var xstsResp = await Services.MicrosoftAuthService.Instance.AuthenticateWithXstsAsync(xboxResp.Token);
+                            var mcResp = await Services.MicrosoftAuthService.Instance.AuthenticateWithMinecraftAsync(xstsResp.Token, xboxResp.DisplayClaims.Xui[0].Uhs);
+                            
+                            account.AccessToken = mcResp.AccessToken;
+                            account.RefreshToken = refreshResp.RefreshToken;
+                            account.ExpiresAt = DateTime.Now.AddSeconds(refreshResp.ExpiresIn);
+                            
+                            await ConfigManager.SaveAccountsAsync(accountsConfig);
+                            Log("Microsoft token refreshed successfully.");
+                        }
+                        else
+                        {
+                            throw new Exception("Microsoft session expired. Please log in again.");
+                        }
+                    }
+                }
+
                 if (account.AccountType == "ElyBy")
                 {
                     Log("Preparing Ely.by authentication...");

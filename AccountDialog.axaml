@@ -89,11 +89,11 @@
                             </Border>
                         </ListBoxItem>
 
-                        <!-- Microsoft Card (Inactive) -->
-                        <ListBoxItem Tag="Microsoft" IsEnabled="False">
-                            <Border Padding="20" Height="140" Background="{DynamicResource WindowBackground}" CornerRadius="12" Opacity="0.5" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                        <!-- Microsoft Card -->
+                        <ListBoxItem Tag="Microsoft">
+                            <Border Classes="Card" Padding="20" Height="140">
                                 <Grid RowDefinitions="*,Auto,Auto">
-                                    <i:Icon Value="fa-brands fa-microsoft" FontSize="32" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                    <i:Icon Value="fa-brands fa-microsoft" FontSize="32" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                                     <TextBlock Grid.Row="1" Text="{loc:Localize Key=AccountDialog_Microsoft}" FontSize="16" FontWeight="Bold" Margin="0,12,0,4"/>
                                     <TextBlock Grid.Row="2" Text="{loc:Localize Key=AccountDialog_MicrosoftDesc}" FontSize="10" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap"/>
                                 </Grid>
@@ -102,7 +102,7 @@
                     </ListBox>
                 </StackPanel>
 
-                <!-- Step 2: Credential Entry -->
+                <!-- Step 2: Credential Entry (Offline/ElyBy) -->
                 <StackPanel x:Name="Step2Container" Spacing="24" IsVisible="False">
                     <TextBlock Text="{loc:Localize Key=AccountDialog_Step2}" Classes="PageDescription" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
                     
@@ -127,6 +127,39 @@
                                 <TextBlock x:Name="Step2InfoBody" Text="{loc:Localize Key=AccountDialog_OfflineInfo}" FontSize="12" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap" Opacity="0.8"/>
                             </StackPanel>
                         </Border>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Step 3: Microsoft Browser Login -->
+                <StackPanel x:Name="Step3Container" Spacing="24" IsVisible="False">
+                    <TextBlock Text="MICROSOFT AUTHENTICATION" Classes="PageDescription" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
+                    
+                    <StackPanel Spacing="20">
+                        <TextBlock Text="Please follow these steps to log in:" FontSize="14" FontWeight="Bold"/>
+                        
+                        <Border Background="{DynamicResource WindowBackground}" CornerRadius="12" Padding="15" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                            <StackPanel Spacing="15">
+                                <StackPanel Spacing="5">
+                                    <TextBlock Text="1. VISIT THE LOGIN PAGE" FontSize="10" Foreground="{DynamicResource SecondaryText}" FontWeight="Bold"/>
+                                    <TextBlock x:Name="LoginUrlText" Text="https://microsoft.com/link" FontSize="14" Foreground="{DynamicResource AccentBrush}" FontWeight="Bold"/>
+                                </StackPanel>
+                                
+                                <Separator Background="{DynamicResource BorderBrush}"/>
+                                
+                                <StackPanel Spacing="5">
+                                    <TextBlock Text="2. ENTER THIS CODE" FontSize="10" Foreground="{DynamicResource SecondaryText}" FontWeight="Bold"/>
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <TextBlock x:Name="UserCodeText" Text="XXXX-XXXX" FontSize="28" FontWeight="Black" LetterSpacing="2" VerticalAlignment="Center"/>
+                                        <Button x:Name="CopyCodeButton" Grid.Column="1" Classes="Secondary" Content="Copy Code" Padding="10,5"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                        
+                        <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
+                            <ProgressBar IsIndeterminate="True" Width="20" Height="20" Theme="{StaticResource {x:Type ProgressBar}}"/>
+                            <TextBlock Text="Waiting for your login in the browser..." VerticalAlignment="Center" Opacity="0.7" FontSize="12"/>
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
             </Grid>

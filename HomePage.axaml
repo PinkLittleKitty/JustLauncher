@@ -42,13 +42,15 @@
                     </Border>
                 </Button>
 
-                <Border Width="300" Height="380" Background="{DynamicResource WindowBackground}" CornerRadius="24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Opacity="0.6">
-                    <Grid RowDefinitions="*,Auto,Auto" Margin="32">
-                        <i:Icon Value="fa-brands fa-microsoft" FontSize="64" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Row="1" Text="{loc:Localize Key=Home_Microsoft}" FontSize="20" FontWeight="Black" Margin="0,0,0,8" HorizontalAlignment="Center"/>
-                        <TextBlock Grid.Row="2" Text="{loc:Localize Key=Home_MicrosoftDesc}" FontSize="13" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap" TextAlignment="Center"/>
-                    </Grid>
-                </Border>
+                <Button x:Name="MicrosoftCard" Classes="Secondary" Padding="0" CornerRadius="20" Tag="Microsoft">
+                    <Border Width="300" Height="380" Background="{DynamicResource ContentBackground}" CornerRadius="24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                        <Grid RowDefinitions="*,Auto,Auto" Margin="32">
+                            <i:Icon Value="fa-brands fa-microsoft" FontSize="64" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Row="1" Text="{loc:Localize Key=Home_Microsoft}" FontSize="20" FontWeight="Black" Margin="0,0,0,8" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Row="2" Text="{loc:Localize Key=Home_MicrosoftDesc}" FontSize="13" Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap" TextAlignment="Center" Opacity="0.8"/>
+                        </Grid>
+                    </Border>
+                </Button>
             </StackPanel>
         </StackPanel>
 

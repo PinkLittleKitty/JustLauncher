@@ -372,7 +372,7 @@
     <value>MICROSOFT</value>
   </data>
   <data name="Home_MicrosoftDesc" xml:space="preserve">
-    <value>Próximamente. Soporte oficial de cuentas de Microsoft.</value>
+    <value>Soporte oficial de cuentas de Microsoft.</value>
   </data>
   
   <!-- Installation Dialog (Additional) -->
@@ -552,7 +552,7 @@
     <value>Microsoft</value>
   </data>
   <data name="AccountDialog_MicrosoftDesc" xml:space="preserve">
-    <value>Microsoft Oficial (Próximamente)</value>
+    <value>Cuenta oficial de Microsoft.</value>
   </data>
   <data name="AccountDialog_Username" xml:space="preserve">
     <value>NOMBRE DE USUARIO</value>
@@ -765,7 +765,7 @@
     <value>Cuenta oficial de Minecraft con acceso multijugador completo.</value>
   </data>
   <data name="Onboarding_Account_Microsoft_ComingSoon" xml:space="preserve">
-    <value>PRÓXIMAMENTE</value>
+    <value>OFICIAL</value>
   </data>
   <data name="Onboarding_Java_Title" xml:space="preserve">
     <value>Configuración de Java</value>

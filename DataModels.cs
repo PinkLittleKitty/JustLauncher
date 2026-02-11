@@ -258,6 +258,11 @@ namespace JustLauncher
         public string SkinUrl { get; set; } = default!;
         public DateTime Created { get; set; } = DateTime.Now;
 
+        public string? AccessToken { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime? ExpiresAt { get; set; }
+        public string? Xuid { get; set; }
+
         public string GetAvatarUrl(int size = 64)
         {
             if (AccountType == "ElyBy")

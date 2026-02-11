@@ -4,8 +4,10 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Interactivity;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using JustLauncher;
+using JustLauncher.Services;
 
 namespace JustLauncher.Dialogs
 {
@@ -51,6 +53,9 @@ namespace JustLauncher.Dialogs
             
             var elyByCard = this.FindControl<Button>("ElyByAccountCard");
             if (elyByCard != null) elyByCard.Click += OnAccountTypeSelected;
+
+            var msCard = this.FindControl<Button>("MicrosoftAccountCard");
+            if (msCard != null) msCard.Click += OnAccountTypeSelected;
             
             var browseJavaBtn = this.FindControl<Button>("BrowseJavaButton");
             if (browseJavaBtn != null) browseJavaBtn.Click += BrowseForJava;
@@ -100,6 +105,35 @@ namespace JustLauncher.Dialogs
                     await ConfigManager.SaveAccountsAsync(accountsConfig);
                     
                     AccountUsername = "Player";
+                }
+                else if (accountType == "Microsoft")
+                {
+                    var dialog = new AccountDialog();
+                    var account = await OverlayService.ShowDialog<Account>(dialog);
+                    if (account != null)
+                    {
+                        var accountsConfig = await ConfigManager.LoadAccountsAsync();
+                        var existing = accountsConfig.Accounts.FirstOrDefault(a => a.Username == account.Username && a.AccountType == account.AccountType);
+                        if (existing != null)
+                        {
+                            existing.AccessToken = account.AccessToken;
+                            existing.RefreshToken = account.RefreshToken;
+                            existing.ExpiresAt = account.ExpiresAt;
+                            account = existing;
+                        }
+                        else
+                        {
+                            accountsConfig.Accounts.Add(account);
+                        }
+
+                        foreach (var acc in accountsConfig.Accounts) acc.IsActive = (acc.Id == account.Id);
+                        accountsConfig.SelectedAccountId = account.Id;
+                        await ConfigManager.SaveAccountsAsync(accountsConfig);
+
+                        AccountUsername = account.Username;
+                        NextStep();
+                    }
+                    return;
                 }
                 
                 NextStep();

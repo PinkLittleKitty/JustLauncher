@@ -23,15 +23,15 @@ public static class LaunchCommandBuilder
             { "${assets_root}", Path.Combine(mcDir, "assets") },
             { "${assets_index_name}", versionInfo.AssetIndex.Id },
             { "${auth_uuid}", account.Id.Replace("-", "") },
-            { "${auth_access_token}", "0" },
-            { "${user_type}", "legacy" },
+            { "${auth_access_token}", account.AccessToken ?? "0" },
+            { "${user_type}", account.AccountType == "Microsoft" ? "msa" : "legacy" },
             { "${version_type}", versionInfo.Type },
             { "${user_properties}", "{}" },
             { "${launcher_name}", "JustLauncher" },
             { "${launcher_version}", AppVersion.Version },
             { "${nativedir}", Path.Combine(mcDir, "versions", installation.Version, "natives") },
             { "${clientid}", "0" },
-            { "${auth_xuid}", "0" },
+            { "${auth_xuid}", account.Xuid ?? "0" },
             { "${resolution_width}", "854" },
             { "${resolution_height}", "480" },
             { "${quickPlayPath}", "" },
@@ -111,9 +111,9 @@ public static class LaunchCommandBuilder
             args.Add("--uuid");
             args.Add(placeholders["${auth_uuid}"]);
             args.Add("--accessToken");
-            args.Add("0");
+            args.Add(placeholders["${auth_access_token}"]);
             args.Add("--userType");
-            args.Add("legacy");
+            args.Add(placeholders["${user_type}"]);
             args.Add("--versionType");
             args.Add(versionInfo.Type);
         }

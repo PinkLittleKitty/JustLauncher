@@ -21,6 +21,10 @@ public partial class ModsControl : UserControl
     private ModManagerService _modManager = new();
     private ModrinthService _modrinthService = new();
     private CurseForgeService _curseForgeService = new();
+    private int _searchIndex = 0;
+    private List<ModInfo> _browseResults = new();
+    private HashSet<string> _processedProjectIds = new();
+    private bool _isSearching = false;
 
     public ModsControl()
     {
@@ -45,6 +49,9 @@ public partial class ModsControl : UserControl
 
         var searchBtn = this.FindControl<Button>("SearchButton");
         if (searchBtn != null) searchBtn.Click += async (s, e) => { await SearchModsAsync(); };
+
+        var loadMoreBtn = this.FindControl<Button>("LoadMoreButton");
+        if (loadMoreBtn != null) loadMoreBtn.Click += async (s, e) => { await LoadMoreModsAsync(); };
 
         var modsList = this.FindControl<ListBox>("ModsListBox");
         if (modsList != null)
@@ -122,42 +129,74 @@ public partial class ModsControl : UserControl
 
     private async Task SearchModsAsync()
     {
-        if (_installation == null) 
-        {
-            ConsoleService.Instance.Log("[Mods] Search skipped: No installation context");
-            return;
-        }
+        _searchIndex = 0;
+        _browseResults.Clear();
+        _processedProjectIds.Clear();
 
-        var searchBox = this.FindControl<TextBox>("SearchBox");
-        string query = searchBox?.Text ?? "";
-        ConsoleService.Instance.Log($"[Mods] Searching for '{query}'...");
-        
-        List<ModInfo> results;
-        if (_installation.LoaderType == ModLoaderType.Fabric)
-        {
-            results = await _modrinthService.SearchModsAsync(query, _installation.BaseVersion, "fabric");
-        }
-        else if (_installation.LoaderType == ModLoaderType.Forge)
-        {
-            results = await _curseForgeService.SearchModsAsync(query, _installation.BaseVersion, "forge");
-        }
-        else
-        {
-            results = new List<ModInfo>();
-        }
+        await PerformSearchAsync();
+    }
 
-        var installedMods = await _modManager.GetModsAsync(GetModsDirectory());
-        foreach (var mod in results)
-        {
-            mod.IsInstalled = installedMods.Any(m => m.Name == mod.Name || m.FileName == mod.FileName);
-        }
+    private async Task PerformSearchAsync()
+    {
+        if (_installation == null || _isSearching) return;
+        _isSearching = true;
 
-        var browseList = this.FindControl<ListBox>("BrowseListBox");
-        if (browseList != null)
+        var loadMoreBtn = this.FindControl<Button>("LoadMoreButton");
+        if (loadMoreBtn != null) loadMoreBtn.Content = "Loading...";
+
+        try
         {
-            browseList.ItemsSource = null;
-            browseList.ItemsSource = results;
+            var searchBox = this.FindControl<TextBox>("SearchBox");
+            string query = searchBox?.Text ?? "";
+            
+            List<ModInfo> results;
+            if (_installation.LoaderType == ModLoaderType.Fabric)
+            {
+                results = await _modrinthService.SearchModsAsync(query, _installation.BaseVersion, "fabric", _searchIndex);
+            }
+            else if (_installation.LoaderType == ModLoaderType.Forge)
+            {
+                results = await _curseForgeService.SearchModsAsync(query, _installation.BaseVersion, "forge", _searchIndex);
+            }
+            else
+            {
+                results = new List<ModInfo>();
+            }
+
+            var installedMods = await _modManager.GetModsAsync(GetModsDirectory());
+            foreach (var mod in results)
+            {
+                if (string.IsNullOrEmpty(mod.ProjectId) || _processedProjectIds.Contains(mod.ProjectId))
+                    continue;
+
+                mod.IsInstalled = installedMods.Any(m => m.Name == mod.Name || m.FileName == mod.FileName);
+                _browseResults.Add(mod);
+                _processedProjectIds.Add(mod.ProjectId);
+            }
+
+            var browseList = this.FindControl<ListBox>("BrowseListBox");
+            if (browseList != null)
+            {
+                browseList.ItemsSource = null;
+                browseList.ItemsSource = _browseResults.ToList();
+            }
+
+            if (loadMoreBtn != null)
+            {
+                loadMoreBtn.IsVisible = results.Count >= 20;
+                loadMoreBtn.Content = "Load More";
+            }
         }
+        finally
+        {
+            _isSearching = false;
+        }
+    }
+
+    private async Task LoadMoreModsAsync()
+    {
+        _searchIndex += 20;
+        await PerformSearchAsync();
     }
 
     private async Task UpdateModAsync(ModInfo mod, Button btn)

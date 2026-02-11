@@ -28,11 +28,11 @@ public class CurseForgeService
         return await response.Content.ReadAsStringAsync();
     }
 
-    public async Task<List<ModInfo>> SearchModsAsync(string query, string minecraftVersion, string loader)
+    public async Task<List<ModInfo>> SearchModsAsync(string query, string minecraftVersion, string loader, int index = 0)
     {
         int modLoaderType = loader.Equals("Forge", StringComparison.OrdinalIgnoreCase) ? 1 : 4;
         string versionParam = string.IsNullOrEmpty(minecraftVersion) ? "" : $"&gameVersion={minecraftVersion}";
-        string url = $"{BaseUrl}/mods/search?gameId=432{versionParam}&modLoaderType={modLoaderType}&searchFilter={Uri.EscapeDataString(query)}&classId=6";
+        string url = $"{BaseUrl}/mods/search?gameId=432{versionParam}&modLoaderType={modLoaderType}&searchFilter={Uri.EscapeDataString(query)}&classId=6&index={index}";
 
         try
         {

@@ -17,11 +17,11 @@ public class ModrinthService
         // HttpClient is now managed by HttpClientManager singleton
     }
 
-    public async Task<List<ModInfo>> SearchModsAsync(string query, string minecraftVersion, string loader)
+    public async Task<List<ModInfo>> SearchModsAsync(string query, string minecraftVersion, string loader, int offset = 0)
     {
         string versionFacet = string.IsNullOrEmpty(minecraftVersion) ? "" : $"[\"versions:{minecraftVersion}\"],";
         string facets = $"[{versionFacet}[\"categories:{loader.ToLower()}\"],[\"project_type:mod\"]]";
-        string url = $"{BaseUrl}/search?query={Uri.EscapeDataString(query)}&facets={Uri.EscapeDataString(facets)}&limit=20";
+        string url = $"{BaseUrl}/search?query={Uri.EscapeDataString(query)}&facets={Uri.EscapeDataString(facets)}&limit=20&offset={offset}";
 
         try
         {

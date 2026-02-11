@@ -50,40 +50,46 @@
                         <TextBox x:Name="SearchBox" Watermark="{loc:Localize Key=Mods_SearchPlaceholder}" Margin="0,0,10,0"/>
                         <Button Grid.Column="1" x:Name="SearchButton" Classes="Primary" Content="Search"/>
                     </Grid>
-                    <ListBox Grid.Row="1" x:Name="BrowseListBox" Background="Transparent" BorderThickness="0">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Border Background="{DynamicResource WindowBackground}" CornerRadius="8" Padding="10" Margin="0,0,0,5">
-                                    <Grid ColumnDefinitions="Auto,*,Auto">
-                                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="4" ClipToBounds="True" Margin="0,0,10,0">
-                                            <Image Source="{Binding IconPath, Converter={StaticResource AsyncImageConverter}, ConverterParameter={Binding}}"/>
+                    <ScrollViewer Grid.Row="1">
+                        <StackPanel>
+                            <ListBox x:Name="BrowseListBox" Background="Transparent" BorderThickness="0" Padding="0,0,0,10" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{DynamicResource WindowBackground}" CornerRadius="8" Padding="10" Margin="0,0,0,5">
+                                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                                <Border Grid.Column="0" Width="40" Height="40" CornerRadius="4" ClipToBounds="True" Margin="0,0,10,0">
+                                                    <Image Source="{Binding IconPath, Converter={StaticResource AsyncImageConverter}, ConverterParameter={Binding}}"/>
+                                                </Border>
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                                    <TextBlock Text="{Binding Authors}" FontSize="11" Foreground="{DynamicResource SecondaryText}"/>
+                                                </StackPanel>
+                                                <Panel Grid.Column="2" VerticalAlignment="Center" MinWidth="100">
+                                                    <Button x:Name="DownloadButton" Content="{loc:Localize Key=Mods_Download}" 
+                                                            Classes="Primary" HorizontalAlignment="Stretch" Tag="{Binding}" IsVisible="{Binding !IsInstalled}"/>
+                                                    
+                                                    <Button x:Name="UpdateBrowseButton" Content="{loc:Localize Key=Mods_Update}" 
+                                                            Classes="Success" HorizontalAlignment="Stretch" Tag="{Binding}" IsVisible="{Binding UpdateAvailable}"/>
+
+                                                    <StackPanel IsVisible="{Binding IsDownloading}" Spacing="5">
+                                                        <TextBlock Text="{loc:Localize Key=Mods_Downloading}" FontSize="10" HorizontalAlignment="Center"/>
+                                                        <ProgressBar Minimum="0" Maximum="100" Value="{Binding DownloadProgress}" Height="4"/>
+                                                    </StackPanel>
+
+                                                    <TextBlock Text="{loc:Localize Key=Mods_AlreadyInstalled}" 
+                                                               IsVisible="{Binding IsInstalled}" 
+                                                               VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                               Foreground="{DynamicResource SuccessBrush}" FontWeight="Bold"/>
+                                                </Panel>
+                                            </Grid>
                                         </Border>
-                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
-                                            <TextBlock Text="{Binding Authors}" FontSize="11" Foreground="{DynamicResource SecondaryText}"/>
-                                        </StackPanel>
-                                        <Panel Grid.Column="2" VerticalAlignment="Center" MinWidth="100">
-                                            <Button x:Name="DownloadButton" Content="{loc:Localize Key=Mods_Download}" 
-                                                    Classes="Primary" HorizontalAlignment="Stretch" Tag="{Binding}" IsVisible="{Binding !IsInstalled}"/>
-                                            
-                                            <Button x:Name="UpdateBrowseButton" Content="{loc:Localize Key=Mods_Update}" 
-                                                    Classes="Success" HorizontalAlignment="Stretch" Tag="{Binding}" IsVisible="{Binding UpdateAvailable}"/>
-
-                                            <StackPanel IsVisible="{Binding IsDownloading}" Spacing="5">
-                                                <TextBlock Text="{loc:Localize Key=Mods_Downloading}" FontSize="10" HorizontalAlignment="Center"/>
-                                                <ProgressBar Minimum="0" Maximum="100" Value="{Binding DownloadProgress}" Height="4"/>
-                                            </StackPanel>
-
-                                            <TextBlock Text="{loc:Localize Key=Mods_AlreadyInstalled}" 
-                                                       IsVisible="{Binding IsInstalled}" 
-                                                       VerticalAlignment="Center" HorizontalAlignment="Center"
-                                                       Foreground="{DynamicResource SuccessBrush}" FontWeight="Bold"/>
-                                        </Panel>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <Button x:Name="LoadMoreButton" Classes="Secondary" Content="Load More" 
+                                    HorizontalAlignment="Stretch" Margin="0,5,0,10" IsVisible="False"/>
+                        </StackPanel>
+                    </ScrollViewer>
                 </Grid>
             </TabItem>
         </TabControl>

@@ -674,8 +674,11 @@
   <data name="Mods_Update" xml:space="preserve">
     <value>Update</value>
   </data>
-  <data name="Mods_CheckingUpdates" xml:space="preserve">
-    <value>Checking for updates...</value>
+  <data name="Mods_Download" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="Mods_Downloading" xml:space="preserve">
+    <value>Downloading...</value>
   </data>
   <data name="Onboarding_Welcome_Title" xml:space="preserve">
     <value>Welcome to JustLauncher!</value>

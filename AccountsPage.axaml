@@ -20,17 +20,17 @@
 
     <Grid Margin="40" RowDefinitions="Auto,*,Auto">
         <!-- Header -->
-        <Grid Grid.Row="0" RowDefinitions="Auto,Auto" Margin="0,0,0,40">
+        <Grid Grid.Row="0" RowDefinitions="Auto,Auto" Margin="0,0,0,32">
             <StackPanel Grid.Row="0" Spacing="4" HorizontalAlignment="Center">
                 <TextBlock Text="{loc:Localize Key=Accounts_Title}" Classes="PageHeader"/>
                 <TextBlock Text="{loc:Localize Key=Accounts_Description}" Classes="PageDescription"/>
             </StackPanel>
             
-            <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="16" HorizontalAlignment="Center" Margin="0,24,0,0">
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="16" HorizontalAlignment="Center" Margin="0,16,0,0">
                 <Button x:Name="RefreshButton" ToolTip.Tip="Refresh" Padding="12" Classes="Secondary">
                     <i:Icon Value="fa-solid fa-sync" FontSize="20"/>
                 </Button>
-                <Button x:Name="AddAccountButton" Classes="Primary" Padding="24,14">
+                <Button x:Name="AddAccountButton" Classes="Primary" Padding="16,10">
                     <StackPanel Orientation="Horizontal" Spacing="12">
                         <i:Icon Value="fa-solid fa-plus" FontSize="20"/>
                         <TextBlock Text="{loc:Localize Key=Accounts_AddAccount}" FontWeight="Bold"/>
@@ -49,11 +49,11 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Classes="Card" Margin="0,0,24,24" Padding="20" Width="260">
+                        <Border Classes="Card" Margin="0,0,16,16" Padding="16" Width="220">
                             <StackPanel Spacing="20">
                                 <!-- Avatar & Status -->
                                 <Grid HorizontalAlignment="Center">
-                                    <Border Width="96" Height="96" CornerRadius="0" ClipToBounds="True" 
+                                    <Border Width="80" Height="80" CornerRadius="0" ClipToBounds="True" 
                                             BorderBrush="{DynamicResource BorderBrush}" BorderThickness="3">
                                         <Panel>
                                             <controls:AsyncImage SourceUrl="{Binding Converter={StaticResource AccountToSkinUrlConverter}}"
@@ -76,7 +76,7 @@
 
                                 <!-- Info -->
                                 <StackPanel Spacing="4">
-                                    <TextBlock Text="{Binding Username}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource PrimaryText}" 
+                                    <TextBlock Text="{Binding Username}" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource PrimaryText}" 
                                                HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>
                                     <TextBlock Text="{Binding AccountType}" FontSize="12" Foreground="{DynamicResource SecondaryText}" 
                                                HorizontalAlignment="Center" FontWeight="SemiBold" Opacity="0.8"/>

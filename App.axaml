@@ -22,7 +22,7 @@
             <Setter Property="Background" Value="{DynamicResource SuccessBrush}"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="Padding" Value="12,8"/>
-            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="CornerRadius" Value="4"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="Transitions">
@@ -42,21 +42,21 @@
             <Setter Property="Background" Value="{DynamicResource HoverBackground}"/>
             <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
             <Setter Property="Padding" Value="12,8"/>
-            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="CornerRadius" Value="4"/>
         </Style>
 
         <Style Selector="Button.Danger">
             <Setter Property="Background" Value="{DynamicResource DangerBrush}"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="Padding" Value="12,8"/>
-            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="CornerRadius" Value="4"/>
             <Setter Property="FontWeight" Value="Bold"/>
         </Style>
 
         <!-- Unified Card Style -->
         <Style Selector="Border.Card">
             <Setter Property="Background" Value="{DynamicResource ContentBackground}"/>
-            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="CornerRadius" Value="4"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
             <Setter Property="Transitions">
@@ -87,14 +87,14 @@
                     <SolidColorBrush x:Key="WarningBrush" Color="#E65100"/>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="WindowBackground" Color="#23272A"/>
-                    <SolidColorBrush x:Key="ContentBackground" Color="#2C2F33"/>
+                    <SolidColorBrush x:Key="WindowBackground" Color="#0B0D11"/>
+                    <SolidColorBrush x:Key="ContentBackground" Color="#15191E"/>
                     <SolidColorBrush x:Key="PrimaryText" Color="#FFFFFF"/>
                     <SolidColorBrush x:Key="SecondaryText" Color="#8E9297"/>
-                    <SolidColorBrush x:Key="BorderBrush" Color="#2C2F33"/>
-                    <SolidColorBrush x:Key="TitleBarBackground" Color="#1E2124"/>
-                    <SolidColorBrush x:Key="HoverBackground" Color="#40444B"/>
-                    <SolidColorBrush x:Key="InputBackground" Color="#1E2124"/>
+                    <SolidColorBrush x:Key="BorderBrush" Color="#24292F"/>
+                    <SolidColorBrush x:Key="TitleBarBackground" Color="#090B0E"/>
+                    <SolidColorBrush x:Key="HoverBackground" Color="#1F242B"/>
+                    <SolidColorBrush x:Key="InputBackground" Color="#0B0D11"/>
                     <SolidColorBrush x:Key="SuccessBrush" Color="#5865F2"/>
                     <SolidColorBrush x:Key="AccentBrush" Color="#7289DA"/>
                     <SolidColorBrush x:Key="DangerBrush" Color="#ED4245"/>

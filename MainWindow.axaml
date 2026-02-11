@@ -25,7 +25,7 @@
             <Setter Property="Padding" Value="10"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="CornerRadius" Value="4"/>
             <Setter Property="Margin" Value="10,2"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="Medium"/>
@@ -107,7 +107,8 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <!-- Sidebar -->
-                <Grid Grid.Column="0" x:Name="SidebarGrid" RowDefinitions="Auto,Auto,*,Auto" Background="{DynamicResource TitleBarBackground}" Classes="Collapsed">
+                <Border Grid.Column="0" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,1,0">
+                    <Grid x:Name="SidebarGrid" RowDefinitions="Auto,Auto,*,Auto" Background="{DynamicResource TitleBarBackground}" Classes="Collapsed">
                     <!-- Collapse Toggle -->
                     <Button x:Name="ToggleSidebarButton" Grid.Row="0" Classes="SidebarBtn" Margin="10,10,10,0">
                         <i:Icon Value="fa-solid fa-bars" />
@@ -163,6 +164,7 @@
                         </Button>
                     </StackPanel>
                 </Grid>
+                </Border>
 
                 <!-- Page Content -->
                 <ContentControl x:Name="MainContent" Grid.Column="1" Margin="0"/>

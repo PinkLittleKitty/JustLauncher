@@ -265,7 +265,8 @@ public partial class MainWindow : Window
         var sidebarGrid = this.FindControl<Grid>("SidebarGrid");
         if (sidebarGrid != null)
         {
-            var parentGrid = sidebarGrid.Parent as Grid;
+            var border = sidebarGrid.Parent as Border;
+            var parentGrid = border?.Parent as Grid;
             var sidebarColumn = parentGrid?.ColumnDefinitions[0];
             if (sidebarColumn != null)
             {

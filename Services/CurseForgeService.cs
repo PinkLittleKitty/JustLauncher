@@ -11,7 +11,7 @@ namespace JustLauncher.Services;
 public class CurseForgeService
 {
     private const string BaseUrl = "https://api.curseforge.com/v1";
-    private const string ApiKey = "$2a$10$89Mof6FSnm86q.OshInatue4V.Lz5aT.6Vf9V.9V.9V.9V.9V.9V"; 
+    private static readonly string ApiKey = ConfigProvider.Get("CURSEFORGE_API_KEY") ?? ""; 
 
     public CurseForgeService()
     {

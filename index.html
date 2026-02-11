@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JustLauncher | Modern Minecraft Launcher</title>
+    <meta name="description"
+        content="A fast, lightweight, and modern cross-platform Minecraft launcher built with .NET 8 and Avalonia UI.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="Assets/JustLogo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Outfit:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <img src="Assets/JustLogo.png" alt="JustLauncher Logo">
+                <div class="logo-text">
+                    <span>JustLauncher</span>
+                    <small>It's Just a Launcher.</small>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#download">Download</a></li>
+                <li><a href="https://github.com/PinkLittleKitty/JustLauncher" target="_blank"><i
+                            class="fab fa-github"></i> GitHub</a></li>
+            </ul>
+            <div class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" id="home">
+            <div class="hero-bg"></div>
+            <div class="container hero-content">
+                <h1 class="animate-up">Fast. Lightweight. <span>Modern.</span></h1>
+                <p class="animate-up" style="animation-delay: 0.1s;">The ultimate Minecraft launcher experience built
+                    for everyone. Cross-platform, efficient, and beautifully designed.</p>
+                <div class="hero-btns animate-up" style="animation-delay: 0.2s;">
+                    <a href="#download" id="hero-download" class="btn btn-primary">Download Now</a>
+                    <a href="#features" class="btn btn-secondary">Learn More</a>
+                </div>
+            </div>
+            <div class="hero-preview animate-up" style="animation-delay: 0.3s;">
+                <div class="laptop-frame">
+                    <img src="Assets/Screenshot_1.png" alt="JustLauncher Interface Preview">
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Everything you need.</h2>
+                    <p>Designed to be simple yet powerful.</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card glass">
+                        <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                        <h3>Lightning Fast</h3>
+                        <p>Built with .NET 8 for peak performance and minimal resource usage.</p>
+                    </div>
+                    <div class="feature-card glass">
+                        <div class="feature-icon"><i class="fas fa-desktop"></i></div>
+                        <h3>Cross-Platform</h3>
+                        <p>Runs natively on Windows and Linux. macOS support is in the works.</p>
+                    </div>
+                    <div class="feature-card glass">
+                        <div class="feature-icon"><i class="fas fa-coffee"></i></div>
+                        <h3>Smart Java</h3>
+                        <p>Automatically detects and downloads the correct Java runtime for any version.</p>
+                    </div>
+                    <div class="feature-card glass">
+                        <div class="feature-icon"><i class="fas fa-layer-group"></i></div>
+                        <h3>Instance Manager</h3>
+                        <p>Create and manage isolated Minecraft installations with custom settings.</p>
+                    </div>
+                    <div class="feature-card glass">
+                        <div class="feature-icon"><i class="fas fa-user-shield"></i></div>
+                        <h3>Account Support</h3>
+                        <p>Supports Microsoft accounts and Offline mode for complete flexibility.</p>
+                    </div>
+                    <div class="feature-card glass">
+                        <div class="feature-icon"><i class="fas fa-paint-brush"></i></div>
+                        <h3>Customizable</h3>
+                        <p>Personalize your experience with custom themes and background images.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="screenshots" class="screenshots">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Gallery</h2>
+                    <p>Take a peek inside the launcher.</p>
+                </div>
+                <div class="screenshots-grid">
+                    <div class="screenshot-card glass animate-up">
+                        <img src="Assets/Screenshot_1.png" alt="JustLauncher Home">
+                    </div>
+                    <div class="screenshot-card glass animate-up" style="animation-delay: 0.1s;">
+                        <img src="Assets/Screenshot_2.png" alt="Mod Manager">
+                    </div>
+                    <div class="screenshot-card glass animate-up" style="animation-delay: 0.2s;">
+                        <img src="Assets/Screenshot_3.png" alt="Settings Page">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="download" class="download">
+            <div class="container glass">
+                <div class="download-content">
+                    <h2>Get JustLauncher Today</h2>
+                    <p>Start your Minecraft journey with the most modern launcher available.</p>
+                    <div class="download-btns">
+                        <a href="https://github.com/PinkLittleKitty/JustLauncher/releases/latest" id="download-win"
+                            class="btn btn-download">
+                            <i class="fab fa-windows"></i>
+                            <div>
+                                <span>Download for</span>
+                                <strong>Windows</strong>
+                            </div>
+                        </a>
+                        <a href="https://github.com/PinkLittleKitty/JustLauncher/releases/latest" id="download-linux"
+                            class="btn btn-download">
+                            <i class="fab fa-linux"></i>
+                            <div>
+                                <span>Download for</span>
+                                <strong>Linux</strong>
+                            </div>
+                        </a>
+                    </div>
+                    <p class="source-link">Interested in the code? <a
+                            href="https://github.com/PinkLittleKitty/JustLauncher">Check it out on GitHub</a></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="Assets/JustLogo.png" alt="JustLauncher">
+                    <span>JustLauncher - by JustNeki</span>
+                </div>
+                <div class="footer-links">
+                    <a href="https://github.com/PinkLittleKitty/JustLauncher"><i class="fab fa-github"></i> GitHub</a>
+                    <a href="#" id="contactLink"><i class="fas fa-envelope"></i> Contact</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 JustLauncher. Built with ❤️ for the Minecraft community.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="contactModal" class="modal">
+        <div class="modal-content glass">
+            <span class="close-btn">&times;</span>
+            <h2>Contact Us</h2>
+            <p>Send a message directly to the developer.</p>
+            <form id="contactForm">
+                <div class="form-group">
+                    <input type="text" id="name" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="discord" placeholder="Discord Username or Email" required>
+                </div>
+                <div class="form-group">
+                    <textarea id="message" placeholder="Your Message" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" id="submitBtn">Send Message</button>
+            </form>
+            <div id="formStatus" class="form-status"></div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>

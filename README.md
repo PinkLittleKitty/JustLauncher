@@ -4,15 +4,26 @@
 
 ![JustLauncher](Assets/JustLogo.png)
 
+## Screenshots
+
+<p align="center">
+  <img src="Assets/Screenshot_1.png" width="30%" />
+  <img src="Assets/Screenshot_2.png" width="30%" />
+  <img src="Assets/Screenshot_3.png" width="30%" />
+</p>
+
 ## Features
 
 - **Cross-Platform**: Runs natively on Windows, Linux, and macOS (Not tested).
 - **Modern UI**: Clean, responsive interface powered by Avalonia UI.
-- **Instance Management**: Create and manage multiple isolated Minecraft instances with custom settings.
+- **Integrated Mod Browser**:
+  - Support for **Modrinth** and **CurseForge**.
+  - Advanced search and pagination.
+  - **Performance Optimized**: Specialized image caching and deduplication for instant mod icon loading.
+- **Instance Management**: Create and manage isolated Minecraft instances with Vanilla, **Fabric**, and **Forge** support.
 - **Smart Java Management**:
   - Automatically detects installed Java versions.
   - **Auto-downloads** missing Java runtimes (e.g., Java 8, 17, 21) required for specific Minecraft versions.
-  - Per-instance Java version and memory configuration.
 - **Account Support**: 
   - Offline Mode (Crack).
   - Microsoft Account Login (OAuth). (WIP)

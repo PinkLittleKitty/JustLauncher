@@ -7,14 +7,25 @@
 
         <!-- Global UI Styles -->
         <Style Selector="TextBlock.PageHeader">
-            <Setter Property="FontSize" Value="32"/>
+            <Setter Property="FontSize" Value="26"/>
             <Setter Property="FontWeight" Value="Black"/>
             <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
-            <Setter Property="Margin" Value="0,0,0,5"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
         </Style>
         <Style Selector="TextBlock.PageDescription">
-            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontSize" Value="13"/>
             <Setter Property="Foreground" Value="{DynamicResource SecondaryText}"/>
+            <Setter Property="Opacity" Value="0.6"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="TextBlock.FieldLabel">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryText}"/>
+            <Setter Property="LetterSpacing" Value="1"/>
         </Style>
 
         <!-- Modern Buttons -->

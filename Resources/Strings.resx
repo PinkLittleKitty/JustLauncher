@@ -60,8 +60,11 @@
   </resheader>
   
   <!-- Navigation -->
-  <data name="Nav_Play" xml:space="preserve">
+  <data name="Common_Play" xml:space="preserve">
     <value>Play</value>
+  </data>
+  <data name="Mods_Description" xml:space="preserve">
+    <value>Browse and manage game modifications</value>
   </data>
   <data name="Nav_Accounts" xml:space="preserve">
     <value>Accounts</value>
@@ -164,6 +167,9 @@
   <!-- Settings Page -->
   <data name="Settings_Title" xml:space="preserve">
     <value>SETTINGS</value>
+  </data>
+  <data name="Settings_ConfigureDescription" xml:space="preserve">
+    <value>Configure the global launcher parameters</value>
   </data>
   <data name="Settings_General" xml:space="preserve">
     <value>General</value>
@@ -480,7 +486,7 @@
   
   <!-- Console Page -->
   <data name="Console_Title" xml:space="preserve">
-    <value>SYSTEM CONSOLE</value>
+    <value>System Console</value>
   </data>
   <data name="Console_Description" xml:space="preserve">
     <value>View live logs and game output</value>
@@ -580,7 +586,7 @@
   
   <!-- Accounts Page -->
   <data name="Accounts_Title" xml:space="preserve">
-    <value>ACCOUNTS</value>
+    <value>Accounts</value>
   </data>
   <data name="Accounts_Description" xml:space="preserve">
     <value>Manage your player profiles</value>

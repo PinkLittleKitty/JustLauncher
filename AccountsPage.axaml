@@ -20,20 +20,20 @@
 
     <Grid Margin="40" RowDefinitions="Auto,*,Auto">
         <!-- Header -->
-        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,40">
-            <StackPanel Grid.Column="0">
+        <Grid Grid.Row="0" RowDefinitions="Auto,Auto" Margin="0,0,0,40">
+            <StackPanel Grid.Row="0" Spacing="4" HorizontalAlignment="Center">
                 <TextBlock Text="{loc:Localize Key=Accounts_Title}" Classes="PageHeader"/>
                 <TextBlock Text="{loc:Localize Key=Accounts_Description}" Classes="PageDescription"/>
             </StackPanel>
             
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="16" HorizontalAlignment="Center" Margin="0,24,0,0">
                 <Button x:Name="RefreshButton" ToolTip.Tip="Refresh" Padding="12" Classes="Secondary">
-                    <i:Icon Value="fa-solid fa-sync"/>
+                    <i:Icon Value="fa-solid fa-sync" FontSize="20"/>
                 </Button>
-                <Button x:Name="AddAccountButton" Classes="Primary" Padding="20,12">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <i:Icon Value="fa-solid fa-plus"/>
-                        <TextBlock Text="{loc:Localize Key=Accounts_AddAccount}"/>
+                <Button x:Name="AddAccountButton" Classes="Primary" Padding="24,14">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <i:Icon Value="fa-solid fa-plus" FontSize="20"/>
+                        <TextBlock Text="{loc:Localize Key=Accounts_AddAccount}" FontWeight="Bold"/>
                     </StackPanel>
                 </Button>
             </StackPanel>

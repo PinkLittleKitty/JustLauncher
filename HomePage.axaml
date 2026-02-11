@@ -17,8 +17,8 @@
                 <Border Background="Transparent" Width="100" Height="100" HorizontalAlignment="Center">
                     <Image Source="/Assets/JustLogo.png" />
                 </Border>
-                <TextBlock Text="{loc:Localize Key=Home_SetupTitle}" Classes="PageHeader" FontSize="36" LetterSpacing="2" HorizontalAlignment="Center"/>
-                <TextBlock Text="{loc:Localize Key=Home_SetupDescription}" Classes="PageDescription" FontSize="16" HorizontalAlignment="Center" Opacity="0.7"/>
+                <TextBlock Text="{loc:Localize Key=Home_SetupTitle}" Classes="PageHeader" HorizontalAlignment="Center"/>
+                <TextBlock Text="{loc:Localize Key=Home_SetupDescription}" Classes="PageDescription" HorizontalAlignment="Center" Margin="0,0,0,32"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Spacing="24" HorizontalAlignment="Center">
@@ -65,7 +65,7 @@
                                 <TextBlock Text="{loc:Localize Key=Home_Back}" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource SecondaryText}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Border>
-                        <TextBlock x:Name="Step2Header" Text="{loc:Localize Key=Home_EnterCredentials}" FontSize="28" FontWeight="Black" HorizontalAlignment="Center" Margin="0,12,0,0"/>
+                        <TextBlock x:Name="Step2Header" Text="{loc:Localize Key=Home_EnterCredentials}" Classes="PageHeader" Margin="0,12,0,0"/>
                         <TextBlock x:Name="Step2Subheader" Text="{loc:Localize Key=Home_CredentialsDescription}" FontSize="14" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center"/>
                     </StackPanel>
 

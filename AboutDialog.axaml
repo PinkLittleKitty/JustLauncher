@@ -16,19 +16,20 @@
             Margin="20">
         <Grid RowDefinitions="Auto,*,Auto" Margin="32">
             <!-- Header -->
-            <Button x:Name="CloseButton" HorizontalAlignment="Right" VerticalAlignment="Top" Classes="Secondary" Padding="8">
-                <i:Icon Value="fa-solid fa-times"/>
+            <Button x:Name="CloseButton" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" Classes="Secondary" Padding="8" Margin="0,-8,-16,0">
+                <i:Icon Value="fa-solid fa-times" FontSize="18"/>
             </Button>
 
             <!-- Content -->
-            <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20">
+            <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="24">
                 <Grid HorizontalAlignment="Center">
+                    <Border Background="{DynamicResource SuccessBrush}" Opacity="0.1" CornerRadius="20" Width="100" Height="100" />
                     <Image Source="/Assets/JustLogo.png" Width="80" Height="80" />
                 </Grid>
 
                 <StackPanel Spacing="4">
-                    <TextBlock Text="{loc:Localize Key=About_Title}" FontSize="28" FontWeight="Black" Foreground="{DynamicResource PrimaryText}" HorizontalAlignment="Center"/>
-                    <TextBlock x:Name="VersionText" FontSize="14" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" Opacity="0.8"/>
+                    <TextBlock Text="{loc:Localize Key=About_Title}" Classes="PageHeader"/>
+                    <TextBlock x:Name="VersionText" Classes="PageDescription"/>
                 </StackPanel>
 
                 <TextBlock Text="{loc:Localize Key=About_Description}" 

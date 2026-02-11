@@ -16,13 +16,13 @@
             Margin="20">
         <Grid Margin="32" RowDefinitions="Auto,*,Auto">
             <!-- Header -->
-            <Grid Grid.Row="0" Margin="0,0,0,32" ColumnDefinitions="*,Auto">
-                <StackPanel>
-                    <TextBlock x:Name="DialogTitle" Text="{loc:Localize Key=AccountDialog_Title}" Classes="PageHeader" FontSize="24"/>
-                    <TextBlock x:Name="DialogSubtitle" Text="{loc:Localize Key=AccountDialog_Subtitle}" Classes="PageDescription" FontSize="13"/>
+            <Grid Grid.Row="0" Margin="0,0,0,32" RowDefinitions="Auto,Auto">
+                <StackPanel Grid.Row="0" Spacing="8" HorizontalAlignment="Center">
+                    <TextBlock x:Name="DialogTitle" Text="{loc:Localize Key=AccountDialog_Title}" Classes="PageHeader"/>
+                    <TextBlock x:Name="DialogSubtitle" Text="{loc:Localize Key=AccountDialog_Subtitle}" Classes="PageDescription"/>
                 </StackPanel>
-                <Button x:Name="CloseButton" Grid.Column="1" Classes="Secondary" Padding="8" VerticalAlignment="Top" CornerRadius="20">
-                    <i:Icon Value="fa-solid fa-times"/>
+                <Button x:Name="CloseButton" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" Classes="Secondary" Padding="8" CornerRadius="20">
+                    <i:Icon Value="fa-solid fa-times" FontSize="18"/>
                 </Button>
             </Grid>
 
@@ -109,12 +109,12 @@
                     <!-- Form Area -->
                     <StackPanel Spacing="24">
                         <StackPanel Spacing="10">
-                            <TextBlock x:Name="FieldLabel" Text="{loc:Localize Key=AccountDialog_Username}" Classes="PageDescription" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
+                            <TextBlock x:Name="FieldLabel" Text="{loc:Localize Key=AccountDialog_Username}" Classes="FieldLabel"/>
                             <TextBox x:Name="UsernameTextBox" Watermark="{loc:Localize Key=Account_PlayerNamePlaceholder}" Padding="14"/>
                         </StackPanel>
 
                         <StackPanel x:Name="PasswordContainer" Spacing="10" IsVisible="False">
-                            <TextBlock Text="{loc:Localize Key=AccountDialog_Password}" Classes="PageDescription" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
+                            <TextBlock Text="{loc:Localize Key=AccountDialog_Password}" Classes="FieldLabel"/>
                             <TextBox x:Name="PasswordTextBox" PasswordChar="*" Watermark="{loc:Localize Key=Account_PasswordPlaceholder}" Padding="14"/>
                         </StackPanel>
 

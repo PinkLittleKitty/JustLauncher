@@ -32,14 +32,15 @@
         </Style>
     </UserControl.Styles>
 
-    <Grid RowDefinitions="*,Auto">
+    <Grid RowDefinitions="*,Auto" Margin="40,40,40,0">
         <!-- Settings Content -->
-        <ScrollViewer Grid.Row="0">
-            <StackPanel Spacing="32" MaxWidth="800" HorizontalAlignment="Center" Margin="24,40,24,40">
-                <TextBlock Text="{loc:Localize Key=Settings_Title}" Classes="PageHeader" HorizontalAlignment="Left" Margin="0,0,0,8"/>
+        <ScrollViewer Grid.Row="0" Margin="0,0,0,16">
+            <StackPanel Spacing="4" HorizontalAlignment="Center" Margin="0,0,0,40">
+                <TextBlock Text="{loc:Localize Key=Nav_Settings}" Classes="PageHeader"/>
+                <TextBlock Text="{loc:Localize Key=Settings_ConfigureDescription}" Classes="PageDescription"/>
 
                 <!-- General Settings -->
-                <StackPanel Spacing="12">
+                <StackPanel Spacing="16">
                     <TextBlock Text="{loc:Localize Key=Settings_General}" Classes="SettingsHeader"/>
                     <Border Classes="Card" Padding="24">
                         <StackPanel Spacing="20">
@@ -187,10 +188,12 @@
         <!-- Sticky Action Bar -->
         <Border Grid.Row="1" Background="{DynamicResource TitleBarBackground}" 
                 BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0"
-                Padding="24,16">
-            <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Right">
+                Padding="0,16" Margin="-40,0,-40,0">
+            <Grid MaxWidth="900" HorizontalAlignment="Stretch">
                 <Button x:Name="SaveButton" Content="{loc:Localize Key=Settings_SaveChanges}" 
                         Classes="Primary" Padding="32,12"
+                        Margin="0,0,40,0"
+                        HorizontalAlignment="Right"
                         Cursor="Hand">
                     <Button.Transitions>
                         <Transitions>
@@ -198,7 +201,7 @@
                         </Transitions>
                     </Button.Transitions>
                 </Button>
-            </StackPanel>
+            </Grid>
         </Border>
     </Grid>
 </UserControl>

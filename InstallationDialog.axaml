@@ -17,13 +17,13 @@
             Margin="20">
         <Grid Margin="32" RowDefinitions="Auto,*,Auto">
             <!-- Header -->
-            <Grid Grid.Row="0" Margin="0,0,0,32" ColumnDefinitions="*,Auto">
-                <StackPanel>
-                    <TextBlock x:Name="DialogTitle" Text="{loc:Localize Key=Installation_Settings}" Classes="PageHeader" FontSize="24"/>
-                    <TextBlock Text="{loc:Localize Key=Installation_ConfigureDescription}" Classes="PageDescription" FontSize="13"/>
+            <Grid Grid.Row="0" Margin="0,0,0,32" RowDefinitions="Auto,Auto">
+                <StackPanel Grid.Row="0" Spacing="8" HorizontalAlignment="Center">
+                    <TextBlock x:Name="DialogTitle" Text="{loc:Localize Key=Installation_Settings}" Classes="PageHeader"/>
+                    <TextBlock Text="{loc:Localize Key=Installation_ConfigureDescription}" Classes="PageDescription"/>
                 </StackPanel>
-                <Button x:Name="CloseButton" Grid.Column="1" Classes="Secondary" Padding="8" VerticalAlignment="Top">
-                    <i:Icon Value="fa-solid fa-times"/>
+                <Button x:Name="CloseButton" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" Classes="Secondary" Padding="8">
+                    <i:Icon Value="fa-solid fa-times" FontSize="18"/>
                 </Button>
             </Grid>
 
@@ -82,7 +82,7 @@
                                     <Border Background="{DynamicResource WindowBackground}" CornerRadius="12" Padding="20" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                                         <StackPanel Spacing="12">
                                             <StackPanel Spacing="5">
-                                                <TextBlock Text="{loc:Localize Key=Settings_JavaExecutablePath}" Foreground="{DynamicResource SecondaryText}" FontSize="12"/>
+                                                <TextBlock Text="{loc:Localize Key=Settings_JavaExecutablePath}" Classes="FieldLabel" Opacity="0.8"/>
                                                 <Grid ColumnDefinitions="*,Auto">
                                                     <ComboBox x:Name="JavaVersionComboBox" HorizontalAlignment="Stretch" Margin="0,0,5,0" PlaceholderText="{loc:Localize Key=Installation_UseGlobalSetting}"/>
                                                     <Button x:Name="BrowseJavaButton" Content="..." Width="30"/>
@@ -91,7 +91,7 @@
 
                                             <StackPanel Spacing="5">
                                                 <Grid ColumnDefinitions="*,Auto">
-                                                    <TextBlock Text="{loc:Localize Key=Profile_MemoryAllocationGB}" Foreground="{DynamicResource SecondaryText}" FontSize="12"/>
+                                                    <TextBlock Text="{loc:Localize Key=Profile_MemoryAllocationGB}" Classes="FieldLabel" Opacity="0.8"/>
                                                     <TextBlock x:Name="MemoryLabelValue" Text="4 GB" HorizontalAlignment="Right" Foreground="{DynamicResource AccentBrush}" FontSize="12"/>
                                                 </Grid>
                                                 

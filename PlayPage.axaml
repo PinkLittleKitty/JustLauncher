@@ -8,35 +8,13 @@
              x:Class="JustLauncher.PlayPage">
     
     <UserControl.Styles>
-        <Style Selector="Button.HeroPlay">
-            <Setter Property="Background" Value="#2da44e"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontSize" Value="20"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Padding" Value="40,15"/>
-            <Setter Property="CornerRadius" Value="4"/>
-            <Setter Property="Transitions">
-                <Transitions>
-                    <BrushTransition Property="Background" Duration="0:0:0.2"/>
-                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
-                </Transitions>
-            </Setter>
-        </Style>
-        <Style Selector="Button.HeroPlay:hover">
-            <Setter Property="Background" Value="#2c974b"/>
-            <Setter Property="RenderTransform" Value="scale(1.02)"/>
-        </Style>
-        <Style Selector="Button.HeroPlay:pressed">
-            <Setter Property="RenderTransform" Value="scale(0.98)"/>
-        </Style>
-        
         <Style Selector="ComboBox.ProfileSelector">
             <Setter Property="Background" Value="{DynamicResource InputBackground}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
             <Setter Property="CornerRadius" Value="4"/>
             <Setter Property="Padding" Value="12,5"/>
-            <Setter Property="MinHeight" Value="48"/>
+            <Setter Property="MinHeight" Value="42"/>
         </Style>
         
         <Style Selector="Border.Badge">
@@ -52,67 +30,72 @@
     </UserControl.Styles>
 
     <Grid>
-        <Panel>
+        <!-- Background -->
+        <Panel x:Name="BackgroundPanel">
             <Image Source="/Assets/MineBG.png" Stretch="UniformToFill" />
             <Border Background="#6E1E1E20" />
         </Panel>
 
-        <Grid RowDefinitions="*,180">
-            
-            <StackPanel Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10">
-                <TextBlock x:Name="WelcomeText" Text="Welcome back, JustNeki!" FontSize="42" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center"/>
-                <TextBlock Text="{loc:Localize Key=Play_ReadyForAdventure}" FontSize="20" Foreground="White" HorizontalAlignment="Center" Opacity="0.9" FontWeight="Medium"/>
+        <Grid Margin="40" RowDefinitions="Auto,*,Auto">
+            <!-- Header (Welcome Section) -->
+            <StackPanel Grid.Row="0" Margin="0,0,0,40" Spacing="8">
+                <TextBlock x:Name="WelcomeText" Text="Welcome back!" Classes="PageHeader"/>
+                <TextBlock Text="{loc:Localize Key=Play_ReadyForAdventure}" Classes="PageDescription"/>
             </StackPanel>
 
-            <Border Grid.Row="1" Background="{DynamicResource WindowBackground}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="20,15">
+            <!-- Main Content Area -->
+            <Grid Grid.Row="1" />
+
+            <!-- Footer (Launch Controls) -->
+            <Border Grid.Row="2" Background="{DynamicResource ContentBackground}" CornerRadius="16" Padding="24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" BoxShadow="0 4 16 0 #30000000">
                 <Grid RowDefinitions="Auto,Auto">
-                    
-                    <StackPanel Grid.Row="0" Margin="0,0,0,10">
-                        <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,8">
-                            <StackPanel Orientation="Horizontal" Spacing="10">
-                                <i:Icon Value="fa-solid fa-bolt" FontSize="14" Foreground="{DynamicResource SuccessBrush}" VerticalAlignment="Center"/>
-                                <TextBlock x:Name="StatusText" Text="Ready to Play" FontSize="14" Foreground="{DynamicResource PrimaryText}" VerticalAlignment="Center" FontWeight="Bold"/>
+                    <!-- Status & Progress -->
+                    <StackPanel Grid.Row="0" Margin="0,0,0,16">
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,6">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <i:Icon Value="fa-solid fa-bolt" FontSize="12" Foreground="{DynamicResource SuccessBrush}" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="StatusText" Text="Ready to Play" FontSize="13" Foreground="{DynamicResource PrimaryText}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             </StackPanel>
                             <TextBlock Grid.Column="1" Text="{Binding AppVersionText}" FontSize="12" Foreground="{DynamicResource SecondaryText}" VerticalAlignment="Center" Opacity="0.5"/>
                         </Grid>
-                        <ProgressBar x:Name="ProgressBar" Height="4" IsVisible="False" IsIndeterminate="True" Foreground="{DynamicResource SuccessBrush}" Background="{DynamicResource ContentBackground}" CornerRadius="2"/>
+                        <ProgressBar x:Name="ProgressBar" Height="3" IsVisible="False" IsIndeterminate="True" Foreground="{DynamicResource SuccessBrush}" Background="{DynamicResource WindowBackground}" CornerRadius="1.5"/>
                     </StackPanel>
 
-                    <Grid Grid.Row="1" ColumnDefinitions="*,220" VerticalAlignment="Center">
-                        <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,20,0">
-                            <TextBlock Text="{loc:Localize Key=Play_SelectedInstallation}" FontSize="11" Foreground="{DynamicResource SecondaryText}" FontWeight="Bold" LetterSpacing="2"/>
-                            <Grid ColumnDefinitions="*,Auto,Auto">
-                                <ComboBox x:Name="ProfileComboBox" Classes="ProfileSelector" HorizontalAlignment="Stretch" VerticalContentAlignment="Center">
-                                    <ComboBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <Grid ColumnDefinitions="Auto,*,Auto" Margin="2">
-                                                <i:Icon Value="fa-solid fa-cube" Width="20" Height="20" FontSize="16" Foreground="{DynamicResource SuccessBrush}" Margin="0,0,12,0" VerticalAlignment="Center"/>
-                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource PrimaryText}"/>
-                                                    <TextBlock Text="{Binding Version}" Foreground="{DynamicResource SecondaryText}" FontSize="11" Opacity="0.7"/>
-                                                </StackPanel>
-                                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
-                                                    <Border Classes="Badge" Background="{DynamicResource SuccessBrush}" Opacity="0.2">
-                                                        <TextBlock Text="{Binding BaseVersion}" Classes="BadgeText" Foreground="{DynamicResource SuccessBrush}"/>
-                                                    </Border>
-                                                    <Border Classes="Badge" Background="{DynamicResource AccentBrush}" Opacity="0.2" IsVisible="{Binding IsModded}">
-                                                        <TextBlock Text="{Binding LoaderType}" Classes="BadgeText" Foreground="{DynamicResource AccentBrush}"/>
-                                                    </Border>
-                                                </StackPanel>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ComboBox.ItemTemplate>
-                                </ComboBox>
-                                <Button x:Name="AddProfileButton" Grid.Column="1" Margin="8,0,0,0" Width="48" Height="48" Classes="Secondary">
-                                    <i:Icon Value="fa-solid fa-plus" FontSize="20"/>
-                                </Button>
-                                <Button x:Name="ManageProfilesButton" Grid.Column="2" Margin="8,0,0,0" Width="48" Height="48" Classes="Secondary">
-                                    <i:Icon Value="fa-solid fa-gear" FontSize="20"/>
-                                </Button>
-                            </Grid>
+                    <!-- Profile & Play -->
+                    <Grid Grid.Row="1" ColumnDefinitions="*,Auto,Auto,180" VerticalAlignment="Center">
+                        <StackPanel Grid.Column="0" Spacing="6" Margin="0,0,20,0">
+                            <TextBlock Text="{loc:Localize Key=Play_SelectedInstallation}" Classes="FieldLabel"/>
+                            <ComboBox x:Name="ProfileComboBox" Classes="ProfileSelector" HorizontalAlignment="Stretch" VerticalContentAlignment="Center">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid ColumnDefinitions="Auto,*,Auto" Margin="2">
+                                            <i:Icon Value="fa-solid fa-cube" Width="18" Height="18" FontSize="14" Foreground="{DynamicResource SuccessBrush}" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource PrimaryText}"/>
+                                                <TextBlock Text="{Binding Version}" Foreground="{DynamicResource SecondaryText}" FontSize="11" Opacity="0.7"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
+                                                <Border Classes="Badge" Background="{DynamicResource SuccessBrush}" Opacity="0.2">
+                                                    <TextBlock Text="{Binding BaseVersion}" Classes="BadgeText" Foreground="{DynamicResource SuccessBrush}"/>
+                                                </Border>
+                                                <Border IsVisible="{Binding IsModded}" Classes="Badge" Background="{DynamicResource AccentBrush}" Opacity="0.2">
+                                                    <TextBlock Text="{Binding LoaderType}" Classes="BadgeText" Foreground="{DynamicResource AccentBrush}"/>
+                                                </Border>
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
                         </StackPanel>
+                        
+                        <Button x:Name="AddProfileButton" Grid.Column="1" VerticalAlignment="Bottom" Margin="0,0,8,0" Width="42" Height="42" Classes="Secondary">
+                            <i:Icon Value="fa-solid fa-plus" FontSize="18"/>
+                        </Button>
+                        <Button x:Name="ManageProfilesButton" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,16,0" Width="42" Height="42" Classes="Secondary">
+                            <i:Icon Value="fa-solid fa-gear" FontSize="18"/>
+                        </Button>
 
-                        <Button Grid.Column="1" x:Name="PlayButton" Content="{loc:Localize Key=Play_PlayButton}" Classes="Primary" HorizontalAlignment="Stretch" Height="48" FontSize="20" VerticalAlignment="Bottom"/>
+                        <Button Grid.Column="3" x:Name="PlayButton" Content="{loc:Localize Key=Play_PlayButton}" Classes="Primary" HorizontalAlignment="Stretch" Height="42" FontSize="18" VerticalAlignment="Bottom"/>
                     </Grid>
                 </Grid>
             </Border>

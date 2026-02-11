@@ -151,6 +151,9 @@ public partial class MainWindow : Window
         var clsBtn = this.FindControl<Button>("CloseButton");
         if (clsBtn != null) clsBtn.Click += CloseButton_Click;
 
+        var toggleBtn = this.FindControl<Button>("ToggleSidebarButton");
+        if (toggleBtn != null) toggleBtn.Click += ToggleSidebarButton_Click;
+
         var titleBar = this.FindControl<Control>("TitleBar");
         if (titleBar != null) titleBar.PointerPressed += TitleBar_PointerPressed;
 
@@ -255,5 +258,28 @@ public partial class MainWindow : Window
     private void ToggleMaximize()
     {
         WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+    }
+
+    private void ToggleSidebarButton_Click(object? sender, RoutedEventArgs e)
+    {
+        var sidebarGrid = this.FindControl<Grid>("SidebarGrid");
+        if (sidebarGrid != null)
+        {
+            var parentGrid = sidebarGrid.Parent as Grid;
+            var sidebarColumn = parentGrid?.ColumnDefinitions[0];
+            if (sidebarColumn != null)
+            {
+                if (sidebarGrid.Classes.Contains("Collapsed"))
+                {
+                    sidebarGrid.Classes.Remove("Collapsed");
+                    sidebarColumn.Width = new GridLength(200);
+                }
+                else
+                {
+                    sidebarGrid.Classes.Add("Collapsed");
+                    sidebarColumn.Width = new GridLength(72);
+                }
+            }
+        }
     }
 }

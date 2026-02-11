@@ -41,13 +41,11 @@
     </UserControl.Styles>
 
     <Grid>
-        <!-- Background Layer -->
         <Panel>
             <Image Source="/Assets/MineBG.png" Stretch="UniformToFill" />
-            <Border Background="#6E1E1E20" /> <!-- Halved Overlay Opacity -->
+            <Border Background="#6E1E1E20" />
         </Panel>
 
-        <!-- Main Content -->
         <Grid RowDefinitions="*,180">
             
             <!-- Hero Section -->
@@ -61,11 +59,9 @@
                 <TextBlock Text="{loc:Localize Key=Play_ReadyForAdventure}" FontSize="18" Foreground="{DynamicResource SecondaryText}" HorizontalAlignment="Center" Opacity="0.6" Margin="0,15,0,0"/>
             </StackPanel>
 
-            <!-- Bottom Control Panel -->
             <Border Grid.Row="1" Background="{DynamicResource WindowBackground}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="40,20">
                 <Grid RowDefinitions="Auto,Auto">
                     
-                    <!-- Progress Section -->
                     <StackPanel Grid.Row="0" Margin="0,0,0,20">
                         <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,8">
                             <StackPanel Orientation="Horizontal" Spacing="10">
@@ -77,9 +73,7 @@
                         <ProgressBar x:Name="ProgressBar" Height="4" IsVisible="False" IsIndeterminate="True" Foreground="{DynamicResource SuccessBrush}" Background="{DynamicResource ContentBackground}" CornerRadius="2"/>
                     </StackPanel>
 
-                    <!-- Main Controls -->
                     <Grid Grid.Row="1" ColumnDefinitions="*,260" VerticalAlignment="Center">
-                        <!-- Profile Selection -->
                         <StackPanel Grid.Column="0" Spacing="8" Margin="0,0,40,0">
                             <TextBlock Text="{loc:Localize Key=Play_SelectedInstallation}" FontSize="11" Foreground="{DynamicResource SecondaryText}" FontWeight="Bold" LetterSpacing="2"/>
                             <Grid ColumnDefinitions="*,Auto,Auto">
@@ -105,7 +99,6 @@
                             </Grid>
                         </StackPanel>
 
-                        <!-- Play Action -->
                         <Button Grid.Column="1" x:Name="PlayButton" Content="{loc:Localize Key=Play_PlayButton}" Classes="Primary" HorizontalAlignment="Stretch" Height="56" FontSize="24" VerticalAlignment="Bottom"/>
                     </Grid>
                 </Grid>

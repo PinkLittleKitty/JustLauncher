@@ -392,6 +392,8 @@ namespace JustLauncher
         public string VersionNumber { get; set; } = default!;
         [JsonPropertyName("files")]
         public List<ModrinthFile> Files { get; set; } = new();
+        [JsonPropertyName("dependencies")]
+        public List<Services.ModrinthDependency> Dependencies { get; set; } = new();
     }
 
     public class ModrinthFile
@@ -458,5 +460,7 @@ namespace JustLauncher
         public List<string> GameVersions { get; set; } = new();
         [JsonPropertyName("modLoader")]
         public int? ModLoader { get; set; }
+        [JsonPropertyName("dependencies")]
+        public List<Services.CurseForgeDependency> Dependencies { get; set; } = new();
     }
 }

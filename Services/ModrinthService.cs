@@ -106,4 +106,30 @@ public class ModrinthService
              return null;
         }
     }
+
+    public async Task<List<ModrinthDependency>> GetDependenciesAsync(string versionId)
+    {
+        string url = $"{BaseUrl}/version/{versionId}";
+        try
+        {
+            string json = await HttpClientManager.Instance.GetStringAsync(url);
+            var version = JsonSerializer.Deserialize<ModrinthVersion>(json);
+            return version?.Dependencies ?? new List<ModrinthDependency>();
+        }
+        catch (Exception ex)
+        {
+            ConsoleService.Instance.Log($"[Modrinth] Dependency lookup error ({versionId}): {ex.Message}");
+            return new List<ModrinthDependency>();
+        }
+    }
+}
+
+public class ModrinthDependency
+{
+    [JsonPropertyName("project_id")]
+    public string? ProjectId { get; set; }
+    [JsonPropertyName("version_id")]
+    public string? VersionId { get; set; }
+    [JsonPropertyName("dependency_type")]
+    public string DependencyType { get; set; } = default!;
 }

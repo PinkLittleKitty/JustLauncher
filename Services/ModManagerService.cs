@@ -39,6 +39,7 @@ public class ModManagerService
                 if (isEnabled)
                 {
                     using var archive = ZipFile.OpenRead(file);
+                    
                     var fabricJson = archive.GetEntry("fabric.mod.json");
                     if (fabricJson != null)
                     {
@@ -66,6 +67,25 @@ public class ModManagerService
                             {
                                 mod.Authors = meta.Authors.GetString() ?? "";
                             }
+                        }
+                    }
+                    else
+                    {
+                        var forgeToml = archive.GetEntry("META-INF/mods.toml") ?? archive.GetEntry("META-INF/neoforge.mods.toml");
+                        if (forgeToml != null)
+                        {
+                            using var reader = new StreamReader(forgeToml.Open());
+                            string content = await reader.ReadToEndAsync();
+                            
+                            var nameMatch = System.Text.RegularExpressions.Regex.Match(content, @"displayName\s*=\s*""([^""]+)""");
+                            var versionMatch = System.Text.RegularExpressions.Regex.Match(content, @"version\s*=\s*""([^""]+)""");
+                            var descMatch = System.Text.RegularExpressions.Regex.Match(content, @"description\s*=\s*'''?([\s\S]*?)'''?|description\s*=\s*""([^""]+)""");
+                            var authorsMatch = System.Text.RegularExpressions.Regex.Match(content, @"authors?\s*=\s*""([^""]+)""");
+
+                            if (nameMatch.Success) mod.Name = nameMatch.Groups[1].Value;
+                            if (versionMatch.Success) mod.Version = versionMatch.Groups[1].Value;
+                            if (descMatch.Success) mod.Description = descMatch.Groups[1].Success ? descMatch.Groups[1].Value : descMatch.Groups[2].Value;
+                            if (authorsMatch.Success) mod.Authors = authorsMatch.Groups[1].Value;
                         }
                     }
                 }
@@ -182,6 +202,84 @@ public class ModManagerService
                 mod.IsEnabled = true;
             }
         }
+    }
+
+    public async Task<List<ModInfo>> ResolveDependenciesAsync(string projectId, string mcVersion, string loader, List<ModInfo> installedMods)
+    {
+        var dependenciesToInstall = new List<ModInfo>();
+        var queue = new Queue<string>();
+        queue.Enqueue(projectId);
+
+        var processed = new HashSet<string>();
+
+        while (queue.Count > 0)
+        {
+            var currentId = queue.Dequeue();
+            if (processed.Contains(currentId)) continue;
+            processed.Add(currentId);
+
+            if (loader.Equals("Fabric", StringComparison.OrdinalIgnoreCase))
+            {
+                var modrinth = new ModrinthService();
+                var versions = await modrinth.GetVersionsAsync(currentId, mcVersion, "fabric");
+                var latest = versions.FirstOrDefault();
+                if (latest != null)
+                {
+                    foreach (var dep in latest.Dependencies.Where(d => d.DependencyType == "required"))
+                    {
+                        if (dep.ProjectId != null && !installedMods.Any(m => m.ProjectId == dep.ProjectId) && !dependenciesToInstall.Any(m => m.ProjectId == dep.ProjectId))
+                        {
+                            var depProject = await modrinth.GetProjectAsync(dep.ProjectId);
+                            if (depProject != null)
+                            {
+                                dependenciesToInstall.Add(new ModInfo
+                                {
+                                    ProjectId = dep.ProjectId,
+                                    Name = depProject.Title,
+                                    Description = depProject.Description,
+                                    IsEnabled = true
+                                });
+                                queue.Enqueue(dep.ProjectId);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                var curseForge = new CurseForgeService();
+                var cfMod = await curseForge.GetModAsync(currentId);
+                if (cfMod != null)
+                {
+                    var latestFile = cfMod.LatestFiles.FirstOrDefault(f => f.GameVersions.Contains(mcVersion));
+                    if (latestFile != null)
+                    {
+                        var fullFile = await curseForge.GetDependenciesAsync(currentId, latestFile.Id.ToString());
+                        foreach (var dep in fullFile.Where(d => d.RelationType == 3))
+                        {
+                            string depId = dep.ModId.ToString();
+                            if (!installedMods.Any(m => m.ProjectId == depId) && !dependenciesToInstall.Any(m => m.ProjectId == depId))
+                            {
+                                var depMod = await curseForge.GetModAsync(depId);
+                                if (depMod != null)
+                                {
+                                    dependenciesToInstall.Add(new ModInfo
+                                    {
+                                        ProjectId = depId,
+                                        Name = depMod.Name,
+                                        Description = depMod.Summary,
+                                        IsEnabled = true
+                                    });
+                                    queue.Enqueue(depId);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return dependenciesToInstall;
     }
 }
 

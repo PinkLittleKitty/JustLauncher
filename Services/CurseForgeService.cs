@@ -104,6 +104,36 @@ public class CurseForgeService
             return null;
         }
     }
+
+    public async Task<List<CurseForgeDependency>> GetDependenciesAsync(string projectId, string fileId)
+    {
+        string url = $"{BaseUrl}/mods/{projectId}/files/{fileId}";
+        try
+        {
+            string json = await GetWithApiKeyAsync(url);
+            var result = JsonSerializer.Deserialize<CurseForgeFileResponse>(json);
+            return result?.Data?.Dependencies ?? new List<CurseForgeDependency>();
+        }
+        catch (Exception ex)
+        {
+            ConsoleService.Instance.Log($"[CurseForge] Dependency lookup error ({projectId}/{fileId}): {ex.Message}");
+            return new List<CurseForgeDependency>();
+        }
+    }
+}
+
+public class CurseForgeFileResponse
+{
+    [JsonPropertyName("data")]
+    public CurseForgeFile Data { get; set; } = default!;
+}
+
+public class CurseForgeDependency
+{
+    [JsonPropertyName("modId")]
+    public int ModId { get; set; }
+    [JsonPropertyName("relationType")]
+    public int RelationType { get; set; }
 }
 
 public class CurseForgeModResponse

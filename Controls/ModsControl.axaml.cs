@@ -208,13 +208,11 @@ public partial class ModsControl : UserControl
 
         try
         {
-            // Delete old file if it exists
             if (File.Exists(mod.Path))
             {
                 File.Delete(mod.Path);
             }
 
-            // Reuse DownloadModAsync logic but with the update URL
             mod.DownloadUrl = mod.UpdateUrl;
             await DownloadModAsync(mod, btn);
             
@@ -232,51 +230,79 @@ public partial class ModsControl : UserControl
     {
         if (_installation == null) return;
         btn.IsEnabled = false;
-        btn.Content = "Downloading...";
+        string originalContent = btn.Content?.ToString() ?? "Download";
+        btn.Content = "Processing...";
 
         try
         {
-            string? downloadUrl = mod.DownloadUrl;
-            if (string.IsNullOrEmpty(downloadUrl))
+            string modsDir = GetModsDirectory();
+            var installedMods = await _modManager.GetModsAsync(modsDir);
+            string loader = _installation.LoaderType.ToString();
+            
+            ConsoleService.Instance.Log($"[Mods] Resolving dependencies for {mod.Name}...");
+            var deps = await _modManager.ResolveDependenciesAsync(mod.ProjectId!, _installation.BaseVersion, loader, installedMods);
+            
+            if (deps.Count > 0)
             {
-                if (_installation.LoaderType == ModLoaderType.Fabric)
-                    downloadUrl = await _modrinthService.GetDownloadUrlAsync(mod.ProjectId!, _installation.BaseVersion, "fabric");
-                else if (_installation.LoaderType == ModLoaderType.Forge)
-                    downloadUrl = await _curseForgeService.GetDownloadUrlAsync(mod.ProjectId!, _installation.BaseVersion, "forge");
-            }
-
-            if (!string.IsNullOrEmpty(downloadUrl))
-            {
-                string modsDir = GetModsDirectory();
-                string fileName = Path.GetFileName(new Uri(downloadUrl).LocalPath);
-                string dest = Path.Combine(modsDir, fileName);
-
-                mod.IsDownloading = true;
-                mod.DownloadProgress = 0;
-
-                await MinecraftService.Instance.DownloadFileAsync(downloadUrl, dest, (read, total) =>
+                ConsoleService.Instance.Log($"[Mods] Found {deps.Count} dependencies to install.");
+                foreach (var dep in deps)
                 {
-                    if (total > 0)
-                    {
-                        Avalonia.Threading.Dispatcher.UIThread.Post(() => 
-                            mod.DownloadProgress = (double)read / total * 100);
-                    }
-                });
-                
-                Avalonia.Threading.Dispatcher.UIThread.Post(async () => {
-                    mod.IsDownloading = false;
-                    mod.IsInstalled = true;
-                    // Reset UpdateUrl/UpdateAvailable if it was an update
-                    mod.UpdateAvailable = false;
-                    await LoadModsAsync();
-                });
+                    btn.Content = $"Downloading {dep.Name}...";
+                    await DownloadModInternalAsync(dep, modsDir);
+                }
             }
+
+            btn.Content = "Downloading...";
+            await DownloadModInternalAsync(mod, modsDir);
+
+            Avalonia.Threading.Dispatcher.UIThread.Post(async () => {
+                mod.IsDownloading = false;
+                mod.IsInstalled = true;
+                mod.UpdateAvailable = false;
+                btn.Content = originalContent;
+                btn.IsEnabled = true;
+                await LoadModsAsync();
+            });
         }
         catch (Exception ex)
         {
             ConsoleService.Instance.Log($"[Mods] Download failed: {ex.Message}");
             btn.Content = "Retry";
             btn.IsEnabled = true;
+        }
+    }
+
+    private async Task DownloadModInternalAsync(ModInfo mod, string modsDir)
+    {
+        if (_installation == null) return;
+
+        string? downloadUrl = mod.DownloadUrl;
+        if (string.IsNullOrEmpty(downloadUrl))
+        {
+            if (_installation.LoaderType == ModLoaderType.Fabric)
+                downloadUrl = await _modrinthService.GetDownloadUrlAsync(mod.ProjectId!, _installation.BaseVersion, "fabric");
+            else if (_installation.LoaderType == ModLoaderType.Forge)
+                downloadUrl = await _curseForgeService.GetDownloadUrlAsync(mod.ProjectId!, _installation.BaseVersion, "forge");
+        }
+
+        if (!string.IsNullOrEmpty(downloadUrl))
+        {
+            string fileName = Path.GetFileName(new Uri(downloadUrl).LocalPath);
+            string dest = Path.Combine(modsDir, fileName);
+
+            mod.IsDownloading = true;
+            mod.DownloadProgress = 0;
+
+            await MinecraftService.Instance.DownloadFileAsync(downloadUrl, dest, (read, total) =>
+            {
+                if (total > 0)
+                {
+                    Avalonia.Threading.Dispatcher.UIThread.Post(() => 
+                        mod.DownloadProgress = (double)read / total * 100);
+                }
+            });
+            mod.IsDownloading = false;
+            mod.IsInstalled = true;
         }
     }
 

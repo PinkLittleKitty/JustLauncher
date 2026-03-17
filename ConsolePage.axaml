@@ -7,28 +7,21 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="JustLauncher.ConsolePage">
     <Grid RowDefinitions="Auto,*,Auto" Margin="40">
-        <!-- Header -->
-        <Grid Grid.Row="0" RowDefinitions="Auto,Auto" Margin="0,0,0,40">
-            <StackPanel Grid.Row="0" Spacing="4" HorizontalAlignment="Center">
-                <TextBlock Text="{loc:Localize Key=Console_Title}" Classes="PageHeader"/>
-                <TextBlock Text="{loc:Localize Key=Console_Description}" Classes="PageDescription"/>
-            </StackPanel>
-            
-            <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center" Margin="0,24,0,0">
-                <Button x:Name="CopyConsoleButton" Classes="Secondary" ToolTip.Tip="{loc:Localize Key=Console_CopyTooltip}">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <i:Icon Value="fa-solid fa-copy" FontSize="20"/>
-                        <TextBlock Text="{loc:Localize Key=Console_CopyLog}"/>
-                    </StackPanel>
-                </Button>
-                <Button x:Name="ClearConsoleButton" Classes="Danger" ToolTip.Tip="{loc:Localize Key=Console_ClearTooltip}">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <i:Icon Value="fa-solid fa-trash-alt" FontSize="20"/>
-                        <TextBlock Text="{loc:Localize Key=Console_Clear}"/>
-                    </StackPanel>
-                </Button>
-            </StackPanel>
-        </Grid>
+        <!-- Action Buttons -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center" Margin="0,0,0,32">
+            <Button x:Name="CopyConsoleButton" Classes="Secondary" Padding="16,10" ToolTip.Tip="{loc:Localize Key=Console_CopyTooltip}">
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <i:Icon Value="fa-solid fa-copy" FontSize="20"/>
+                    <TextBlock Text="{loc:Localize Key=Console_CopyLog}" FontWeight="Bold"/>
+                </StackPanel>
+            </Button>
+            <Button x:Name="ClearConsoleButton" Classes="Danger" Padding="16,10" ToolTip.Tip="{loc:Localize Key=Console_ClearTooltip}">
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <i:Icon Value="fa-solid fa-trash-alt" FontSize="20"/>
+                    <TextBlock Text="{loc:Localize Key=Console_Clear}" FontWeight="Bold"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
 
         <!-- Log Output Container -->
         <Border Grid.Row="1" 

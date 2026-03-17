@@ -301,12 +301,48 @@ namespace JustLauncher
             PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
 
-        public string FileName { get; set; } = default!;
-        public string Name { get; set; } = default!;
-        public string Version { get; set; } = default!;
-        public string Description { get; set; } = default!;
-        public string Authors { get; set; } = default!;
-        public string Path { get; set; } = default!;
+        private string _fileName = default!;
+        public string FileName 
+        { 
+            get => _fileName; 
+            set { _fileName = value; OnPropertyChanged(); } 
+        }
+
+        private string _name = default!;
+        public string Name 
+        { 
+            get => _name; 
+            set { _name = value; OnPropertyChanged(); } 
+        }
+
+        private string _version = default!;
+        public string Version 
+        { 
+            get => _version; 
+            set { _version = value; OnPropertyChanged(); } 
+        }
+
+        private string _description = default!;
+        public string Description 
+        { 
+            get => _description; 
+            set { _description = value; OnPropertyChanged(); } 
+        }
+
+        private string _authors = default!;
+        public string Authors 
+        { 
+            get => _authors; 
+            set { _authors = value; OnPropertyChanged(); } 
+        }
+
+        private string _path = default!;
+        public string Path 
+        { 
+            get => _path; 
+            set { _path = value; OnPropertyChanged(); } 
+        }
+
         private string? _iconPath;
         public string? IconPath 
         { 

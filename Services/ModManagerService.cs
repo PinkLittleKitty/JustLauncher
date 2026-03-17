@@ -20,85 +20,99 @@ public class ModManagerService
 
         foreach (var file in Directory.GetFiles(modsDir))
         {
-            var fileName = Path.GetFileName(file);
             var isEnabled = file.EndsWith(".jar", StringComparison.OrdinalIgnoreCase);
             var isDisabled = file.EndsWith(".disabled", StringComparison.OrdinalIgnoreCase);
 
             if (!isEnabled && !isDisabled) continue;
 
-            var mod = new ModInfo
+            var mod = await GetModAsync(file);
+            if (mod != null)
             {
-                FileName = fileName,
-                Path = file,
-                Name = fileName,
-                IsEnabled = isEnabled
-            };
-
-            try
-            {
-                if (isEnabled)
-                {
-                    using var archive = ZipFile.OpenRead(file);
-                    
-                    var fabricJson = archive.GetEntry("fabric.mod.json");
-                    if (fabricJson != null)
-                    {
-                        using var stream = fabricJson.Open();
-                        var meta = await JsonSerializer.DeserializeAsync<FabricModMetadata>(stream);
-                        if (meta != null)
-                        {
-                            mod.Name = meta.Name ?? fileName;
-                            mod.Version = meta.Version ?? "";
-                            mod.Description = meta.Description ?? "";
-                            
-                            if (meta.Authors.ValueKind == JsonValueKind.Array)
-                            {
-                                var authors = new List<string>();
-                                foreach (var element in meta.Authors.EnumerateArray())
-                                {
-                                    if (element.ValueKind == JsonValueKind.String)
-                                        authors.Add(element.GetString() ?? "");
-                                    else if (element.ValueKind == JsonValueKind.Object && element.TryGetProperty("name", out var nameProp))
-                                        authors.Add(nameProp.GetString() ?? "");
-                                }
-                                mod.Authors = string.Join(", ", authors);
-                            }
-                            else if (meta.Authors.ValueKind == JsonValueKind.String)
-                            {
-                                mod.Authors = meta.Authors.GetString() ?? "";
-                            }
-                        }
-                    }
-                    else
-                    {
-                        var forgeToml = archive.GetEntry("META-INF/mods.toml") ?? archive.GetEntry("META-INF/neoforge.mods.toml");
-                        if (forgeToml != null)
-                        {
-                            using var reader = new StreamReader(forgeToml.Open());
-                            string content = await reader.ReadToEndAsync();
-                            
-                            var nameMatch = System.Text.RegularExpressions.Regex.Match(content, @"displayName\s*=\s*""([^""]+)""");
-                            var versionMatch = System.Text.RegularExpressions.Regex.Match(content, @"version\s*=\s*""([^""]+)""");
-                            var descMatch = System.Text.RegularExpressions.Regex.Match(content, @"description\s*=\s*'''?([\s\S]*?)'''?|description\s*=\s*""([^""]+)""");
-                            var authorsMatch = System.Text.RegularExpressions.Regex.Match(content, @"authors?\s*=\s*""([^""]+)""");
-
-                            if (nameMatch.Success) mod.Name = nameMatch.Groups[1].Value;
-                            if (versionMatch.Success) mod.Version = versionMatch.Groups[1].Value;
-                            if (descMatch.Success) mod.Description = descMatch.Groups[1].Success ? descMatch.Groups[1].Value : descMatch.Groups[2].Value;
-                            if (authorsMatch.Success) mod.Authors = authorsMatch.Groups[1].Value;
-                        }
-                    }
-                }
+                mods.Add(mod);
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error reading mod metadata for {fileName}: {ex.Message}");
-            }
-
-            mods.Add(mod);
         }
 
         return mods;
+    }
+
+    public async Task<ModInfo?> GetModAsync(string file)
+    {
+        if (!File.Exists(file)) return null;
+
+        var fileName = Path.GetFileName(file);
+        var isEnabled = file.EndsWith(".jar", StringComparison.OrdinalIgnoreCase);
+        
+        var mod = new ModInfo
+        {
+            FileName = fileName,
+            Path = file,
+            Name = fileName,
+            IsEnabled = isEnabled,
+            IsInstalled = true
+        };
+
+        try
+        {
+            if (isEnabled)
+            {
+                using var archive = ZipFile.OpenRead(file);
+                
+                var fabricJson = archive.GetEntry("fabric.mod.json");
+                if (fabricJson != null)
+                {
+                    using var stream = fabricJson.Open();
+                    var meta = await JsonSerializer.DeserializeAsync<FabricModMetadata>(stream);
+                    if (meta != null)
+                    {
+                        mod.Name = meta.Name ?? fileName;
+                        mod.Version = meta.Version ?? "";
+                        mod.Description = meta.Description ?? "";
+                        
+                        if (meta.Authors.ValueKind == JsonValueKind.Array)
+                        {
+                            var authors = new List<string>();
+                            foreach (var element in meta.Authors.EnumerateArray())
+                            {
+                                if (element.ValueKind == JsonValueKind.String)
+                                    authors.Add(element.GetString() ?? "");
+                                else if (element.ValueKind == JsonValueKind.Object && element.TryGetProperty("name", out var nameProp))
+                                    authors.Add(nameProp.GetString() ?? "");
+                            }
+                            mod.Authors = string.Join(", ", authors);
+                        }
+                        else if (meta.Authors.ValueKind == JsonValueKind.String)
+                        {
+                            mod.Authors = meta.Authors.GetString() ?? "";
+                        }
+                    }
+                }
+                else
+                {
+                    var forgeToml = archive.GetEntry("META-INF/mods.toml") ?? archive.GetEntry("META-INF/neoforge.mods.toml");
+                    if (forgeToml != null)
+                    {
+                        using var reader = new StreamReader(forgeToml.Open());
+                        string content = await reader.ReadToEndAsync();
+                        
+                        var nameMatch = System.Text.RegularExpressions.Regex.Match(content, @"displayName\s*=\s*""([^""]+)""");
+                        var versionMatch = System.Text.RegularExpressions.Regex.Match(content, @"version\s*=\s*""([^""]+)""");
+                        var descMatch = System.Text.RegularExpressions.Regex.Match(content, @"description\s*=\s*'''?([\s\S]*?)'''?|description\s*=\s*""([^""]+)""");
+                        var authorsMatch = System.Text.RegularExpressions.Regex.Match(content, @"authors?\s*=\s*""([^""]+)""");
+
+                        if (nameMatch.Success) mod.Name = nameMatch.Groups[1].Value;
+                        if (versionMatch.Success) mod.Version = versionMatch.Groups[1].Value;
+                        if (descMatch.Success) mod.Description = descMatch.Groups[1].Success ? descMatch.Groups[1].Value : descMatch.Groups[2].Value;
+                        if (authorsMatch.Success) mod.Authors = authorsMatch.Groups[1].Value;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error reading mod metadata for {fileName}: {ex.Message}");
+        }
+
+        return mod;
     }
 
     public async Task CheckForUpdatesAsync(List<ModInfo> mods, string mcVersion, string loader)

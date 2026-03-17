@@ -19,25 +19,18 @@
     </UserControl.Resources>
 
     <Grid Margin="40" RowDefinitions="Auto,*,Auto">
-        <!-- Header -->
-        <Grid Grid.Row="0" RowDefinitions="Auto,Auto" Margin="0,0,0,32">
-            <StackPanel Grid.Row="0" Spacing="4" HorizontalAlignment="Center">
-                <TextBlock Text="{loc:Localize Key=Accounts_Title}" Classes="PageHeader"/>
-                <TextBlock Text="{loc:Localize Key=Accounts_Description}" Classes="PageDescription"/>
-            </StackPanel>
-            
-            <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="16" HorizontalAlignment="Center" Margin="0,16,0,0">
-                <Button x:Name="RefreshButton" ToolTip.Tip="Refresh" Padding="12" Classes="Secondary">
-                    <i:Icon Value="fa-solid fa-sync" FontSize="20"/>
-                </Button>
-                <Button x:Name="AddAccountButton" Classes="Primary" Padding="16,10">
-                    <StackPanel Orientation="Horizontal" Spacing="12">
-                        <i:Icon Value="fa-solid fa-plus" FontSize="20"/>
-                        <TextBlock Text="{loc:Localize Key=Accounts_AddAccount}" FontWeight="Bold"/>
-                    </StackPanel>
-                </Button>
-            </StackPanel>
-        </Grid>
+        <!-- Action Buttons -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="16" HorizontalAlignment="Center" Margin="0,0,0,32">
+            <Button x:Name="RefreshButton" ToolTip.Tip="Refresh" Padding="12" Classes="Secondary">
+                <i:Icon Value="fa-solid fa-sync" FontSize="20"/>
+            </Button>
+            <Button x:Name="AddAccountButton" Classes="Primary" Padding="24,10">
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <i:Icon Value="fa-solid fa-plus" FontSize="20"/>
+                    <TextBlock Text="{loc:Localize Key=Accounts_AddAccount}" FontWeight="Bold"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
 
         <!-- Accounts Grid -->
         <ScrollViewer Grid.Row="1">

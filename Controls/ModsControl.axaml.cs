@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -22,7 +23,8 @@ public partial class ModsControl : UserControl
     private ModrinthService _modrinthService = new();
     private CurseForgeService _curseForgeService = new();
     private int _searchIndex = 0;
-    private List<ModInfo> _browseResults = new();
+    private ObservableCollection<ModInfo> _mods = new();
+    private ObservableCollection<ModInfo> _browseResults = new();
     private HashSet<string> _processedProjectIds = new();
     private bool _isSearching = false;
 
@@ -69,6 +71,7 @@ public partial class ModsControl : UserControl
         var browseList = this.FindControl<ListBox>("BrowseListBox");
         if (browseList != null)
         {
+            browseList.ItemsSource = _browseResults;
             browseList.AddHandler(Button.ClickEvent, async (object? sender, RoutedEventArgs e) =>
             {
                 if (e.Source is Button btn && (btn.Name == "DownloadButton" || btn.Name == "UpdateBrowseButton") && btn.Tag is ModInfo mod)
@@ -76,6 +79,12 @@ public partial class ModsControl : UserControl
                     await DownloadModAsync(mod, btn);
                 }
             }, RoutingStrategies.Bubble);
+        }
+
+        var modsListControl = this.FindControl<ListBox>("ModsListBox");
+        if (modsListControl != null)
+        {
+            modsListControl.ItemsSource = _mods;
         }
     }
 
@@ -101,11 +110,14 @@ public partial class ModsControl : UserControl
         if (!Directory.Exists(modsDir)) Directory.CreateDirectory(modsDir);
 
         var mods = await _modManager.GetModsAsync(modsDir);
-        var modsList = this.FindControl<ListBox>("ModsListBox");
-        if (modsList != null)
-        {
-            modsList.ItemsSource = mods;
-        }
+        
+        _mods.Clear();
+        foreach (var mod in mods) _mods.Add(mod);
+
+        _ = Task.Run(async () => {
+            if (_installation != null)
+                await _modManager.CheckForUpdatesAsync(_mods.ToList(), _installation.BaseVersion, _installation.LoaderType.ToString().ToLower());
+        });
     }
 
     private async Task CheckForUpdatesAsync()
@@ -164,22 +176,18 @@ public partial class ModsControl : UserControl
             }
 
             var installedMods = await _modManager.GetModsAsync(GetModsDirectory());
-            foreach (var mod in results)
-            {
-                if (string.IsNullOrEmpty(mod.ProjectId) || _processedProjectIds.Contains(mod.ProjectId))
-                    continue;
+            Avalonia.Threading.Dispatcher.UIThread.Post(() => {
+                _browseResults.Clear();
+                foreach (var mod in results)
+                {
+                    if (string.IsNullOrEmpty(mod.ProjectId) || _processedProjectIds.Contains(mod.ProjectId))
+                        continue;
 
-                mod.IsInstalled = installedMods.Any(m => m.Name == mod.Name || m.FileName == mod.FileName);
-                _browseResults.Add(mod);
-                _processedProjectIds.Add(mod.ProjectId);
-            }
-
-            var browseList = this.FindControl<ListBox>("BrowseListBox");
-            if (browseList != null)
-            {
-                browseList.ItemsSource = null;
-                browseList.ItemsSource = _browseResults.ToList();
-            }
+                    mod.IsInstalled = installedMods.Any(m => m.Name == mod.Name || m.FileName == mod.FileName);
+                    _browseResults.Add(mod);
+                    _processedProjectIds.Add(mod.ProjectId);
+                }
+            });
 
             if (loadMoreBtn != null)
             {
@@ -208,15 +216,8 @@ public partial class ModsControl : UserControl
 
         try
         {
-            if (File.Exists(mod.Path))
-            {
-                File.Delete(mod.Path);
-            }
-
             mod.DownloadUrl = mod.UpdateUrl;
-            await DownloadModAsync(mod, btn);
-            
-            mod.UpdateAvailable = false;
+            await DownloadModAsync(mod, btn, true);
         }
         catch (Exception ex)
         {
@@ -226,11 +227,11 @@ public partial class ModsControl : UserControl
         }
     }
 
-    private async Task DownloadModAsync(ModInfo mod, Button btn)
+    private async Task DownloadModAsync(ModInfo mod, Button btn, bool isUpdate = false)
     {
         if (_installation == null) return;
         btn.IsEnabled = false;
-        string originalContent = btn.Content?.ToString() ?? "Download";
+        string originalContent = isUpdate ? "Update" : (btn.Content?.ToString() ?? "Download");
         btn.Content = "Processing...";
 
         try
@@ -249,19 +250,50 @@ public partial class ModsControl : UserControl
                 {
                     btn.Content = $"Downloading {dep.Name}...";
                     await DownloadModInternalAsync(dep, modsDir);
+                    
+                    if (!_mods.Any(m => m.ProjectId == dep.ProjectId))
+                    {
+                        var newMod = await _modManager.GetModAsync(dep.Path);
+                        if (newMod != null) 
+                        {
+                            newMod.ProjectId = dep.ProjectId;
+                            Avalonia.Threading.Dispatcher.UIThread.Post(() => _mods.Add(newMod));
+                        }
+                    }
                 }
             }
 
             btn.Content = "Downloading...";
+            string oldPath = mod.Path;
             await DownloadModInternalAsync(mod, modsDir);
 
-            Avalonia.Threading.Dispatcher.UIThread.Post(async () => {
+            // If it was an update and the filename changed, delete the old file
+            if (isUpdate && !string.IsNullOrEmpty(oldPath) && oldPath != mod.Path && File.Exists(oldPath))
+            {
+                try { File.Delete(oldPath); } catch { /* ignore */ }
+            }
+
+            // Update metadata for the mod
+            var updatedMeta = await _modManager.GetModAsync(mod.Path);
+            if (updatedMeta != null)
+            {
+                mod.Name = updatedMeta.Name;
+                mod.Version = updatedMeta.Version;
+                mod.Description = updatedMeta.Description;
+                mod.FileName = updatedMeta.FileName;
+            }
+
+            Avalonia.Threading.Dispatcher.UIThread.Post(() => {
                 mod.IsDownloading = false;
                 mod.IsInstalled = true;
                 mod.UpdateAvailable = false;
                 btn.Content = originalContent;
                 btn.IsEnabled = true;
-                await LoadModsAsync();
+                
+                if (!isUpdate && !_mods.Any(m => m.ProjectId == mod.ProjectId))
+                {
+                    _mods.Add(mod);
+                }
             });
         }
         catch (Exception ex)
@@ -303,6 +335,8 @@ public partial class ModsControl : UserControl
             });
             mod.IsDownloading = false;
             mod.IsInstalled = true;
+            mod.Path = dest;
+            mod.FileName = fileName;
         }
     }
 
@@ -352,12 +386,11 @@ public partial class ModsControl : UserControl
         }
     }
 
-    private async void ModsListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+    private void ModsListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         if (sender is ListBox list && list.SelectedItem is ModInfo mod)
         {
             _modManager.ToggleMod(mod);
-            await LoadModsAsync();
             list.SelectedItem = null;
         }
     }

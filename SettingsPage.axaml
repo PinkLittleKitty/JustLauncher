@@ -36,9 +36,6 @@
         <!-- Settings Content -->
         <ScrollViewer Grid.Row="0" Margin="0,0,0,16">
             <StackPanel Spacing="4" HorizontalAlignment="Center" Margin="0,0,0,40">
-                <TextBlock Text="{loc:Localize Key=Nav_Settings}" Classes="PageHeader"/>
-                <TextBlock Text="{loc:Localize Key=Settings_ConfigureDescription}" Classes="PageDescription"/>
-
                 <!-- General Settings -->
                 <StackPanel Spacing="16">
                     <TextBlock Text="{loc:Localize Key=Settings_General}" Classes="SettingsHeader"/>

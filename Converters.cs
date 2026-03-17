@@ -91,7 +91,7 @@ namespace JustLauncher
                 
                 try 
                 { 
-                    return new Avalonia.Media.Imaging.Bitmap(Avalonia.Platform.AssetLoader.Open(new Uri("avares://JustLauncher/Assets/grass_block.png"))); 
+                    return new Avalonia.Media.Imaging.Bitmap(Avalonia.Platform.AssetLoader.Open(new Uri("avares://JustLauncher/Assets/grass_block.jpg"))); 
                 } 
                 catch (Exception ex)
                 {

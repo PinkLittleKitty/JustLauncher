@@ -6,15 +6,9 @@
              xmlns:loc="clr-namespace:JustLauncher.Resources"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="JustLauncher.ModsPage">
-    <Grid RowDefinitions="Auto,*" Margin="40">
-        <!-- Header -->
-        <StackPanel Grid.Row="0" Spacing="4" HorizontalAlignment="Center" Margin="0,0,0,40">
-            <TextBlock Text="{loc:Localize Key=Nav_Mods}" Classes="PageHeader"/>
-            <TextBlock Text="{loc:Localize Key=Mods_Description}" Classes="PageDescription"/>
-        </StackPanel>
-        
+    <Grid RowDefinitions="*" Margin="40">
         <!-- Mods Control -->
-        <Border Grid.Row="1" Background="{DynamicResource ContentBackground}" CornerRadius="8" Padding="20">
+        <Border Grid.Row="0" Background="{DynamicResource ContentBackground}" CornerRadius="8" Padding="20">
             <controls:ModsControl x:Name="ModsControl"/>
         </Border>
     </Grid>

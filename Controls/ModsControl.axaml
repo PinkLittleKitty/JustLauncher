@@ -6,91 +6,179 @@
              xmlns:loc="clr-namespace:JustLauncher.Resources"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="JustLauncher.Controls.ModsControl">
+    <UserControl.Resources>
+        <BoxShadows x:Key="CardShadow">0 4 12 0 #20000000</BoxShadows>
+        <BoxShadows x:Key="CardShadowHover">0 8 24 0 #40000000</BoxShadows>
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <ContentPresenter Name="PART_ContentPresenter"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                    Content="{TemplateBinding Content}"
+                                    Padding="{TemplateBinding Padding}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" />
+                </ControlTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="Border.ModCard">
+            <Setter Property="Background" Value="{DynamicResource ContentBackground}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="BoxShadow" Value="{StaticResource CardShadow}"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.2"/>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+                </Transitions>
+            </Setter>
+        </Style>
+
+        <Style Selector="ListBoxItem:pointerover Border.ModCard">
+            <Setter Property="BoxShadow" Value="{StaticResource CardShadowHover}"/>
+            <Setter Property="RenderTransform" Value="translateY(-2px)"/>
+            <Setter Property="Background" Value="#1AFFFFFF"/>
+        </Style>
+
+        <Style Selector="TabItem">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="MinHeight" Value="44"/>
+            <Setter Property="Padding" Value="20,0"/>
+        </Style>
+    </UserControl.Styles>
+
     <Grid RowDefinitions="Auto,*">
-        <TabControl Grid.RowSpan="2">
-            <TabItem Header="{loc:Localize Key=Mods_Installed}">
-                <Grid RowDefinitions="Auto,*">
-                    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,10,0,10">
-                        <Button x:Name="AddModButton" Classes="Primary" Content="{loc:Localize Key=Common_Add}"/>
-                        <Button x:Name="OpenModsFolderButton" Classes="Secondary" Content="Open Folder"/>
-                        <Button x:Name="RefreshModsButton" Classes="Secondary" Content="Refresh"/>
-                        <Button x:Name="CheckUpdatesButton" Classes="Secondary" Content="{loc:Localize Key=Update_CheckNow}" CommandParameter="{Binding}"/>
+        <!-- Header / Toolbar -->
+        <Border Grid.Row="0" Background="{DynamicResource ContentBackground}" CornerRadius="12" Padding="12" Margin="0,0,0,20" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                    <Button x:Name="AddModButton" Classes="Primary" Height="36" Padding="16,0">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <i:Icon Value="fa-solid fa-plus" FontSize="14"/>
+                            <TextBlock Text="{loc:Localize Key=Common_Add}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="OpenModsFolderButton" Classes="Secondary" Height="36" Width="36" Padding="0" ToolTip.Tip="Open Folder">
+                        <i:Icon Value="fa-solid fa-folder-open" FontSize="14"/>
+                    </Button>
+                    <Button x:Name="RefreshModsButton" Classes="Secondary" Height="36" Width="36" Padding="0" ToolTip.Tip="Refresh">
+                        <i:Icon Value="fa-solid fa-arrows-rotate" FontSize="14"/>
+                    </Button>
+                </StackPanel>
+
+                <Button Grid.Column="1" x:Name="CheckUpdatesButton" Classes="Secondary" Height="36" Padding="16,0" CommandParameter="{Binding}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <i:Icon Value="fa-solid fa-cloud-arrow-down" FontSize="14"/>
+                        <TextBlock Text="{loc:Localize Key=Update_CheckNow}" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <ListBox Grid.Row="1" x:Name="ModsListBox" Background="Transparent" BorderThickness="0">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Border Background="{DynamicResource WindowBackground}" CornerRadius="8" Padding="10" Margin="0,0,0,5">
-                                    <Grid ColumnDefinitions="Auto,Auto,*,Auto">
-                                        <CheckBox IsChecked="{Binding IsEnabled}" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                                        <Border Grid.Column="1" Width="40" Height="40" CornerRadius="4" ClipToBounds="True" Margin="0,0,10,0">
-                                            <Image Source="{Binding IconPath, Converter={StaticResource AsyncImageConverter}, ConverterParameter={Binding}}"/>
+                </Button>
+            </Grid>
+        </Border>
+
+        <TabControl Grid.Row="1" Theme="{StaticResource (Avalonia.Controls.TabControl)}">
+            <!-- Installed Mods -->
+            <TabItem Header="{loc:Localize Key=Mods_Installed}">
+                <ListBox x:Name="ModsListBox" Background="Transparent" BorderThickness="0" Padding="0,10,0,0">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Classes="ModCard">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <StackPanel Orientation="Horizontal" Spacing="16" Grid.Column="0">
+                                        <CheckBox IsChecked="{Binding IsEnabled}" VerticalAlignment="Center" Margin="0"/>
+                                        <Border Width="48" Height="48" CornerRadius="8" ClipToBounds="True" Background="#20FFFFFF">
+                                            <Image Source="{Binding IconPath, Converter={StaticResource AsyncImageConverter}, ConverterParameter={Binding}}" Stretch="UniformToFill"/>
                                         </Border>
-                                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
-                                                <Border CornerRadius="4" Background="{DynamicResource AccentBrush}" Padding="4,1" IsVisible="{Binding UpdateAvailable}">
-                                                    <TextBlock Text="UPDATE" FontSize="10" Foreground="White" FontWeight="Bold"/>
-                                                </Border>
-                                            </StackPanel>
-                                            <TextBlock Text="{Binding Description}" FontSize="11" Foreground="{DynamicResource SecondaryText}" TextTrimming="CharacterEllipsis"/>
-                                            <TextBlock Text="{Binding RemoteVersion, StringFormat='New version: {0}'}" FontSize="10" Foreground="{DynamicResource SuccessBrush}" IsVisible="{Binding UpdateAvailable}"/>
+                                    </StackPanel>
+                                    
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="16,0">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource PrimaryText}"/>
+                                            <Border CornerRadius="4" Background="{DynamicResource SuccessBrush}" Padding="6,2" IsVisible="{Binding UpdateAvailable}" VerticalAlignment="Center">
+                                                <TextBlock Text="UPDATE" FontSize="9" Foreground="White" FontWeight="Black"/>
+                                            </Border>
                                         </StackPanel>
-                                        <StackPanel Grid.Column="3" VerticalAlignment="Center" Spacing="5" MinWidth="80">
-                                            <TextBlock Text="{Binding Version}" HorizontalAlignment="Right" Foreground="{DynamicResource SecondaryText}" FontSize="12"/>
-                                            <Button Content="{loc:Localize Key=Mods_Update}" Classes="Primary" FontSize="11" Padding="8,2" 
-                                                    HorizontalAlignment="Stretch" IsVisible="{Binding UpdateAvailable}" Tag="{Binding}" x:Name="UpdateSingleButton"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </Grid>
+                                        <TextBlock Text="{Binding Description}" FontSize="12" Foreground="{DynamicResource SecondaryText}" TextTrimming="CharacterEllipsis" MaxLines="1" Opacity="0.8"/>
+                                        <TextBlock Text="{Binding RemoteVersion, StringFormat='New version: {0}'}" FontSize="11" Foreground="{DynamicResource SuccessBrush}" IsVisible="{Binding UpdateAvailable}" FontWeight="SemiBold" Margin="0,2,0,0"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="8" MinWidth="100">
+                                        <TextBlock Text="{Binding Version}" HorizontalAlignment="Right" Foreground="{DynamicResource SecondaryText}" FontSize="12" Opacity="0.6"/>
+                                        <Button Content="{loc:Localize Key=Mods_Update}" Classes="Primary" FontSize="11" Height="28" Padding="12,0" 
+                                                HorizontalAlignment="Right" IsVisible="{Binding UpdateAvailable}" Tag="{Binding}" x:Name="UpdateSingleButton"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </TabItem>
+
+            <!-- Browse Mods -->
             <TabItem Header="{loc:Localize Key=Mods_Browse}">
                 <Grid RowDefinitions="Auto,*">
-                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,10,0,10">
-                        <TextBox x:Name="SearchBox" Watermark="{loc:Localize Key=Mods_SearchPlaceholder}" Margin="0,0,10,0"/>
-                        <Button Grid.Column="1" x:Name="SearchButton" Classes="Primary" Content="Search"/>
-                    </Grid>
+                    <Border Grid.Row="0" Margin="0,10,0,20" Background="{DynamicResource InputBackground}" CornerRadius="8" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBox x:Name="SearchBox" Watermark="{loc:Localize Key=Mods_SearchPlaceholder}" 
+                                     Background="Transparent" BorderThickness="0" Padding="12,10" VerticalContentAlignment="Center"/>
+                            <Button Grid.Column="1" x:Name="SearchButton" Classes="Primary" Height="34" Margin="4" Padding="16,0">
+                                <i:Icon Value="fa-solid fa-magnifying-glass" FontSize="14"/>
+                            </Button>
+                        </Grid>
+                    </Border>
+
                     <ScrollViewer Grid.Row="1">
                         <StackPanel>
-                            <ListBox x:Name="BrowseListBox" Background="Transparent" BorderThickness="0" Padding="0,0,0,10" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                            <ListBox x:Name="BrowseListBox" Background="Transparent" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Disabled">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Background="{DynamicResource WindowBackground}" CornerRadius="8" Padding="10" Margin="0,0,0,5">
+                                        <Border Classes="ModCard">
                                             <Grid ColumnDefinitions="Auto,*,Auto">
-                                                <Border Grid.Column="0" Width="40" Height="40" CornerRadius="4" ClipToBounds="True" Margin="0,0,10,0">
-                                                    <Image Source="{Binding IconPath, Converter={StaticResource AsyncImageConverter}, ConverterParameter={Binding}}"/>
+                                                <Border Grid.Column="0" Width="48" Height="48" CornerRadius="8" ClipToBounds="True" Background="#20FFFFFF">
+                                                    <Image Source="{Binding IconPath, Converter={StaticResource AsyncImageConverter}, ConverterParameter={Binding}}" Stretch="UniformToFill"/>
                                                 </Border>
-                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                    <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
-                                                    <TextBlock Text="{Binding Authors}" FontSize="11" Foreground="{DynamicResource SecondaryText}"/>
+
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="16,0">
+                                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource PrimaryText}"/>
+                                                    <TextBlock Text="{Binding Authors}" FontSize="12" Foreground="{DynamicResource SecondaryText}" Opacity="0.7"/>
                                                 </StackPanel>
-                                                <Panel Grid.Column="2" VerticalAlignment="Center" MinWidth="100">
+
+                                                <Panel Grid.Column="2" VerticalAlignment="Center" MinWidth="120">
                                                     <Button x:Name="DownloadButton" Content="{loc:Localize Key=Mods_Download}" 
-                                                            Classes="Primary" HorizontalAlignment="Stretch" Tag="{Binding}" IsVisible="{Binding !IsInstalled}"/>
+                                                            Classes="Primary" HorizontalAlignment="Stretch" Height="32" Tag="{Binding}" IsVisible="{Binding !IsInstalled}"/>
                                                     
                                                     <Button x:Name="UpdateBrowseButton" Content="{loc:Localize Key=Mods_Update}" 
-                                                            Classes="Success" HorizontalAlignment="Stretch" Tag="{Binding}" IsVisible="{Binding UpdateAvailable}"/>
+                                                            Classes="Success" HorizontalAlignment="Stretch" Height="32" Tag="{Binding}" IsVisible="{Binding UpdateAvailable}"/>
 
-                                                    <StackPanel IsVisible="{Binding IsDownloading}" Spacing="5">
-                                                        <TextBlock Text="{loc:Localize Key=Mods_Downloading}" FontSize="10" HorizontalAlignment="Center"/>
-                                                        <ProgressBar Minimum="0" Maximum="100" Value="{Binding DownloadProgress}" Height="4"/>
+                                                    <StackPanel IsVisible="{Binding IsDownloading}" Spacing="6">
+                                                        <TextBlock Text="{loc:Localize Key=Mods_Downloading}" FontSize="10" HorizontalAlignment="Center" FontWeight="Bold" Foreground="{DynamicResource SuccessBrush}"/>
+                                                        <ProgressBar Minimum="0" Maximum="100" Value="{Binding DownloadProgress}" Height="4" CornerRadius="2" Foreground="{DynamicResource SuccessBrush}"/>
                                                     </StackPanel>
 
-                                                    <TextBlock Text="{loc:Localize Key=Mods_AlreadyInstalled}" 
-                                                               IsVisible="{Binding IsInstalled}" 
-                                                               VerticalAlignment="Center" HorizontalAlignment="Center"
-                                                               Foreground="{DynamicResource SuccessBrush}" FontWeight="Bold"/>
+                                                    <Border IsVisible="{Binding IsInstalled}" VerticalAlignment="Center" HorizontalAlignment="Center" 
+                                                            Background="{DynamicResource SuccessBrush}" CornerRadius="4" Padding="8,4" Opacity="0.1">
+                                                        <TextBlock Text="{loc:Localize Key=Mods_AlreadyInstalled}" Foreground="{DynamicResource SuccessBrush}" FontWeight="Bold" FontSize="11"/>
+                                                    </Border>
                                                 </Panel>
                                             </Grid>
                                         </Border>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
-                            <Button x:Name="LoadMoreButton" Classes="Secondary" Content="Load More" 
-                                    HorizontalAlignment="Stretch" Margin="0,5,0,10" IsVisible="False"/>
+                            <Button x:Name="LoadMoreButton" Classes="Secondary" Content="LOAD MORE" 
+                                    HorizontalAlignment="Stretch" Margin="0,10,0,20" Height="40" IsVisible="False"/>
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>

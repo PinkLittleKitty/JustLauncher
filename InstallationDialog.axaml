@@ -112,9 +112,6 @@
                         </Grid>
                     </ScrollViewer>
                 </TabItem>
-                <TabItem Header="{loc:Localize Key=Nav_Mods}" x:Name="ModsTab" FontSize="16" IsEnabled="False">
-                    <controls:ModsControl x:Name="ModsControl"/>
-                </TabItem>
             </TabControl>
 
             <!-- Buttons -->

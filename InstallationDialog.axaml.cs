@@ -434,43 +434,5 @@ public partial class InstallationDialog : UserControl
                 loaderVersionCombo.ItemsSource = new[] { "Error loading versions" };
             }
         }
-        
-        var modsTab = this.FindControl<TabItem>("ModsTab");
-        if (modsTab != null)
-        {
-             modsTab.IsEnabled = type != ModLoaderType.Vanilla;
-             if (modsTab.IsEnabled)
-             {
-                 var modsControl = this.FindControl<Controls.ModsControl>("ModsControl");
-                 if (modsControl != null)
-                 {
-                      var dirBox = this.FindControl<TextBox>("GameDirectoryTextBox");
-                      string gameDir = dirBox?.Text ?? PlatformManager.GetMinecraftDirectory();
-                      if (_existingInstallation != null && !string.IsNullOrEmpty(_existingInstallation.GameDirectory))
-                      {
-                          gameDir = _existingInstallation.GameDirectory;
-                      }
-
-                      string selectedVersion = versionCombo?.SelectedItem?.ToString() ?? "";
-                      if (string.IsNullOrEmpty(selectedVersion) && versionCombo?.SelectedIndex >= 0)
-                      {
-                          var items = versionCombo.ItemsSource as System.Collections.IList;
-                          if (items != null && versionCombo.SelectedIndex < items.Count)
-                              selectedVersion = items[versionCombo.SelectedIndex]?.ToString() ?? "";
-                      }
-                      
-                      var tempInstallation = _existingInstallation ?? new Installation 
-                      { 
-                          GameDirectory = gameDir,
-                          LoaderType = type,
-                          BaseVersion = selectedVersion,
-                          Version = selectedVersion
-                      };
-                      
-                      ConsoleService.Instance.Log($"[Mods] Passing Installation: {tempInstallation.Name} (Version: {tempInstallation.BaseVersion})");
-                      modsControl.Initialize(tempInstallation);
-                 }
-             }
-        }
     }
 }

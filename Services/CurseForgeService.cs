@@ -120,6 +120,22 @@ public class CurseForgeService
             return new List<CurseForgeDependency>();
         }
     }
+
+    public async Task<CurseForgeFile?> GetFileAsync(string projectId, string fileId)
+    {
+        string url = $"{BaseUrl}/mods/{projectId}/files/{fileId}";
+        try
+        {
+            string json = await GetWithApiKeyAsync(url);
+            var result = JsonSerializer.Deserialize<CurseForgeFileResponse>(json);
+            return result?.Data;
+        }
+        catch (Exception ex)
+        {
+            ConsoleService.Instance.Log($"[CurseForge] File lookup error ({projectId}/{fileId}): {ex.Message}");
+            return null;
+        }
+    }
 }
 
 public class CurseForgeFileResponse

@@ -64,6 +64,79 @@ namespace JustLauncher
 
             var addBtn = this.FindControl<Button>("AddProfileButton");
             if (addBtn != null) addBtn.Click += AddProfileButton_Click;
+
+            var importBtn = this.FindControl<Button>("ImportModpackButton");
+            if (importBtn != null) importBtn.Click += ImportModpackButton_Click;
+        }
+
+        private async void ImportModpackButton_Click(object? sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog
+            {
+                Title = "Import Modpack",
+                AllowMultiple = false,
+                Filters = new List<FileDialogFilter>
+                {
+                    new FileDialogFilter { Name = "Modpacks", Extensions = { "mrpack", "zip" } }
+                }
+            };
+
+            var window = MainWindow.Instance;
+            if (window == null) return;
+
+            string[]? result = await dialog.ShowAsync(window);
+            if (result != null && result.Length > 0)
+            {
+                string path = result[0];
+                await Task.Run(async () => {
+                    var modpackService = new Services.ModpackService(minecraftDirectory);
+                    
+                    Dispatcher.UIThread.Post(() => {
+                        var statusText = this.FindControl<TextBlock>("StatusText");
+                        var progressBar = this.FindControl<ProgressBar>("ProgressBar");
+                        if (statusText != null) statusText.Text = "Importing modpack...";
+                        if (progressBar != null)
+                        {
+                            progressBar.IsVisible = true;
+                            progressBar.IsIndeterminate = false;
+                            progressBar.Value = 0;
+                        }
+                    });
+
+                    var installation = await modpackService.ImportModpackAsync(path, (msg, prog) => {
+                        Dispatcher.UIThread.Post(() => {
+                            var statusText = this.FindControl<TextBlock>("StatusText");
+                            var progressBar = this.FindControl<ProgressBar>("ProgressBar");
+                            if (statusText != null) statusText.Text = msg;
+                            if (progressBar != null) progressBar.Value = prog;
+                        });
+                    });
+
+                    if (installation != null)
+                    {
+                        installationsConfig.Installations.Add(installation);
+                        installationsConfig.SelectedInstallationId = installation.Id;
+                        await ConfigManager.SaveInstallationsAsync(installationsConfig);
+
+                        Dispatcher.UIThread.Post(() => {
+                            var statusText = this.FindControl<TextBlock>("StatusText");
+                            var progressBar = this.FindControl<ProgressBar>("ProgressBar");
+                            if (statusText != null) statusText.Text = "Import successful!";
+                            if (progressBar != null) progressBar.IsVisible = false;
+                            RefreshInstallations();
+                        });
+                    }
+                    else
+                    {
+                        Dispatcher.UIThread.Post(() => {
+                            var statusText = this.FindControl<TextBlock>("StatusText");
+                            var progressBar = this.FindControl<ProgressBar>("ProgressBar");
+                            if (statusText != null) statusText.Text = "Import failed.";
+                            if (progressBar != null) progressBar.IsVisible = false;
+                        });
+                    }
+                });
+            }
         }
 
         private async void LoadInstallations()

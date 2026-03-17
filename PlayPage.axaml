@@ -62,7 +62,7 @@
                     </StackPanel>
 
                     <!-- Profile & Play -->
-                    <Grid Grid.Row="1" ColumnDefinitions="*,Auto,Auto,180" VerticalAlignment="Center">
+                    <Grid Grid.Row="1" ColumnDefinitions="*,Auto,Auto,Auto,180" VerticalAlignment="Center">
                         <StackPanel Grid.Column="0" Spacing="6" Margin="0,0,20,0">
                             <TextBlock Text="{loc:Localize Key=Play_SelectedInstallation}" Classes="FieldLabel"/>
                             <ComboBox x:Name="ProfileComboBox" Classes="ProfileSelector" HorizontalAlignment="Stretch" VerticalContentAlignment="Center">
@@ -88,14 +88,17 @@
                             </ComboBox>
                         </StackPanel>
                         
-                        <Button x:Name="AddProfileButton" Grid.Column="1" VerticalAlignment="Bottom" Margin="0,0,8,0" Width="42" Height="42" Classes="Secondary">
+                        <Button x:Name="AddProfileButton" Grid.Column="1" VerticalAlignment="Bottom" Margin="0,0,8,0" Width="42" Height="42" Classes="Secondary" ToolTip.Tip="Add Profile">
                             <i:Icon Value="fa-solid fa-plus" FontSize="18"/>
                         </Button>
-                        <Button x:Name="ManageProfilesButton" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,16,0" Width="42" Height="42" Classes="Secondary">
+                        <Button x:Name="ImportModpackButton" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,8,0" Width="42" Height="42" Classes="Secondary" ToolTip.Tip="Import Modpack">
+                            <i:Icon Value="fa-solid fa-file-import" FontSize="18"/>
+                        </Button>
+                        <Button x:Name="ManageProfilesButton" Grid.Column="3" VerticalAlignment="Bottom" Margin="0,0,16,0" Width="42" Height="42" Classes="Secondary" ToolTip.Tip="Manage Profiles">
                             <i:Icon Value="fa-solid fa-gear" FontSize="18"/>
                         </Button>
 
-                        <Button Grid.Column="3" x:Name="PlayButton" Content="{loc:Localize Key=Play_PlayButton}" Classes="Primary" HorizontalAlignment="Stretch" Height="42" FontSize="18" VerticalAlignment="Bottom"/>
+                        <Button Grid.Column="4" x:Name="PlayButton" Content="{loc:Localize Key=Play_PlayButton}" Classes="Primary" HorizontalAlignment="Stretch" Height="42" FontSize="18" VerticalAlignment="Bottom"/>
                     </Grid>
                 </Grid>
             </Border>

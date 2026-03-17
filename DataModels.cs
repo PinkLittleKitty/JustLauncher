@@ -463,4 +463,78 @@ namespace JustLauncher
         [JsonPropertyName("dependencies")]
         public List<Services.CurseForgeDependency> Dependencies { get; set; } = new();
     }
+
+    public class ModrinthModpack
+    {
+        [JsonPropertyName("formatVersion")]
+        public int FormatVersion { get; set; }
+        [JsonPropertyName("game")]
+        public string Game { get; set; } = default!;
+        [JsonPropertyName("versionId")]
+        public string VersionId { get; set; } = default!;
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = default!;
+        [JsonPropertyName("summary")]
+        public string? Summary { get; set; }
+        [JsonPropertyName("files")]
+        public List<ModrinthModpackFile> Files { get; set; } = new();
+        [JsonPropertyName("dependencies")]
+        public Dictionary<string, string> Dependencies { get; set; } = new();
+    }
+
+    public class ModrinthModpackFile
+    {
+        [JsonPropertyName("path")]
+        public string Path { get; set; } = default!;
+        [JsonPropertyName("hashes")]
+        public Dictionary<string, string> Hashes { get; set; } = new();
+        [JsonPropertyName("downloads")]
+        public List<string> Downloads { get; set; } = new();
+    }
+
+    public class CurseForgeModpack
+    {
+        [JsonPropertyName("minecraft")]
+        public CurseForgeModpackMinecraft Minecraft { get; set; } = new();
+        [JsonPropertyName("manifestType")]
+        public string ManifestType { get; set; } = default!;
+        [JsonPropertyName("manifestVersion")]
+        public int ManifestVersion { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = default!;
+        [JsonPropertyName("version")]
+        public string Version { get; set; } = default!;
+        [JsonPropertyName("author")]
+        public string Author { get; set; } = default!;
+        [JsonPropertyName("files")]
+        public List<CurseForgeModpackFile> Files { get; set; } = new();
+        [JsonPropertyName("overrides")]
+        public string Overrides { get; set; } = "overrides";
+    }
+
+    public class CurseForgeModpackMinecraft
+    {
+        [JsonPropertyName("version")]
+        public string Version { get; set; } = default!;
+        [JsonPropertyName("modLoaders")]
+        public List<CurseForgeModpackModLoader> ModLoaders { get; set; } = new();
+    }
+
+    public class CurseForgeModpackModLoader
+    {
+        [JsonPropertyName("id")]
+        public string Id { get; set; } = default!;
+        [JsonPropertyName("primary")]
+        public bool Primary { get; set; }
+    }
+
+    public class CurseForgeModpackFile
+    {
+        [JsonPropertyName("projectID")]
+        public int ProjectId { get; set; }
+        [JsonPropertyName("fileID")]
+        public int FileId { get; set; }
+        [JsonPropertyName("required")]
+        public bool Required { get; set; }
+    }
 }

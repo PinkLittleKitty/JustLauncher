@@ -9,10 +9,17 @@ namespace JustLauncher;
 
 public static class LaunchCommandBuilder
 {
-    public static List<string> BuildArguments(Installation installation, Account account, VersionInfo versionInfo, LauncherSettings settings)
+    public static List<string> BuildArguments(Installation installation, Account account, VersionInfo versionInfo, LauncherSettings settings, string? authlibInjectorPath = null)
     {
         var args = new List<string>();
+        
+        if (account.AccountType == "ElyBy" && !string.IsNullOrEmpty(authlibInjectorPath))
+        {
+            args.Add($"-javaagent:{authlibInjectorPath}=ely.by");
+        }
+
         string mcDir = PlatformManager.GetMinecraftDirectory();
+
         string currentOs = PlatformManager.GetCurrentOsName();
 
         var placeholders = new Dictionary<string, string>

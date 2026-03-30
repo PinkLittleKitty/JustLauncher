@@ -573,4 +573,19 @@ namespace JustLauncher
         [JsonPropertyName("required")]
         public bool Required { get; set; }
     }
+    public class GitHubRelease
+    {
+        [JsonPropertyName("tag_name")]
+        public string TagName { get; set; } = default!;
+        [JsonPropertyName("assets")]
+        public List<GitHubAsset> Assets { get; set; } = new();
+    }
+
+    public class GitHubAsset
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = default!;
+        [JsonPropertyName("browser_download_url")]
+        public string BrowserDownloadUrl { get; set; } = default!;
+    }
 }

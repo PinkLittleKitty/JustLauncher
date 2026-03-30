@@ -92,6 +92,8 @@ public partial class HomePage : UserControl
     }
     private async void LoginButton_Click(object? sender, RoutedEventArgs e)
     {
+        if (_isLoggingIn) return;
+
         if (_currentType == "Microsoft")
         {
             var dialog = new AccountDialog();
@@ -103,19 +105,62 @@ public partial class HomePage : UserControl
             return;
         }
 
-        var box = this.FindControl<TextBox>("UsernameTextBox");
-        string username = box?.Text ?? "";
+        var userBox = this.FindControl<TextBox>("UsernameTextBox");
+        var passBox = this.FindControl<TextBox>("PasswordTextBox");
+        string username = userBox?.Text ?? "";
+        string password = passBox?.Text ?? "";
         
         if (string.IsNullOrWhiteSpace(username)) return;
 
-        var account = new Account 
-        { 
-            Username = username, 
-            AccountType = _currentType, 
-            IsActive = true 
-        };
-        await FinishLogin(account);
+        _isLoggingIn = true;
+        var loginBtn = this.FindControl<Button>("FinalLoginBtn");
+        if (loginBtn != null) loginBtn.IsEnabled = false;
+
+        try 
+        {
+            Account account;
+            if (_currentType == "ElyBy")
+            {
+                if (string.IsNullOrWhiteSpace(password))
+                {
+                    NotificationService.Instance.ShowError("Error", "Password is required for Ely.by accounts");
+                    return;
+                }
+
+                var authResp = await YggdrasilAuthService.Instance.AuthenticateAsync(username, password, "https://account.ely.by/api/authlib-injector/authserver");
+                account = new Account
+                {
+                    Id = authResp.SelectedProfile.Id,
+                    Username = authResp.SelectedProfile.Name,
+                    Email = username,
+                    AccountType = "ElyBy",
+                    AccessToken = authResp.AccessToken,
+                    IsActive = true
+                };
+            }
+            else
+            {
+                account = new Account 
+                { 
+                    Username = username, 
+                    AccountType = _currentType, 
+                    IsActive = true 
+                };
+            }
+            await FinishLogin(account);
+        }
+        catch (Exception ex)
+        {
+            NotificationService.Instance.ShowError("Login Failed", ex.Message);
+        }
+        finally
+        {
+            _isLoggingIn = false;
+            if (loginBtn != null) loginBtn.IsEnabled = true;
+        }
     }
+    
+    private bool _isLoggingIn = false;
 
     private async Task FinishLogin(Account account)
     {

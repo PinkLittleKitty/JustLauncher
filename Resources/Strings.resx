@@ -60,6 +60,12 @@
   </resheader>
   
   <!-- Navigation -->
+  <data name="Nav_Play" xml:space="preserve">
+    <value>Play</value>
+  </data>
+  <data name="Nav_Import" xml:space="preserve">
+    <value>Import</value>
+  </data>
   <data name="Common_Play" xml:space="preserve">
     <value>Play</value>
   </data>

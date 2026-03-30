@@ -228,19 +228,60 @@ public partial class AccountDialog : UserControl
         }
     }
 
-    private void SaveButton_Click(object? sender, RoutedEventArgs e)
+    private async void SaveButton_Click(object? sender, RoutedEventArgs e)
     {
-        var box = this.FindControl<TextBox>("UsernameTextBox");
-        if (string.IsNullOrWhiteSpace(box?.Text)) return;
-
-        var account = new Account 
-        { 
-            Username = box.Text, 
-            AccountType = _selectedType,
-            IsActive = false
-        };
+        var userBox = this.FindControl<TextBox>("UsernameTextBox");
+        var passBox = this.FindControl<TextBox>("PasswordTextBox");
         
-        OverlayService.Close(account);
+        string username = userBox?.Text ?? "";
+        string password = passBox?.Text ?? "";
+
+        if (string.IsNullOrWhiteSpace(username)) return;
+
+        var saveBtn = this.FindControl<Button>("SaveButton");
+        if (saveBtn != null) saveBtn.IsEnabled = false;
+
+        try
+        {
+            Account account;
+            if (_selectedType == "ElyBy")
+            {
+                if (string.IsNullOrWhiteSpace(password))
+                {
+                    NotificationService.Instance.ShowError("Error", "Password is required for Ely.by accounts");
+                    return;
+                }
+
+                var authResp = await YggdrasilAuthService.Instance.AuthenticateAsync(username, password, "https://account.ely.by/api/authlib-injector/authserver");
+                account = new Account 
+                { 
+                    Id = authResp.SelectedProfile.Id,
+                    Username = authResp.SelectedProfile.Name, 
+                    AccountType = "ElyBy",
+                    AccessToken = authResp.AccessToken,
+                    IsActive = false
+                };
+            }
+            else
+            {
+                account = new Account 
+                { 
+                    Username = username, 
+                    AccountType = _selectedType,
+                    IsActive = false
+                };
+            }
+            
+            OverlayService.Close(account);
+        }
+        catch (Exception ex)
+        {
+            NotificationService.Instance.ShowError("Login Failed", ex.Message);
+        }
+        finally
+        {
+            if (saveBtn != null) saveBtn.IsEnabled = true;
+        }
     }
 
     private void InitializeComponent()

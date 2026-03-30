@@ -348,8 +348,28 @@ public class MinecraftService
         string injectorPath = Path.Combine(toolsDir, "authlib-injector.jar");
         if (!File.Exists(injectorPath))
         {
+            ConsoleService.Instance.Log("Fetching latest authlib-injector version from GitHub...");
+            string url = "https://github.com/yushijinhun/authlib-injector/releases/download/v1.2.7/authlib-injector-1.2.7.jar"; // Fallback
+
+            try
+            {
+                string apiUrl = "https://api.github.com/repos/yushijinhun/authlib-injector/releases/latest";
+                string json = await HttpClientManager.Instance.GetStringAsync(apiUrl);
+                var release = JsonSerializer.Deserialize<GitHubRelease>(json);
+                
+                var jarAsset = release?.Assets.FirstOrDefault(a => a.Name.EndsWith(".jar"));
+                if (jarAsset != null)
+                {
+                    url = jarAsset.BrowserDownloadUrl;
+                    ConsoleService.Instance.Log($"Found latest version: {release?.TagName}");
+                }
+            }
+            catch (Exception ex)
+            {
+                ConsoleService.Instance.Log($"[WARNING] Failed to fetch latest authlib-injector version: {ex.Message}. Using fallback.");
+            }
+
             ConsoleService.Instance.Log("Downloading authlib-injector...");
-            string url = "https://github.com/yushijinhun/authlib-injector/releases/download/v1.2.9/authlib-injector-1.2.9.jar";
             await DownloadFileAsync(url, injectorPath);
         }
         

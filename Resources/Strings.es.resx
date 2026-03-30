@@ -63,6 +63,9 @@
   <data name="Nav_Play" xml:space="preserve">
     <value>Jugar</value>
   </data>
+  <data name="Nav_Import" xml:space="preserve">
+    <value>Importar</value>
+  </data>
   <data name="Nav_Accounts" xml:space="preserve">
     <value>Cuentas</value>
   </data>

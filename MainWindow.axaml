@@ -142,12 +142,6 @@
                                 <TextBlock Text="{loc:Localize Key=Nav_Play}" VerticalAlignment="Center" Classes="SidebarText"/>
                             </StackPanel>
                         </Button>
-                        <Button x:Name="ImportModpackButton" Classes="SidebarBtn">
-                            <StackPanel Orientation="Horizontal" Spacing="15">
-                                <i:Icon Value="fa-solid fa-file-import" ToolTip.Tip="Import Modpack"/>
-                                <TextBlock Text="Import" VerticalAlignment="Center" Classes="SidebarText"/>
-                            </StackPanel>
-                        </Button>
                         <Button x:Name="AccountsButton" Classes="SidebarBtn">
                             <StackPanel Orientation="Horizontal" Spacing="15">
                                 <i:Icon Value="fa-solid fa-users" ToolTip.Tip="{loc:Localize Key=Nav_Accounts}"/>

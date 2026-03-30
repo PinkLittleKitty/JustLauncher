@@ -485,11 +485,12 @@ namespace JustLauncher
                     }
                 }
 
+                string? injectorPath = null;
                 if (account.AccountType == "ElyBy")
                 {
                     Log("Preparing Ely.by authentication...");
                     Dispatcher.UIThread.Post(() => { if (statusText != null) statusText.Text = "Preparing Ely.by authentication..."; });
-                    await _minecraftService.EnsureAuthlibInjectorAsync();
+                    injectorPath = await _minecraftService.EnsureAuthlibInjectorAsync();
                 }
 
                 if (!string.IsNullOrEmpty(installation.GameDirectory) && !Directory.Exists(installation.GameDirectory))
@@ -499,7 +500,7 @@ namespace JustLauncher
                 }
 
                 Log("Building launch arguments...");
-                var args = LaunchCommandBuilder.BuildArguments(installation, account, info, settings);
+                var args = LaunchCommandBuilder.BuildArguments(installation, account, info, settings, injectorPath);
                 
                 var startInfo = new ProcessStartInfo
                 {

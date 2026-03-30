@@ -133,9 +133,6 @@ public partial class MainWindow : Window
         var modsBtn = this.FindControl<Button>("ModsButton");
         if (modsBtn != null) modsBtn.Click += ModsButton_Click;
 
-        var importMPBtn = this.FindControl<Button>("ImportModpackButton");
-        if (importMPBtn != null) importMPBtn.Click += ImportModpackButton_Click;
-
         var infoBtn = this.FindControl<Button>("InfoButton");
         if (infoBtn != null)
         {
@@ -239,21 +236,6 @@ public partial class MainWindow : Window
         SetActiveNavItem("ModsButton");
     }
 
-    private async void ImportModpackButton_Click(object? sender, RoutedEventArgs e)
-    {
-        var dialog = new ImportModpackDialog();
-        dialog.OnImportFinished += async (s, installation) =>
-        {
-            var config = await ConfigManager.LoadInstallationsAsync();
-            config.Installations.Add(installation);
-            config.SelectedInstallationId = installation.Id;
-            await ConfigManager.SaveInstallationsAsync(config);
-            
-            // Refresh current page if it's PlayPage
-            await InitializeAsync();
-        };
-        await OverlayService.ShowDialog<object>(dialog);
-    }
 
     private void TitleBar_PointerPressed(object? sender, PointerPressedEventArgs e)
     {
@@ -343,7 +325,7 @@ public partial class MainWindow : Window
 
     private void SetActiveNavItem(string buttonName)
     {
-        string[] navButtons = { "PlayButton", "ImportModpackButton", "AccountsButton", "SettingsButton", "ConsoleButton", "ModsButton" };
+        string[] navButtons = { "PlayButton", "AccountsButton", "SettingsButton", "ConsoleButton", "ModsButton" };
         foreach (var name in navButtons)
         {
             var btn = this.FindControl<Button>(name);

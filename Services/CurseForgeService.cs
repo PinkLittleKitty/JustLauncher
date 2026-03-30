@@ -18,9 +18,20 @@ public class CurseForgeService
 
     private async Task<string> GetWithApiKeyAsync(string url)
     {
+        if (string.IsNullOrEmpty(ApiKey))
+        {
+            throw new Exception("CurseForge API Key is missing. Please set CURSEFORGE_API_KEY in your .env file.");
+        }
+
         using var request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.Add("x-api-key", ApiKey);
         var response = await HttpClientManager.Instance.SendAsync(request);
+        
+        if (response.StatusCode == System.Net.HttpStatusCode.Forbidden || response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            throw new Exception($"CurseForge API access denied ({response.StatusCode}). Your API key might be invalid or expired.");
+        }
+
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadAsStringAsync();
     }

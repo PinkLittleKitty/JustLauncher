@@ -386,12 +386,17 @@ public partial class ModsControl : UserControl
         }
     }
 
-    private void ModsListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+    private async void ModsListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         if (sender is ListBox list && list.SelectedItem is ModInfo mod)
         {
-            _modManager.ToggleMod(mod);
             list.SelectedItem = null;
+            bool success = _modManager.ToggleMod(mod);
+            if (!success)
+            {
+                NotificationService.Instance.ShowError("Error", "Could not toggle mod. Make sure the game is not running.");
+            }
+            await LoadModsAsync();
         }
     }
 }

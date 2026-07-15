@@ -193,28 +193,37 @@ public class ModManagerService
         }
     }
 
-    public void ToggleMod(ModInfo mod)
+    public bool ToggleMod(ModInfo mod)
     {
-        if (mod.IsEnabled)
+        try
         {
-            var newPath = mod.Path + ".disabled";
-            if (File.Exists(newPath)) File.Delete(newPath);
-            File.Move(mod.Path, newPath);
-            mod.Path = newPath;
-            mod.FileName = Path.GetFileName(newPath);
-            mod.IsEnabled = false;
-        }
-        else
-        {
-            if (mod.Path.EndsWith(".disabled"))
+            if (mod.IsEnabled)
             {
-                var newPath = mod.Path.Substring(0, mod.Path.Length - ".disabled".Length);
+                var newPath = mod.Path + ".disabled";
                 if (File.Exists(newPath)) File.Delete(newPath);
                 File.Move(mod.Path, newPath);
                 mod.Path = newPath;
                 mod.FileName = Path.GetFileName(newPath);
-                mod.IsEnabled = true;
+                mod.IsEnabled = false;
             }
+            else
+            {
+                if (mod.Path.EndsWith(".disabled"))
+                {
+                    var newPath = mod.Path.Substring(0, mod.Path.Length - ".disabled".Length);
+                    if (File.Exists(newPath)) File.Delete(newPath);
+                    File.Move(mod.Path, newPath);
+                    mod.Path = newPath;
+                    mod.FileName = Path.GetFileName(newPath);
+                    mod.IsEnabled = true;
+                }
+            }
+            return true;
+        }
+        catch (Exception ex)
+        {
+            ConsoleService.Instance.Log($"[Mods] Failed to toggle mod: {ex.Message}");
+            return false;
         }
     }
 

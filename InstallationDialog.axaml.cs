@@ -63,16 +63,6 @@ public partial class InstallationDialog : UserControl
                 {
                     var memoryLabel = this.FindControl<TextBlock>("MemoryLabel");
                     if (memoryLabel != null) memoryLabel.Text = $"{(int)memorySlider.Value} GB";
-                    
-                    var argsBox = this.FindControl<TextBox>("JavaArgsTextBox");
-                    if (argsBox != null)
-                    {
-                        int memoryGb = (int)memorySlider.Value;
-                        if (memoryGb > 0)
-                            argsBox.Text = $"-Xmx{memoryGb}G -Xms{memoryGb}G";
-                        else
-                            argsBox.Text = "";
-                    }
                 }
             };
         }
@@ -209,6 +199,29 @@ public partial class InstallationDialog : UserControl
         }
     }
     
+    private List<string> GetLocalVersions()
+    {
+        var versions = new List<string>();
+        try
+        {
+            string mcDir = PlatformManager.GetMinecraftDirectory();
+            string versionsDir = Path.Combine(mcDir, "versions");
+            if (Directory.Exists(versionsDir))
+            {
+                foreach (var dir in Directory.GetDirectories(versionsDir))
+                {
+                    var name = Path.GetFileName(dir);
+                    if (File.Exists(Path.Combine(dir, $"{name}.json")))
+                    {
+                        versions.Add(name);
+                    }
+                }
+            }
+        }
+        catch {}
+        return versions.OrderByDescending(v => v).ToList();
+    }
+
     private async Task LoadVersionsAsync()
     {
         var versionCombo = this.FindControl<ComboBox>("VersionComboBox");
@@ -232,7 +245,15 @@ public partial class InstallationDialog : UserControl
         }
         catch
         {
-            versionCombo.ItemsSource = new[] { "1.21.1", "1.20.1", "1.19.4" };
+            var localVersions = GetLocalVersions();
+            if (localVersions.Count > 0)
+            {
+                versionCombo.ItemsSource = localVersions;
+            }
+            else
+            {
+                versionCombo.ItemsSource = new[] { "1.21.1", "1.20.1", "1.19.4" };
+            }
             versionCombo.SelectedIndex = 0;
         }
     }

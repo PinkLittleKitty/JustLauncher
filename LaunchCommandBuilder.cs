@@ -70,18 +70,30 @@ public static class LaunchCommandBuilder
         classpath.Add(Path.Combine(mcDir, "versions", jarVersion, jarVersion + ".jar"));
         placeholders["${classpath}"] = string.Join(Path.PathSeparator, classpath);
 
-        // Determine memory allocation
         double ramGb = installation.MemoryAllocationGb > 0 
             ? installation.MemoryAllocationGb 
             : settings.MemoryAllocationGb;
-        if (ramGb <= 0) ramGb = 2.0; // Fail-safe default
+        if (ramGb <= 0) ramGb = 2.0;
 
         string minRam = $"-Xms{(int)ramGb}G";
         string maxRam = $"-Xmx{(int)ramGb}G";
 
-        // Add memory arguments first (or early enough)
         args.Add(maxRam);
         args.Add(minRam);
+
+        int javaMajor = versionInfo.JavaVersion?.MajorVersion ?? 8;
+        if (javaMajor == 0) javaMajor = 8;
+
+        if (javaMajor >= 16)
+        {
+            args.Add("--add-opens=java.base/java.io=ALL-UNNAMED");
+            args.Add("--add-opens=java.base/java.lang=ALL-UNNAMED");
+            args.Add("--add-opens=java.base/java.lang.reflect=ALL-UNNAMED");
+            args.Add("--add-opens=java.base/java.util=ALL-UNNAMED");
+            args.Add("--add-opens=java.base/java.util.concurrent=ALL-UNNAMED");
+            args.Add("--add-opens=java.base/java.lang.invoke=ALL-UNNAMED");
+            args.Add("--add-opens=java.base/java.security=ALL-UNNAMED");
+        }
 
         if (versionInfo.Arguments?.Jvm != null && versionInfo.Arguments.Jvm.Count > 0)
         {

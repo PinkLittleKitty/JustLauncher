@@ -84,7 +84,20 @@ public partial class App : Application
             Console.WriteLine(msg);
             Console.Error.WriteLine(msg);
             System.Diagnostics.Debug.WriteLine(msg);
-            File.WriteAllText("/tmp/justlauncher_crash.log", msg);
+            try
+            {
+                var logDir = PlatformManager.GetLauncherDirectory();
+                if (!Directory.Exists(logDir)) Directory.CreateDirectory(logDir);
+                File.WriteAllText(Path.Combine(logDir, "crash.log"), msg);
+            }
+            catch
+            {
+                try
+                {
+                    File.WriteAllText("crash.log", msg);
+                }
+                catch {}
+            }
             Environment.Exit(1);
         }
     }

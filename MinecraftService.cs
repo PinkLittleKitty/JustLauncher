@@ -238,13 +238,13 @@ public class MinecraftService
 
             if (lib.Natives != null && lib.Natives.TryGetValue(currentOs, out string? classifier))
             {
-                if (lib.Downloads.Classifiers != null && lib.Downloads.Classifiers.TryGetValue(classifier, out var nativeArtifact))
+                if (lib.Downloads?.Classifiers != null && lib.Downloads.Classifiers.TryGetValue(classifier, out var nativeArtifact))
                 {
                     candidates.Add(nativeArtifact);
                 }
             }
 
-            if (lib.Downloads.Classifiers != null)
+            if (lib.Downloads?.Classifiers != null)
             {
                 foreach (var entry in lib.Downloads.Classifiers)
                 {
@@ -257,7 +257,7 @@ public class MinecraftService
 
             if (lib.Name.Contains($"natives-{currentOs}") && PlatformManager.IsArchitectureMatch(lib.Name, currentOs))
             {
-                if (lib.Downloads.Artifact != null)
+                if (lib.Downloads?.Artifact != null)
                 {
                     candidates.Add(lib.Downloads.Artifact);
                 }

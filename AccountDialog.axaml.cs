@@ -74,6 +74,8 @@ public partial class AccountDialog : UserControl
 
     private async void NextButton_Click(object? sender, RoutedEventArgs e)
     {
+        if (_isAuthInProgress) return;
+
         if (_selectedType == "Microsoft")
         {
             _currentStep = 3;

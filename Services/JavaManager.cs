@@ -173,7 +173,80 @@ public class JavaManager
 
     private async Task<string?> DetectAndMoveExtractedJava(string extractionRoot, string finalTargetDir)
     {
-        return null;
+        await Task.CompletedTask;
+        try
+        {
+            var dirs = Directory.GetDirectories(extractionRoot);
+            string? extractedDir = null;
+            
+            foreach (var dir in dirs)
+            {
+                var dirName = Path.GetFileName(dir);
+                if (dirName.StartsWith("java-runtime-")) continue;
+                
+                var javaExe = FindJavaExecutable(dir);
+                if (!string.IsNullOrEmpty(javaExe))
+                {
+                    extractedDir = dir;
+                    break;
+                }
+            }
+            
+            if (extractedDir == null)
+            {
+                ConsoleService.Instance.Log("[JavaManager] Could not find any extracted JRE directory.");
+                return null;
+            }
+            
+            if (Directory.Exists(finalTargetDir))
+            {
+                try
+                {
+                    Directory.Delete(finalTargetDir, true);
+                }
+                catch (Exception ex)
+                {
+                    ConsoleService.Instance.Log($"[JavaManager] Failed to delete existing target directory: {ex.Message}");
+                }
+            }
+            
+            Directory.Move(extractedDir, finalTargetDir);
+            
+            var targetExe = FindJavaExecutable(finalTargetDir);
+            if (string.IsNullOrEmpty(targetExe))
+            {
+                ConsoleService.Instance.Log("[JavaManager] Java executable not found in moved directory.");
+                return null;
+            }
+            
+            // Mark as executable on Linux/macOS
+            if (!PlatformManager.IsWindows())
+            {
+                try
+                {
+                    var chmodInfo = new ProcessStartInfo
+                    {
+                        FileName = "chmod",
+                        Arguments = $"+x \"{targetExe}\"",
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    };
+                    using var p = Process.Start(chmodInfo);
+                    if (p != null) await p.WaitForExitAsync();
+                }
+                catch (Exception ex)
+                {
+                    ConsoleService.Instance.Log($"[JavaManager] Failed to chmod java executable: {ex.Message}");
+                }
+            }
+
+            return targetExe;
+        }
+        catch (Exception ex)
+        {
+            ConsoleService.Instance.Log($"[JavaManager] Error detecting and moving JRE: {ex.Message}");
+            return null;
+        }
     }
 
     private async Task<JavaInfo?> GetJavaVersionInfoAsync(string path)

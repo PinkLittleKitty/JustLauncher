@@ -11,6 +11,7 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Avalonia.Platform.Storage;
 
 namespace JustLauncher
 {
@@ -71,23 +72,22 @@ namespace JustLauncher
 
         private async void ImportModpackButton_Click(object? sender, RoutedEventArgs e)
         {
-            var dialog = new OpenFileDialog
+            var topLevel = TopLevel.GetTopLevel(this);
+            if (topLevel == null) return;
+
+            var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
                 Title = "Import Modpack",
                 AllowMultiple = false,
-                Filters = new List<FileDialogFilter>
+                FileTypeFilter = new[]
                 {
-                    new FileDialogFilter { Name = "Modpacks", Extensions = { "mrpack", "zip" } }
+                    new FilePickerFileType("Modpacks") { Patterns = new[] { "*.mrpack", "*.zip" } }
                 }
-            };
+            });
 
-            var window = MainWindow.Instance;
-            if (window == null) return;
-
-            string[]? result = await dialog.ShowAsync(window);
-            if (result != null && result.Length > 0)
+            if (files != null && files.Count > 0)
             {
-                string path = result[0];
+                string path = files[0].Path.LocalPath;
                 await Task.Run(async () => {
                     var modpackService = new Services.ModpackService(minecraftDirectory);
                     

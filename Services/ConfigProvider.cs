@@ -7,12 +7,9 @@ namespace JustLauncher.Services;
 public static class ConfigProvider
 {
     private static readonly Dictionary<string, string> _envVars = new();
-    private static bool _initialized = false;
 
-    private static void Initialize()
+    static ConfigProvider()
     {
-        if (_initialized) return;
-
         string envPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env");
         
         if (!File.Exists(envPath))
@@ -22,25 +19,28 @@ public static class ConfigProvider
 
         if (File.Exists(envPath))
         {
-            foreach (var line in File.ReadAllLines(envPath))
+            try
             {
-                if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#")) continue;
-
-                var parts = line.Split('=', 2);
-                if (parts.Length == 2)
+                foreach (var line in File.ReadAllLines(envPath))
                 {
-                    _envVars[parts[0].Trim()] = parts[1].Trim();
+                    if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#")) continue;
+
+                    var parts = line.Split('=', 2);
+                    if (parts.Length == 2)
+                    {
+                        _envVars[parts[0].Trim()] = parts[1].Trim();
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading .env file: {ex.Message}");
+            }
         }
-
-        _initialized = true;
     }
 
     public static string? Get(string key)
     {
-        Initialize();
-
         if (_envVars.TryGetValue(key, out var value))
         {
             return value;

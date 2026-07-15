@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -9,6 +10,7 @@ namespace JustLauncher.Services;
 public static class ImageCacheService
 {
     private static readonly string CacheDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "JustLauncher", "Cache", "Images");
+    private static readonly ConcurrentDictionary<string, Task<string?>> _activeDownloads = new();
 
     static ImageCacheService()
     {
@@ -26,31 +28,39 @@ public static class ImageCacheService
         return File.Exists(filePath) ? filePath : null;
     }
 
-    public static async Task<string?> GetCachedImageAsync(string url)
+    public static Task<string?> GetCachedImageAsync(string url)
     {
-        string? existing = GetCachedPath(url);
-        if (existing != null) return existing;
+        if (string.IsNullOrEmpty(url)) return Task.FromResult<string?>(null);
 
-        if (string.IsNullOrEmpty(url)) return null;
-        string fileName = GetHash(url);
-        string filePath = Path.Combine(CacheDir, fileName);
-
-        try
+        return _activeDownloads.GetOrAdd(url, async (u) =>
         {
-            var response = await HttpClientManager.Instance.GetAsync(url);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var bytes = await response.Content.ReadAsByteArrayAsync();
-                await File.WriteAllBytesAsync(filePath, bytes);
-                return filePath;
-            }
-        }
-        catch (Exception ex)
-        {
-            ConsoleService.Instance.Log($"[ImageCache] Failed to cache image from {url}: {ex.Message}");
-        }
+                string? existing = GetCachedPath(u);
+                if (existing != null) return existing;
 
-        return null;
+                string fileName = GetHash(u);
+                string filePath = Path.Combine(CacheDir, fileName);
+
+                var response = await HttpClientManager.Instance.GetAsync(u);
+                if (response.IsSuccessStatusCode)
+                {
+                    var bytes = await response.Content.ReadAsByteArrayAsync();
+                    await File.WriteAllBytesAsync(filePath, bytes);
+                    return filePath;
+                }
+            }
+            catch (Exception ex)
+            {
+                ConsoleService.Instance.Log($"[ImageCache] Failed to cache image from {u}: {ex.Message}");
+            }
+            finally
+            {
+                _activeDownloads.TryRemove(u, out _);
+            }
+
+            return null;
+        });
     }
 
     private static string GetHash(string input)

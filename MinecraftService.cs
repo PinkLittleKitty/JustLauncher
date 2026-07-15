@@ -47,11 +47,40 @@ public class MinecraftService
 
         if (!string.IsNullOrEmpty(info.InheritsFrom))
         {
-            var manifest = await GetVersionManifestAsync();
-            var parentVer = manifest.Versions.FirstOrDefault(v => v.Id == info.InheritsFrom);
-            if (parentVer != null)
+            VersionInfo? parentInfo = null;
+            string parentJsonPath = Path.Combine(_baseDir, "versions", info.InheritsFrom, $"{info.InheritsFrom}.json");
+            
+            if (File.Exists(parentJsonPath))
             {
-                var parentInfo = await GetVersionInfoAsync(parentVer.Url);
+                try
+                {
+                    parentInfo = await GetVersionInfoFromLocalAsync(info.InheritsFrom);
+                }
+                catch (Exception ex)
+                {
+                    ConsoleService.Instance.Log($"[MinecraftService] Error loading local parent version info ({info.InheritsFrom}): {ex.Message}");
+                }
+            }
+
+            if (parentInfo == null)
+            {
+                try
+                {
+                    var manifest = await GetVersionManifestAsync();
+                    var parentVer = manifest.Versions.FirstOrDefault(v => v.Id == info.InheritsFrom);
+                    if (parentVer != null)
+                    {
+                        parentInfo = await GetVersionInfoAsync(parentVer.Url);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ConsoleService.Instance.Log($"[MinecraftService] Error fetching remote parent version info ({info.InheritsFrom}): {ex.Message}");
+                }
+            }
+
+            if (parentInfo != null)
+            {
                 MergeVersionInfo(info, parentInfo);
             }
         }

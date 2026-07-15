@@ -73,40 +73,57 @@ public class MicrosoftAuthService
         return $"https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize?{queryString}";
     }
 
-    public async Task<string> ListenForCodeAsync(int port)
+    public async Task<string> ListenForCodeAsync(int port, System.Threading.CancellationToken cancellationToken)
     {
         var listener = new System.Net.HttpListener();
         var redirectUri = $"http://localhost:{port}/";
         listener.Prefixes.Add(redirectUri);
         listener.Start();
 
-        try
-        {
-            var context = await listener.GetContextAsync();
-            var code = context.Request.QueryString["code"];
-
-            using var writer = new System.IO.StreamWriter(context.Response.OutputStream);
-            if (!string.IsNullOrEmpty(code))
+        using (cancellationToken.Register(() => {
+            try
             {
-                await writer.WriteAsync("<html><body><h1>Success!</h1><p>You can close this tab now and return to JustLauncher.</p></body></html>");
-                context.Response.StatusCode = 200;
+                listener.Stop();
             }
-            else
-            {
-                await writer.WriteAsync("<html><body><h1>Error</h1><p>No authorization code found in the request.</p></body></html>");
-                context.Response.StatusCode = 400;
-            }
-            await writer.FlushAsync();
-            context.Response.Close();
-
-            if (string.IsNullOrEmpty(code))
-                throw new Exception("Authorization failed: No code received.");
-
-            return code;
-        }
-        finally
+            catch {}
+        }))
         {
-            listener.Stop();
+            try
+            {
+                var context = await listener.GetContextAsync();
+                var code = context.Request.QueryString["code"];
+
+                using var writer = new System.IO.StreamWriter(context.Response.OutputStream);
+                if (!string.IsNullOrEmpty(code))
+                {
+                    await writer.WriteAsync("<html><body><h1>Success!</h1><p>You can close this tab now and return to JustLauncher.</p></body></html>");
+                    context.Response.StatusCode = 200;
+                }
+                else
+                {
+                    await writer.WriteAsync("<html><body><h1>Error</h1><p>No authorization code found in the request.</p></body></html>");
+                    context.Response.StatusCode = 400;
+                }
+                await writer.FlushAsync();
+                context.Response.Close();
+
+                if (string.IsNullOrEmpty(code))
+                    throw new Exception("Authorization failed: No code received.");
+
+                return code;
+            }
+            catch (Exception) when (cancellationToken.IsCancellationRequested)
+            {
+                throw new OperationCanceledException(cancellationToken);
+            }
+            finally
+            {
+                try
+                {
+                    listener.Close();
+                }
+                catch {}
+            }
         }
     }
 

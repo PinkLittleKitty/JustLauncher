@@ -119,21 +119,11 @@ public partial class AccountDialog : UserControl
                 if (urlText != null) urlText.Text = authUrl;
             }
 
-            var codeTask = MicrosoftAuthService.Instance.ListenForCodeAsync(port);
-            var resultTask = await Task.WhenAny(codeTask, Task.Delay(-1, _authCts.Token));
-
-            if (resultTask == codeTask)
-            {
-                var code = await codeTask;
-                ConsoleService.Instance.Log("Authorization code received. Exchanging for token...");
-                
-                var tokenResponse = await MicrosoftAuthService.Instance.ExchangeCodeForTokenAsync(code, pkce.Verifier, redirectUri);
-                await FinalizeMicrosoftAuth(tokenResponse);
-            }
-            else
-            {
-                return;
-            }
+            var code = await MicrosoftAuthService.Instance.ListenForCodeAsync(port, _authCts.Token);
+            ConsoleService.Instance.Log("Authorization code received. Exchanging for token...");
+            
+            var tokenResponse = await MicrosoftAuthService.Instance.ExchangeCodeForTokenAsync(code, pkce.Verifier, redirectUri);
+            await FinalizeMicrosoftAuth(tokenResponse);
         }
         catch (OperationCanceledException) { }
         catch (Exception ex)

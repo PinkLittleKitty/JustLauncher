@@ -84,7 +84,19 @@ public class ModpackService
             currentFile++;
             onProgress?.Invoke($"Downloading {file.Path}...", (double)currentFile / totalFiles * 100);
 
-            string destPath = Path.Combine(instanceDir, file.Path);
+            string destPath = Path.GetFullPath(Path.Combine(instanceDir, file.Path));
+            string fullInstanceDir = Path.GetFullPath(instanceDir);
+            if (!fullInstanceDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                fullInstanceDir += Path.DirectorySeparatorChar;
+            }
+
+            if (!destPath.StartsWith(fullInstanceDir, StringComparison.OrdinalIgnoreCase))
+            {
+                ConsoleService.Instance.Log($"[Modpack] Warning: Ignored traversal file path in Modrinth index: {file.Path}");
+                continue;
+            }
+
             string? dir = Path.GetDirectoryName(destPath);
             if (dir != null && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
 
@@ -160,16 +172,30 @@ public class ModpackService
         return installation;
     }
 
-    private void ExtractOverrides(ZipArchive archive, string overrideFolder, string targetDir)
+    private void ExtractOverrides(ZipArchive archive, string? overrideFolder, string targetDir)
     {
+        if (string.IsNullOrEmpty(overrideFolder)) return;
+        
         string prefix = overrideFolder + "/";
         foreach (var entry in archive.Entries)
         {
             if (entry.FullName.StartsWith(prefix) && !string.IsNullOrEmpty(entry.Name))
             {
                 string relativePath = entry.FullName.Substring(prefix.Length);
-                string destPath = Path.Combine(targetDir, relativePath);
                 
+                string destPath = Path.GetFullPath(Path.Combine(targetDir, relativePath));
+                string fullTargetDir = Path.GetFullPath(targetDir);
+                if (!fullTargetDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                {
+                    fullTargetDir += Path.DirectorySeparatorChar;
+                }
+
+                if (!destPath.StartsWith(fullTargetDir, StringComparison.OrdinalIgnoreCase))
+                {
+                    ConsoleService.Instance.Log($"[Modpack] Warning: Ignored traversal file path in overrides: {entry.FullName}");
+                    continue;
+                }
+
                 string? dir = Path.GetDirectoryName(destPath);
                 if (dir != null && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
                 

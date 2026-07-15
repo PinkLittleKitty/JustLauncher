@@ -1,8 +1,10 @@
+using System.Reflection;
+
 namespace JustLauncher;
 
 public static class AppVersion
 {
-    public const string Version = "1.0.8";
+    public static string Version => Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.0.0";
 
     public const string Name = "JustLauncher";
 

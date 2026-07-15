@@ -224,17 +224,23 @@ public static class PlatformManager
         }
 
         
-        var compatible = candidates.Where(c => c.major >= requiredMajorVersion).ToList();
+        var exactMatches = candidates.Where(c => c.major == requiredMajorVersion).ToList();
+        if (exactMatches.Any())
+        {
+            var best = exactMatches.OrderByDescending(c => c.version).First();
+            return (best.version, best.path);
+        }
 
+        var compatible = candidates.Where(c => c.major >= requiredMajorVersion).ToList();
         if (compatible.Any())
         {
-            var best = compatible.OrderByDescending(c => c.major).First();
+            var best = compatible.OrderBy(c => c.major).ThenByDescending(c => c.version).First();
             return (best.version, best.path);
         }
 
         if (candidates.Any())
         {
-            var bestStart = candidates.OrderByDescending(c => c.major).First();
+            var bestStart = candidates.OrderBy(c => Math.Abs(c.major - requiredMajorVersion)).First();
             return (bestStart.version, bestStart.path);
         }
 

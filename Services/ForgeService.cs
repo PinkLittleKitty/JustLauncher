@@ -67,6 +67,28 @@ public class ForgeService
         return list;
     }
 
+    private static int GetRequiredJavaVersion(string mcVersion)
+    {
+        if (string.IsNullOrEmpty(mcVersion)) return 8;
+
+        var parts = mcVersion.Split('.');
+        if (parts.Length >= 2 && int.TryParse(parts[1], out int minor))
+        {
+            if (minor <= 16) return 8;
+            if (minor == 17) return 16;
+            if (minor <= 20)
+            {
+                if (minor == 20 && parts.Length >= 3 && int.TryParse(parts[2], out int patch) && patch >= 5)
+                {
+                    return 21;
+                }
+                return 17;
+            }
+            return 21;
+        }
+        return 8;
+    }
+
     public async Task<string?> InstallForgeAsync(string mcVersion, string forgeVersion, string gameDir)
     {
         string installerUrl = $"{MavenUrl}/{mcVersion}-{forgeVersion}/forge-{mcVersion}-{forgeVersion}-installer.jar";
@@ -89,11 +111,20 @@ public class ForgeService
                 File.WriteAllText(profilesPath, "{ \"profiles\": {} }");
             }
 
+            int requiredJava = GetRequiredJavaVersion(mcVersion);
             var javas = await _javaManager.GetInstalledJavaVersionsAsync();
             if (javas.Count > 0)
             {
-                var best = javas.OrderByDescending(j => j.MajorVersion).FirstOrDefault();
-                if (best != null) javaPath = best.Path;
+                var matchedJava = javas.FirstOrDefault(j => j.MajorVersion == requiredJava);
+                if (matchedJava != null)
+                {
+                    javaPath = matchedJava.Path;
+                }
+                else
+                {
+                    var fallback = javas.OrderBy(j => Math.Abs(j.MajorVersion - requiredJava)).FirstOrDefault();
+                    if (fallback != null) javaPath = fallback.Path;
+                }
             }
             
             var psi = new ProcessStartInfo

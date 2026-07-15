@@ -44,7 +44,7 @@ public class YggdrasilAuthService
                     throw new Exception(error.ErrorMessage);
                 }
             }
-            catch (Exception ex) when (ex is not Exception)
+            catch
             {
             }
 

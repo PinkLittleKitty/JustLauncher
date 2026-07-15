@@ -12,6 +12,10 @@ public static class ConfigManager
     private static readonly string InstallationsPath = Path.Combine(LauncherDir, "launcher_installations.json");
     private static readonly string SettingsPath = Path.Combine(LauncherDir, "launcher_settings.json");
 
+    private static readonly System.Threading.SemaphoreSlim _accountsLock = new(1, 1);
+    private static readonly System.Threading.SemaphoreSlim _installationsLock = new(1, 1);
+    private static readonly System.Threading.SemaphoreSlim _settingsLock = new(1, 1);
+
     static ConfigManager()
     {
         if (!Directory.Exists(LauncherDir)) Directory.CreateDirectory(LauncherDir);
@@ -50,9 +54,10 @@ public static class ConfigManager
 
     public static async Task<AccountsConfig> LoadAccountsAsync()
     {
-        if (!File.Exists(AccountsPath)) return new AccountsConfig();
+        await _accountsLock.WaitAsync();
         try
         {
+            if (!File.Exists(AccountsPath)) return new AccountsConfig();
             string json = await File.ReadAllTextAsync(AccountsPath);
             return JsonSerializer.Deserialize<AccountsConfig>(json) ?? new AccountsConfig();
         }
@@ -61,10 +66,15 @@ public static class ConfigManager
             ConsoleService.Instance.Log($"[Config] Error loading accounts: {ex.Message}");
             return new AccountsConfig();
         }
+        finally
+        {
+            _accountsLock.Release();
+        }
     }
 
     public static async Task SaveAccountsAsync(AccountsConfig config)
     {
+        await _accountsLock.WaitAsync();
         try
         {
             string json = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
@@ -75,13 +85,18 @@ public static class ConfigManager
             ConsoleService.Instance.Log($"[Config] Error saving accounts: {ex.Message}");
             throw;
         }
+        finally
+        {
+            _accountsLock.Release();
+        }
     }
 
     public static async Task<InstallationsConfig> LoadInstallationsAsync()
     {
-        if (!File.Exists(InstallationsPath)) return new InstallationsConfig();
+        await _installationsLock.WaitAsync();
         try
         {
+            if (!File.Exists(InstallationsPath)) return new InstallationsConfig();
             string json = await File.ReadAllTextAsync(InstallationsPath);
             return JsonSerializer.Deserialize<InstallationsConfig>(json) ?? new InstallationsConfig();
         }
@@ -90,10 +105,15 @@ public static class ConfigManager
             ConsoleService.Instance.Log($"[Config] Error loading installations: {ex.Message}");
             return new InstallationsConfig();
         }
+        finally
+        {
+            _installationsLock.Release();
+        }
     }
 
     public static async Task SaveInstallationsAsync(InstallationsConfig config)
     {
+        await _installationsLock.WaitAsync();
         try
         {
             string json = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
@@ -104,13 +124,18 @@ public static class ConfigManager
             ConsoleService.Instance.Log($"[Config] Error saving installations: {ex.Message}");
             throw;
         }
+        finally
+        {
+            _installationsLock.Release();
+        }
     }
 
     public static async Task<LauncherSettings> LoadSettingsAsync()
     {
-        if (!File.Exists(SettingsPath)) return new LauncherSettings();
+        await _settingsLock.WaitAsync();
         try
         {
+            if (!File.Exists(SettingsPath)) return new LauncherSettings();
             string json = await File.ReadAllTextAsync(SettingsPath);
             return JsonSerializer.Deserialize<LauncherSettings>(json) ?? new LauncherSettings();
         }
@@ -119,10 +144,15 @@ public static class ConfigManager
             ConsoleService.Instance.Log($"[Config] Error loading settings: {ex.Message}");
             return new LauncherSettings();
         }
+        finally
+        {
+            _settingsLock.Release();
+        }
     }
 
     public static async Task SaveSettingsAsync(LauncherSettings settings)
     {
+        await _settingsLock.WaitAsync();
         try
         {
             string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
@@ -133,13 +163,18 @@ public static class ConfigManager
             ConsoleService.Instance.Log($"[Config] Error saving settings: {ex.Message}");
             throw;
         }
+        finally
+        {
+            _settingsLock.Release();
+        }
     }
 
     public static LauncherSettings LoadSettings()
     {
-        if (!File.Exists(SettingsPath)) return new LauncherSettings();
+        _settingsLock.Wait();
         try
         {
+            if (!File.Exists(SettingsPath)) return new LauncherSettings();
             string json = File.ReadAllText(SettingsPath);
             return JsonSerializer.Deserialize<LauncherSettings>(json) ?? new LauncherSettings();
         }
@@ -148,10 +183,15 @@ public static class ConfigManager
             ConsoleService.Instance.Log($"[Config] Error loading settings: {ex.Message}");
             return new LauncherSettings();
         }
+        finally
+        {
+            _settingsLock.Release();
+        }
     }
 
     public static void SaveSettings(LauncherSettings settings)
     {
+        _settingsLock.Wait();
         try
         {
             string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
@@ -160,6 +200,10 @@ public static class ConfigManager
         catch (Exception ex)
         {
             ConsoleService.Instance.Log($"[Config] Error saving settings: {ex.Message}");
+        }
+        finally
+        {
+            _settingsLock.Release();
         }
     }
 }

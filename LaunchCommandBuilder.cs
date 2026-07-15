@@ -262,10 +262,4 @@ public static class LaunchCommandBuilder
         }
         return text;
     }
-
-    private static string EscapePath(string path)
-    {
-        if (path.Contains(" ")) return "\"" + path + "\"";
-        return path;
-    }
 }

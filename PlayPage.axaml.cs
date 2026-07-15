@@ -502,12 +502,13 @@ namespace JustLauncher
                 Log("Building launch arguments...");
                 var args = LaunchCommandBuilder.BuildArguments(installation, account, info, settings, injectorPath);
                 
+                bool redirect = !settings.CloseOnLaunch;
                 var startInfo = new ProcessStartInfo
                 {
                     FileName = javaPathToUse,
                     UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
+                    RedirectStandardOutput = redirect,
+                    RedirectStandardError = redirect,
                     CreateNoWindow = true,
                     WorkingDirectory = string.IsNullOrEmpty(installation.GameDirectory) ? PlatformManager.GetMinecraftDirectory() : installation.GameDirectory
                 };
@@ -520,14 +521,21 @@ namespace JustLauncher
                 Log($"Launching process: {startInfo.FileName}");
                 Log($"Arguments (hidden for security): [FILTERED]");
                 
-                var process = new Process { StartInfo = startInfo, EnableRaisingEvents = true };
+                var process = new Process { StartInfo = startInfo, EnableRaisingEvents = redirect };
                 
-                process.OutputDataReceived += (s, ev) => { if (ev.Data != null) Log($"[GAME] {ev.Data}"); };
-                process.ErrorDataReceived += (s, ev) => { if (ev.Data != null) Log($"[ERROR] {ev.Data}"); };
+                if (redirect)
+                {
+                    process.OutputDataReceived += (s, ev) => { if (ev.Data != null) Log($"[GAME] {ev.Data}"); };
+                    process.ErrorDataReceived += (s, ev) => { if (ev.Data != null) Log($"[ERROR] {ev.Data}"); };
+                }
 
                 process.Start();
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
+                
+                if (redirect)
+                {
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
+                }
                 
                 Dispatcher.UIThread.Post(() => 
                 {
@@ -539,6 +547,16 @@ namespace JustLauncher
                         Services.LocalizationService.Instance["Message_GameLaunched"]);
                 });
                 Log("Game started successfully.");
+
+                if (settings.CloseOnLaunch)
+                {
+                    Log("CloseOnLaunch is enabled. Shutting down launcher in 1 second...");
+                    await Task.Delay(1000);
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        (Avalonia.Application.Current?.ApplicationLifetime as Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime)?.Shutdown();
+                    });
+                }
             }
             catch (Exception ex)
             {

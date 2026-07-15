@@ -10,6 +10,9 @@
         Title="{loc:Localize Key=Update_NewVersionAvailable}"
         WindowStartupLocation="CenterOwner"
         CanResize="False"
+        SystemDecorations="None"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
         Background="Transparent">
     
     <Border Background="{DynamicResource ContentBackground}" 
@@ -20,7 +23,7 @@
             Margin="20">
         <Grid Margin="32" RowDefinitions="Auto,*,Auto">
             <!-- Header -->
-            <Grid Grid.Row="0" Margin="0,0,0,24" ColumnDefinitions="*,Auto">
+            <Grid Grid.Row="0" Margin="0,0,0,24" ColumnDefinitions="*,Auto" PointerPressed="Header_PointerPressed" Background="Transparent">
                 <StackPanel>
                     <TextBlock Text="{loc:Localize Key=Update_NewVersionAvailable}" Classes="PageHeader" FontSize="28"/>
                     <StackPanel Orientation="Horizontal" Spacing="16" Margin="0,8,0,0">

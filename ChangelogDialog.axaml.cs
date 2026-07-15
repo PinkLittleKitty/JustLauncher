@@ -100,4 +100,9 @@ public partial class ChangelogDialog : Window
 
         Close();
     }
+
+    private void Header_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
+    {
+        BeginMoveDrag(e);
+    }
 }

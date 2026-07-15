@@ -68,6 +68,9 @@ namespace JustLauncher
 
             var importBtn = this.FindControl<Button>("ImportModpackButton");
             if (importBtn != null) importBtn.Click += ImportModpackButton_Click;
+
+            var openFolderBtn = this.FindControl<Button>("OpenFolderButton");
+            if (openFolderBtn != null) openFolderBtn.Click += OpenFolderButton_Click;
         }
 
         private async void ImportModpackButton_Click(object? sender, RoutedEventArgs e)
@@ -207,6 +210,19 @@ namespace JustLauncher
                 installationsConfig.Installations.RemoveAll(i => i.Id == selected.Id);
                 await ConfigManager.SaveInstallationsAsync(installationsConfig);
                 RefreshInstallations();
+            }
+        }
+
+        private void OpenFolderButton_Click(object? sender, RoutedEventArgs e)
+        {
+            var combo = this.FindControl<ComboBox>("ProfileComboBox");
+            if (combo?.SelectedItem is Installation installation)
+            {
+                string path = !string.IsNullOrEmpty(installation.GameDirectory) 
+                            ? installation.GameDirectory 
+                            : PlatformManager.GetMinecraftDirectory();
+                
+                PlatformManager.OpenFolder(path);
             }
         }
 
